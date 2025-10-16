@@ -31,7 +31,7 @@ Celem projektu jest dostarczenie najbardziej precyzyjnych i szczegółowych rece
 * **Autoryzacja użytkowników:** Wymagana rejestracja do wystawiania ocen.
 
 ### Etapy tworzenia projektu:
-[x] Etap 1: Główne założenia
+ - [x] Etap 1: Główne założenia
 
 ### 🛠 Stos Technologiczny
 

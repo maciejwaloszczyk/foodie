@@ -4,9 +4,15 @@
   <img src="-" width="200" alt="Logo">
 </p>
 
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Strapi](https://img.shields.io/badge/strapi-%232E7EEA.svg?style=for-the-badge&logo=strapi&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]][license]
-[![hacs][hacsbadge]][hacs]
 
 ### 🌟 O Projekcie
 
@@ -50,3 +56,9 @@ Projekt został zbudowany na nowoczesnym i wydajnym stosie technologicznym:
 ### 📝 Licencja
 
 Projekt Food.ie jest udostępniony na licencji **MIT License**. Szczegóły znajdziesz w pliku `LICENSE`.
+
+
+[releases-shield]: https://img.shields.io/github/release/maciejwaloszczyk/foodie.svg?style=for-the-badge
+[releases]: https://github.com/maciejwaloszczyk/foodie/releases
+[license-shield]: https://img.shields.io/github/license/maciejwaloszczyk/foodie.svg?style=for-the-badge
+[license]: https://github.com/maciejwaloszczyk/foodie/blob/master/LICENSE

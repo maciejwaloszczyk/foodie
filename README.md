@@ -48,10 +48,10 @@ Projekt został zbudowany na nowoczesnym i wydajnym stosie technologicznym:
 
 ### 🤝 Twórcy projektu
 
-**Maciej Sulima** | [@VarSwasTaken](https://github.com/VarSwasTaken)
-**Maciej Waloszczyk** | [@maciejwaloszczyk](https://github.com/maciejwaloszczyk)
-**Wiktor Wybraniec** | [@Sigmen-bot](https://github.com/Sigmen-bot)
-**Jan Zieliński** | [@ZieloPL](https://github.com/ZieloPL)
+**Maciej Sulima** | [@VarSwasTaken](https://github.com/VarSwasTaken) <br>
+**Maciej Waloszczyk** | [@maciejwaloszczyk](https://github.com/maciejwaloszczyk) <br>
+**Wiktor Wybraniec** | [@Sigmen-bot](https://github.com/Sigmen-bot) <br>
+**Jan Zieliński** | [@ZieloPL](https://github.com/ZieloPL) <br>
 
 ### 📝 Licencja
 

@@ -16,7 +16,7 @@
 
 ### 🌟 O Projekcie
 
-**Food.ie** to innowacyjna platforma do oceniania restauracji i jedzenia, która rewolucjonizuje standardowy system gwiazdek (1-5). Nasza aplikacja pozwala użytkownikom na dogłębną analizę i ocenę poszczególnych **atrybutów** dania (np. *Kebab: sos, frytki, surówka, mięso*), z których następnie wyliczana jest **ważona średnia ocena końcowa**.
+**Foodie** to innowacyjna platforma do oceniania restauracji i jedzenia, która rewolucjonizuje standardowy system gwiazdek (1-5). Nasza aplikacja pozwala użytkownikom na dogłębną analizę i ocenę poszczególnych **atrybutów** dania (np. *Kebab: sos, frytki, surówka, mięso*), z których następnie wyliczana jest **ważona średnia ocena końcowa**.
 
 Celem projektu jest dostarczenie najbardziej precyzyjnych i szczegółowych recenzji kulinarnych, ułatwiając użytkownikom podejmowanie świadomych decyzji o tym, gdzie zjeść.
 
@@ -55,7 +55,7 @@ Projekt został zbudowany na nowoczesnym i wydajnym stosie technologicznym:
 
 ### 📝 Licencja
 
-Projekt Food.ie jest udostępniony na licencji **MIT License**. Szczegóły znajdziesz w pliku `LICENSE`.
+Projekt Foodie jest udostępniony na licencji **MIT License**. Szczegóły znajdziesz w pliku `LICENSE`.
 
 
 [releases-shield]: https://img.shields.io/github/release/maciejwaloszczyk/foodie.svg?style=for-the-badge

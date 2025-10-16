@@ -1,7 +1,7 @@
-# Food.ie
+# Foodie
 
 <p align="center">
-  <img src="-" width="200" alt="Logo">
+  <img src="https://waloszczyk.eu/public/foodie/image.png" width="300" alt="Logo">
 </p>
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)

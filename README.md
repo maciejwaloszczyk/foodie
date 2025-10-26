@@ -7,6 +7,7 @@
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Strapi](https://img.shields.io/badge/strapi-%232E7EEA.svg?style=for-the-badge&logo=strapi&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
@@ -91,7 +92,7 @@ Projekt został zbudowany na nowoczesnym i wydajnym stosie technologicznym:
 | **CMS/Headless** | **Strapi** | Elastyczny Headless CMS do zarządzania danymi (restauracje, atrybuty dań, użytkownicy). |
 | **Baza Danych** | **PostgreSQL / MariaDB** | Wytrzymałe systemy zarządzania bazą danych (wybór w trakcie implementacji). |
 | **Frontend** | **React** | Biblioteka do budowania dynamicznego i responsywnego interfejsu użytkownika. |
-| **Stylizacja** | **Bootstrap** | Framework front-end do szybkiego prototypowania i responsywnego designu. |
+| **Stylizacja** | **TailwindCSS** | Framework front-end do szybkiego prototypowania i responsywnego designu. |
 
 
 ### 🤝 Twórcy projektu

@@ -31,8 +31,55 @@ Celem projektu jest dostarczenie najbardziej precyzyjnych i szczegółowych rece
 * **Weryfikacja krytyków:** System weryfikacji kont dla znanych krytyków kulinarnych.
 * **Autoryzacja użytkowników:** Wymagana rejestracja do wystawiania ocen.
 
-### Etapy tworzenia projektu:
- - [x] Etap 1: Główne założenia
+### Etapy tworzenia projektu
+
+<details>
+  <summary>
+    Tydzień 1: Konfiguracja środowiska
+  </summary>
+
+  **Serwer i repozytorium**
+  - [x] 1) Instalacja i konfiguracja serwera (Linux)
+    - [x] a) Aktualizacja systemu i podstawowe zabezpieczenia
+    - [x] b) Instalacja Node.js (zalecana LTS)
+    - [x] c) Instalacja i konfiguracja bazy danych (PostgreSQL i MariaDB)
+  - [x] 2) Utworzenie repozytorium Git
+    - [ ] a) Ustalenie struktury branchy (main/develop/feature)
+    - [ ] b) Dodanie pliku .gitignore i podstawowego README
+  - [x] 3) Konfiguracja podstawowego projektu Node.js + Strapi
+    - [x] a) Inicjalizacja projektu npm/yarn
+    - [x] b) Instalacja Strapi i podstawowa konfiguracja
+  - [ ] 4) Test połączenia z bazą danych
+  - [x] 5) Prosty landing-page (coming-soon)
+
+  **Modelowanie danych i API**
+  - [ ] 1) Ustalenie modelu danych
+  - [ ] 2) Definicja relacji w Strapi / modelach Node.js
+  - [x] 3) Utworzenie pierwszych endpointów API
+  - [ ] 4) Testowanie endpointów w Postmanie
+    - [ ] a) Testy CRUD
+    - [ ] b) Testy autoryzacji i walidacji
+  - [ ] 5) Dokumentacja podstawowego API (krótki OpenAPI / README)
+</details>
+
+<details>
+  <summary>
+    Tydzień 2: Planowanie funkcji i frontu
+  </summary>
+
+  **Architektura**
+  - [x] 1) Zaplanowanie architektury aplikacji (Front + API + DB)
+  - [x] 2) Stworzenie szkicu ekranu głównego (lista lokali, mapa)
+  - [ ] 3) Makieta ekranu logowania i ekranu oceny jedzenia
+  - [x] 4) Ustalenie sposobu logowania (JWT / OAuth / inne)
+
+  **Integracja front-endu**
+  - [ ] 1) Utworzenie projektu React + Tailwinds (strukturacja katalogów)
+  - [ ] 2) Połączenie z API — testowe pobranie listy lokali
+  - [ ] 3) Konfiguracja routingu (Home / Map / Login)
+  - [ ] 4) Przygotowanie komponentu „Karta lokalu” (zdjęcie, nazwa, ocena, skrócony opis)
+  - [ ] 5) Podstawowe testy integracyjne (sprawdzenie pobierania danych i renderowania komponentów)
+</details>
 
 ### 🛠 Stos Technologiczny
 

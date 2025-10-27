@@ -14,7 +14,6 @@
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 
 [![GitHub Release][releases-shield]][releases]
-[![License][license-shield]][license]
 
 ### 🌟 O Projekcie
 
@@ -101,10 +100,6 @@ Projekt został zbudowany na nowoczesnym i wydajnym stosie technologicznym:
 **Maciej Waloszczyk** | [@maciejwaloszczyk](https://github.com/maciejwaloszczyk) <br>
 **Wiktor Wybraniec** | [@Sigmen-bot](https://github.com/Sigmen-bot) <br>
 **Jan Zieliński** | [@ZieloPL](https://github.com/ZieloPL) <br>
-
-### 📝 Licencja
-
-Projekt Foodie jest udostępniony na licencji **MIT License**. Szczegóły znajdziesz w pliku `LICENSE`.
 
 
 [releases-shield]: https://img.shields.io/github/release/maciejwaloszczyk/foodie.svg?style=for-the-badge

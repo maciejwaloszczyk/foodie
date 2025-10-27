@@ -44,8 +44,8 @@ Celem projektu jest dostarczenie najbardziej precyzyjnych i szczegółowych rece
     - [x] b) Instalacja Node.js (zalecana LTS)
     - [x] c) Instalacja i konfiguracja bazy danych (PostgreSQL i MariaDB)
   - [x] 2) Utworzenie repozytorium Git
-    - [ ] a) Ustalenie struktury branchy (main/develop/feature)
-    - [ ] b) Dodanie pliku .gitignore i podstawowego README
+    - [x] a) Ustalenie struktury branchy
+    - [x] b) Dodanie pliku .gitignore i podstawowego README
   - [x] 3) Konfiguracja podstawowego projektu Node.js + Strapi
     - [x] a) Inicjalizacja projektu npm/yarn
     - [x] b) Instalacja Strapi i podstawowa konfiguracja
@@ -74,7 +74,7 @@ Celem projektu jest dostarczenie najbardziej precyzyjnych i szczegółowych rece
   - [x] 4) Ustalenie sposobu logowania (JWT / OAuth / inne)
 
   **Integracja front-endu**
-  - [ ] 1) Utworzenie projektu React + Tailwinds (strukturacja katalogów)
+  - [x] 1) Utworzenie projektu React + Tailwinds (strukturacja katalogów)
   - [ ] 2) Połączenie z API — testowe pobranie listy lokali
   - [ ] 3) Konfiguracja routingu (Home / Map / Login)
   - [ ] 4) Przygotowanie komponentu „Karta lokalu” (zdjęcie, nazwa, ocena, skrócony opis)

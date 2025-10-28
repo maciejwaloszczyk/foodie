@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "review_details",
+  "info": {
+    "singularName": "review-detail",
+    "pluralName": "review-details",
+    "displayName": "Review Detail"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "rating": {
+      "type": "decimal",
+      "min": 0,
+      "max": 5
+    },
+    "review": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::review.review",
+      "inversedBy": "review_details"
+    },
+    "attribute": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::attribute.attribute",
+      "inversedBy": "review_details"
+    }
+  }
+}

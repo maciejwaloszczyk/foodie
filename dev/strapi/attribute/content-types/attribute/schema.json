@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attributes",
+  "info": {
+    "singularName": "attribute",
+    "pluralName": "attributes",
+    "displayName": "Attribute"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "rating": {
+      "type": "decimal",
+      "default": 0
+    },
+    "dish_attributes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::dish-attribute.dish-attribute",
+      "mappedBy": "attribute"
+    },
+    "review_details": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review-detail.review-detail",
+      "mappedBy": "attribute"
+    }
+  }
+}

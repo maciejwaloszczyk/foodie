@@ -11,12 +11,26 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
     "name": {
       "type": "string",
       "required": true
     },
     "address": {
       "type": "string"
+    },
+    "postalCode": {
+      "type": "string",
+      "regex": "^\\d{2}-\\d{3}$"
     },
     "city": {
       "type": "string"

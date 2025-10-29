@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dish_attributes",
+  "info": {
+    "singularName": "dish-attribute",
+    "pluralName": "dish-attributes",
+    "displayName": "Dish Attribute"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "dish": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::dish.dish",
+      "inversedBy": "dish_attributes"
+    },
+    "attribute": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::attribute.attribute",
+      "inversedBy": "dish_attributes"
+    }
+  }
+}

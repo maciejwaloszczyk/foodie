@@ -4,7 +4,7 @@
   "info": {
     "singularName": "dish-attribute",
     "pluralName": "dish-attributes",
-    "displayName": "dish attribute"
+    "displayName": "Dish Attribute"
   },
   "options": {
     "draftAndPublish": true

@@ -12,7 +12,7 @@ const restaurantData: Restaurant[] = [
     deliveryTime: "25-35 min",
     distance: "1.2 km",
     isPromoted: true,
-    description: "Autentyczna kuchnia włoska z rodzinnymi przepisami",
+    description: "Bella Italia to urokliwa włoska trattoria w sercu miasta, w której unosi się zapach świeżych ziół, oliwy i pieczonej w piecu pizzy. Wnętrze utrzymane w ciepłych barwach i drewnianych akcentach przenosi gości prosto do Toskanii.\n\nW menu znajdziesz klasyczne dania kuchni włoskiej – od aromatycznego spaghetti carbonara, przez kremowe risotto z grzybami, po chrupiącą pizzę z pieca opalanego drewnem. Wszystko przygotowywane z oryginalnych włoskich składników sprowadzanych od lokalnych dostawców.\n\n To idealne miejsce zarówno na rodzinny obiad, romantyczną kolację, jak i szybki lunch w ciągu dnia. Personel dba o przyjazną atmosferę i chętnie doradzi wybór wina pasującego do potrawy.",
     address: "ul. Piotrkowska 123, Łódź",
     location: {
       lat: 51.7592,

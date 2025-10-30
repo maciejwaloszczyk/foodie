@@ -16,8 +16,27 @@ export default async function RestaurantPage({ params }: Props) {
 
   if (!restaurant) return notFound();
 
-  // TODO : Fetch related restaurants based on cuisine or location
-  const related = restaurantData.filter((r) => r.id !== numericId).slice(0, 4);
+  // Find related restaurants: same cuisine first, then others, sorted by distance
+  const parseDistanceKm = (d?: string | number) => {
+    if (d === undefined || d === null) return Infinity;
+    if (typeof d === "number") return d;
+    const num = parseFloat(String(d));
+    return Number.isFinite(num) ? num : Infinity;
+  };
+
+  const sameCuisine = restaurantData
+    .filter((r) => r.id !== numericId && r.cuisine === restaurant.cuisine)
+    .map((r) => ({ r, dist: parseDistanceKm(r.distance) }))
+    .sort((a, b) => a.dist - b.dist)
+    .map(({ r }) => r);
+
+  const others = restaurantData
+    .filter((r) => r.id !== numericId && r.cuisine !== restaurant.cuisine)
+    .map((r) => ({ r, dist: parseDistanceKm(r.distance) }))
+    .sort((a, b) => a.dist - b.dist)
+    .map(({ r }) => r);
+
+  const related = [...sameCuisine, ...others].slice(0, 4);
 
   return (
     <section className="overflow-hidden pb-[120px] pt-[120px]">
@@ -54,7 +73,7 @@ export default async function RestaurantPage({ params }: Props) {
                       >
                         <div className="min-w-0">
                           <div className="text-sm font-medium text-primary truncate">{r.name}</div>
-                          <div className="text-xs text-gray-500 truncate">{r.cuisine}</div>
+                          <div className="text-xs text-gray-500 truncate">{r.cuisine} • {r.distance}</div>
                         </div>
 
                         <div className="ml-3 flex items-center gap-2 shrink-0">

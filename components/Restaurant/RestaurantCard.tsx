@@ -36,10 +36,12 @@ function Header({ restaurant }: Props) {
 }
 
 function ImageBlock({ restaurant }: Props) {
-  if (!restaurant.image) return null;
+  const imageSrc = restaurant.image ? restaurant.image : "/images/blog/image-placeholder.jpg";
+  const imageAlt = restaurant.image == "" ? "Brak zdjęcia restauracji" : restaurant.name;
+
   return (
     <div className="w-full h-96 relative mb-6 rounded overflow-hidden">
-      <Image src={restaurant.image} alt={restaurant.name} fill style={{ objectFit: "cover" }} />
+      <Image src={imageSrc} alt={imageAlt} fill style={{ objectFit: "cover" }} />
     </div>
   );
 }

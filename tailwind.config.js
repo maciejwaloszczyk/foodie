@@ -36,11 +36,16 @@ module.exports = {
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
-        black: "#121723",
-        dark: "#1D2430",
-        primary: "#4A6CF7",
-        yellow: "#FBB040",
-        "body-color": "#788293",
+        black: "#121723", 
+        dark: "#1D2430", 
+
+        primary: "#007bff", // <-- ZASTĄPIONY (#4A6CF7 nie zgadzal mi sie z barwami logo)
+        "primary-dark": "#0056b3", // <-- DODANY
+        "primary-light": "#e3f2fd", // <-- DODANY
+        "text-main": "#212529", // <-- DODANY (główny kolor tekstu)
+
+        yellow: "#FBB040", 
+        "body-color": "#788293", 
         "body-color-dark": "#959CB1",
         "gray-dark": "#1E232E",
         "gray-light": "#F0F2F9",

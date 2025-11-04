@@ -9,7 +9,7 @@ const TopRated = () => {
     .slice(0, 6);
 
   return (
-    <section className="bg-white dark:bg-gray-dark py-16 md:py-20 lg:py-28">
+    <section className="bg-primary-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28"> {/* <-- ZMIANA TŁA */}
       <div className="container">
         <SectionTitle
           title="Najlepiej oceniane"

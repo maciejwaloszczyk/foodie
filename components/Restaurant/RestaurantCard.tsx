@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Restaurant } from "@/types/restaurant";
+import restaurantData from "@/components/Restaurant/restaurantData";
 
 type Props = {
   restaurant: Restaurant;
@@ -69,7 +71,7 @@ function Stars({ rating }: { rating: number }) {
           const gradId = `grad-${uid}-${i}`;
 
           return (
-            <svg key={i} className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" aria-hidden>
+            <svg key={i} className="w-4 h-4 md:w-5 md:h-5 translate-y-[-1px]" viewBox="0 0 24 24" aria-hidden>
               <defs>
                 <linearGradient id={gradId} x1="0" x2="1" gradientUnits="objectBoundingBox">
                   <stop offset={`${percent}%`} stopColor={filledColor} />
@@ -98,25 +100,40 @@ function mapSearchUrl(restaurant: Restaurant) {
 
 function QuickFacts({ restaurant }: Props) {
   return (
-    <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-6 mb-4">
+    <div className="flex items-center justify-between gap-3 mb-4">
       <div className="flex items-center gap-3">
         <div className="text-sm">
-          <div className="font-bold text-gray-900 dark:text-gray-100">Ocena</div>
+          <div className="font-bold text-gray-900 dark:text-gray-100">Ocena ogólna</div>
           <div className="mt-1 flex items-center gap-2">
             <Stars rating={restaurant.rating} />
             <span className="text-sm text-gray-600 dark:text-gray-400">({restaurant.reviewCount})</span>
           </div>
         </div>
+
+        {/*
+        <div className="text-sm">
+          <div className="font-bold text-gray-900 dark:text-gray-100">Kuchnia</div>
+          <div className="mt-1 text-gray-800 dark:text-gray-200">{restaurant.cuisine}</div>
+        </div>
+
+        <div className="text-sm">
+          <div className="font-bold text-gray-900 dark:text-gray-100">Czas dostawy</div>
+          <div className="mt-1 text-gray-800 dark:text-gray-200">{restaurant.deliveryTime}</div>
+        </div>
+        */}
       </div>
 
-      <div className="text-sm">
-        <div className="font-bold text-gray-900 dark:text-gray-100">Kuchnia</div>
-        <div className="mt-1 text-gray-800 dark:text-gray-200">{restaurant.cuisine}</div>
-      </div>
-
-      <div className="text-sm">
-        <div className="font-bold text-gray-900 dark:text-gray-100">Czas dostawy</div>
-        <div className="mt-1 text-gray-800 dark:text-gray-200">{restaurant.deliveryTime}</div>
+      <div className="flex-shrink-0">
+        <Link
+          href={`/restaurant/${restaurant.id}/reviews`}
+          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          aria-label="Zobacz opinie / Dodaj opinię"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M21 6.5a2.5 2.5 0 0 0-2.5-2.5H5.5A2.5 2.5 0 0 0 3 6.5v9A2.5 2.5 0 0 0 5.5 18H7l3 3 3-3h6.5A2.5 2.5 0 0 0 21 15.5v-9zM7 9h10v2H7V9zm0 3h7v2H7v-2z" />
+          </svg>
+          Opinie
+        </Link>
       </div>
     </div>
   );
@@ -192,4 +209,69 @@ export default function RestaurantCard({ restaurant }: Props) {
       </div>
     </article>
   );
+}
+
+export function Sidebar({ restaurant }: Props) {
+   const parseDistanceKm = (d?: string | number) => {
+     if (d === undefined || d === null) return Infinity;
+     if (typeof d === "number") return d;
+     const num = parseFloat(String(d).replace(",", "."));
+     return Number.isFinite(num) ? num : Infinity;
+   };
+
+   const sameCuisine = restaurantData
+     .filter((r) => r.id !== restaurant.id && r.cuisine === restaurant.cuisine)
+     .map((r) => ({ r, dist: parseDistanceKm(r.distance) }))
+     .sort((a, b) => a.dist - b.dist)
+     .map(({ r }) => r);
+
+   const others = restaurantData
+     .filter((r) => r.id !== restaurant.id && r.cuisine !== restaurant.cuisine)
+     .map((r) => ({ r, dist: parseDistanceKm(r.distance) }))
+     .sort((a, b) => a.dist - b.dist)
+     .map(({ r }) => r);
+
+   const related = [...sameCuisine, ...others].slice(0, 4);
+
+   return (
+     <div className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+       <div className="rounded-sm bg-white p-4 sm:p-6 shadow-three dark:bg-gray-dark dark:shadow-none">
+         <h3 className="mb-3 text-lg font-semibold">Zdjęcia</h3>
+         <p className="text-sm text-gray-600">Brak dodatkowych zdjęć dla tej restauracji.</p>
+       </div>
+
+       <div className="rounded-sm bg-white p-4 sm:p-6 shadow-three dark:bg-gray-dark dark:shadow-none">
+         <h3 className="mb-3 text-lg font-semibold">Menu</h3>
+         <p className="text-sm text-gray-600">Jeśli menu jest dostępne, pojawi się tutaj link lub miniatury zdjęć.</p>
+       </div>
+
+       <div className="rounded-sm bg-white p-4 sm:p-6 shadow-three dark:bg-gray-dark dark:shadow-none">
+         <h3 className="mb-3 text-lg font-semibold">Podobne restauracje</h3>
+         <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+           {related.map((r) => (
+             <li key={r.id} className="py-3">
+               <Link href={`/restaurant/${r.id}`} className="flex items-center justify-between gap-3">
+                 <div className="min-w-0">
+                   <div className="text-sm font-medium text-primary truncate">{r.name}</div>
+                   <div className="text-xs text-gray-500 truncate">{r.cuisine} • {r.distance}</div>
+                 </div>
+
+                 <div className="ml-3 flex items-center gap-2 shrink-0">
+                   <span className="text-sm font-medium leading-none">{r.rating.toFixed(1)}</span>
+                   <svg
+                     className="w-3 h-3 text-yellow-400 translate-y-[-1px]"
+                     viewBox="0 0 24 24"
+                     fill="currentColor"
+                     aria-hidden
+                   >
+                     <path d="M12 .587l3.668 7.431 8.232 1.732-5.4 5.264 1.274 8.986L12 19.897 4.226 24l1.274-8.986L.1 9.75l8.232-1.732z" />
+                   </svg>
+                 </div>
+               </Link>
+             </li>
+           ))}
+         </ul>
+       </div>
+     </div>
+   );
 }

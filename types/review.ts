@@ -1,13 +1,15 @@
 export type Review = {
   id: number;
+  user_id: number;
+  dish_id: number;
   comment: string;
-  dish: number;
-  users_permissions_user: number;
-  review_details: [number];
+  overall_rating: number;
+  review_details: number[];
 };
 
 export type ReviewDetails = {
+  id: number;
   rating: number;
-  review: number;
-  attribute: number;
+  review_id: number;
+  attribute_id: number;
 };

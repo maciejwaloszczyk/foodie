@@ -1,6 +1,6 @@
 import SectionTitle from "../Common/SectionTitle";
 import SingleRestaurant from "./SingleRestaurant";
-import restaurantData from "./restaurantData";
+import restaurantData from "./data/restaurantData";
 
 const TopRated = () => {
   // Sort by rating and take top 6

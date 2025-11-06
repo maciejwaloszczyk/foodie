@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Restaurant } from "@/types/restaurant";
-import restaurantData from "@/components/Restaurant/restaurantData";
+import restaurantData from "@/components/Restaurant/data/restaurantData";
 
 type Props = {
   restaurant: Restaurant;

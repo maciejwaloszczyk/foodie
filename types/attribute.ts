@@ -1,12 +1,11 @@
 export type Attribute = {
+  id: number;
   name: string;
   description?: string;
-  rating: number;
-  dish_attributes: [number];
-  review_details: [number];
+  weight: number;
 }
 
 export type DishAttribute = {
-  dish: number;
-  attribute: number;
+  dish_id: number;
+  attribute_id: number;
 };

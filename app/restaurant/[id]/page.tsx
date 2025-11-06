@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import restaurantData from "@/components/Restaurant/restaurantData";
+import restaurantData from "@/components/Restaurant/data/restaurantData";
 import { Restaurant } from "@/types/restaurant";
 import RestaurantCard, { Sidebar } from "@/components/Restaurant/RestaurantCard";
 

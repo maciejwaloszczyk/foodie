@@ -18,6 +18,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7592,
       lng: 19.4560,
     },
+    dishes: [1, 2, 3],
   },
   {
     id: 2,
@@ -36,6 +37,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7615,
       lng: 19.4567,
     },
+    dishes: [4, 5],
   },
   {
     id: 3,
@@ -54,6 +56,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7589,
       lng: 19.4590,
     },
+    dishes: [],
   },
   {
     id: 4,
@@ -72,6 +75,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7601,
       lng: 19.4578,
     },
+    dishes: [],
   },
   {
     id: 5,
@@ -90,6 +94,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7623,
       lng: 19.4545,
     },
+    dishes: [],
   },
   {
     id: 6,
@@ -108,6 +113,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7580,
       lng: 19.4600,
     },
+    dishes: [],
   },
   {
     id: 7,
@@ -126,6 +132,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7610,
       lng: 19.4533,
     },
+    dishes: [],
   },
   {
     id: 8,
@@ -144,6 +151,7 @@ const restaurantData: Restaurant[] = [
       lat: 51.7595,
       lng: 19.4585,
     },
+    dishes: [],
   },
 ];
 

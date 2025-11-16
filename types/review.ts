@@ -1,9 +1,9 @@
 export type Review = {
   id: number;
-  user_id: number;
-  dish_id: number;
   comment: string;
   overall_rating: number;
+  user_id: number;
+  dish_id: number;
   review_details: number[];
 };
 

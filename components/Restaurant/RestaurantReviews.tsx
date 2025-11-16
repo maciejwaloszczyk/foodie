@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useAuth } from "@/lib/useAuth";
+import { useState } from "react";
 import { Restaurant } from "@/types/restaurant";
+import { Review } from "@/types/review";
+
+// data imports used to resolve names/attributes for rendering reviews
+import { dishData } from "./data/dishData";
+import { userData } from "./data/userData";
+import { reviewData, reviewDetailsData } from "./data/reviewData";
+import { attributeData } from "./data/attributeData";
 
 type Props = {
   restaurant: Restaurant;
@@ -91,12 +99,12 @@ function Header({ restaurant, count }: { restaurant: Restaurant; count: number }
   );
 }
 
-/*
-  ReviewForm is client-side and checks auth using useAuth.
-  Kept inside the same file as requested.
-*/
 function ReviewForm() {
   const { isAuthenticated, loading } = useAuth();
+  const [foodQuality, setFoodQuality] = useState<number>(4);
+  const [serviceQuality, setServiceQuality] = useState<number>(4);
+  const [name, setName] = useState<string>("");
+  const [comment, setComment] = useState<string>("");
 
   if (loading) {
     return <div className="mb-6 p-4 text-sm text-gray-600 dark:text-gray-400">Ładowanie...</div>;
@@ -106,12 +114,12 @@ function ReviewForm() {
     return (
       <div className="mb-6 rounded-md border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
         <h2 className="text-lg font-semibold mb-3">Dodaj opinię</h2>
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          Musisz się{" "}
+        <p className="text-sm italic text-gray-700 dark:text-gray-300">
+          Aby dodać opinię, musisz być{" "}
           <Link href="/signin" className="text-primary underline">
-            zalogować
+            zalogowany
           </Link>
-          , aby dodać opinię.
+          .
         </p>
       </div>
     );
@@ -120,37 +128,107 @@ function ReviewForm() {
   return (
     <section className="mb-6">
       <h2 className="text-lg font-semibold mb-3">Dodaj opinię</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
-        <div className="sm:col-span-2">
-          <label className="block text-xs text-gray-500 mb-1">Twoje imię</label>
-          <input className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" placeholder="Imię" />
-        </div>
 
-        <div className="sm:col-span-2">
-          <label className="block text-xs text-gray-500 mb-1">Ocena</label>
-          <div className="inline-flex items-center gap-1">
-            {[5, 4, 3, 2, 1].map((s) => (
-              <button key={s} type="button" className="p-1" aria-label={`${s} gwiazdek`}>
-                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                  <path d="M12 .587l3.668 7.431 8.232 1.732-5.4 5.264 1.274 8.986L12 19.897 4.226 24l1.274-8.986L.1 9.75l8.232-1.732z" />
-                </svg>
-              </button>
-            ))}
+      {/* Sliders for two attributes */}
+      <div className="space-y-4">
+        {/* Food quality */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Jakość jedzenia</label>
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={1}
+              max={10}
+              step={1}
+              value={foodQuality}
+              onChange={(e) => setFoodQuality(Number(e.target.value))}
+              className="w-full accent-blue-600"
+            />
+            <input
+              type="number"
+              min={1}
+              max={10}
+              step={1}
+              value={foodQuality}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (!Number.isNaN(v)) setFoodQuality(Math.max(1, Math.min(5, v)));
+              }}
+              className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            />
           </div>
         </div>
 
-        <div className="sm:col-span-2 flex items-end justify-end">
-          <div className="text-xs text-gray-500">Polecam podać rzetelną ocenę i krótki opis.</div>
+        {/* Service quality */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Obsługa</label>
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={1}
+              max={10}
+              step={1}
+              value={serviceQuality}
+              onChange={(e) => setServiceQuality(Number(e.target.value))}
+              className="w-full accent-blue-600"
+            />
+            <input
+              type="number"
+              min={1}
+              max={10}
+              step={1}
+              value={serviceQuality}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (!Number.isNaN(v)) setServiceQuality(Math.max(1, Math.min(5, v)));
+              }}
+              className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            />
+          </div>
         </div>
 
-        <div className="sm:col-span-6">
-          <label className="block text-xs text-gray-500 mb-1">Treść opinii</label>
-          <textarea className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" placeholder="Napisz, co Ci się podobało / nie podobało..." />
-        </div>
+        {/* Name + comment */}
+        <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+          <div className="sm:col-span-6">
+            <label className="block text-xs text-white mb-1">Treść opinii</label>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              placeholder="Napisz, co Ci się podobało / nie podobało..."
+            />
+          </div>
 
-        <div className="sm:col-span-6 flex justify-end gap-3">
-          <button className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200">Anuluj</button>
-          <button className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Dodaj opinię</button>
+          <div className="sm:col-span-6 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                // design-only: reset fields
+                setFoodQuality(4);
+                setServiceQuality(4);
+                setName("");
+                setComment("");
+              }}
+              className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >
+              Anuluj
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                // design-only: console log values
+                console.log({
+                  name,
+                  foodQuality,
+                  serviceQuality,
+                  comment,
+                });
+              }}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+            >
+              Dodaj opinię
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -158,50 +236,96 @@ function ReviewForm() {
 }
 
 function ReviewCard({ rev }: { rev: any }) {
-  const full = Math.floor(rev.rating || 0);
-  const half = rev.rating - full >= 0.5;
+  const user = userData.find((u) => u.id === rev.user_id);
+  const dish = dishData.find((d) => d.id === rev.dish_id);
+
+  const details = (rev.review_details ?? [])
+    .map((id: number) => reviewDetailsData.find((rd) => rd.id === id))
+    .filter(Boolean) as any[];
+
+  const getBadgeClasses = (value: number) => {
+    if (value <= 3) return "bg-red-500 text-white";
+    else if (value <= 6) return "bg-amber-400 text-white";
+    return "bg-emerald-500 text-white";
+  };
 
   return (
-    <div className="rounded-md border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-3">
-            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{rev.author}</div>
-            <div className="text-xs text-gray-500">{rev.date}</div>
-          </div>
-
-          <div className="mt-2 flex items-center gap-2 text-sm">
-            <div className="inline-flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => {
-                const filled = i < full || (i === full && half);
-                return (
-                  <svg key={i} className={`w-4 h-4 ${filled ? "text-blue-600" : "text-gray-300"}`} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                    <path d="M12 .587l3.668 7.431 8.232 1.732-5.4 5.264 1.274 8.986L12 19.897 4.226 24l1.274-8.986L.1 9.75l8.232-1.732z" />
-                  </svg>
-                );
-              })}
+    <div className="rounded-md border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
+      {/* HEADER: username and overall rating */}
+      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800">
+        <div className="flex items-start justify-between">
+          <div className="min-w-0">
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
+              {user?.username ?? "Anonim"}
             </div>
-            <div className="text-xs text-gray-500"> {rev.rating?.toFixed(1)}</div>
-          </div>
-        </div>
 
-        <div className="text-sm text-gray-500" />
+            {/* ocena ogólna pod nazwą użytkownika */}
+            <div className="mt-2 flex items-center gap-3">
+              <Stars rating={rev.overall_rating ?? 0} />
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-500" />
+        </div>
       </div>
 
-      <p className="mt-3 text-gray-800 dark:text-gray-200 whitespace-pre-line">{rev.text}</p>
+      {/* DESCRIPTION + Produkt (produkt przeniesiony tutaj ponad opis) */}
+      <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3">
+        <div className="text-sm text-gray-500 mb-2">
+          Danie: <span className="font-semibold text-gray-800 dark:text-gray-200">{dish?.name ?? "—"}</span>
+        </div>
+        <p className="text-gray-800 dark:text-gray-200 text-base whitespace-pre-line font-medium">{rev.comment}</p>
+      </div>
+
+      {/* ATTRIBUTES */}
+      <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3 bg-gray-50 dark:bg-gray-900">
+        <div className="text-xs text-gray-500 mb-2">Oceny atrybutów</div>
+        <div className="space-y-2">
+          {details.length > 0 ? (
+            details.map((d) => {
+              const attr = attributeData.find((a) => a.id === d.attribute_id);
+              return (
+                <div key={d.id} className="flex items-center gap-3 text-sm text-gray-700 font-medium dark:text-gray-300">
+                  <span
+                    title={`${d.rating}/10`}
+                    className={`inline-flex items-center justify-center w-10 h-6 rounded-full text-xs font-semibold ${getBadgeClasses(d.rating)}`}
+                  >
+                    {d.rating}
+                  </span>
+                  <div>{attr?.name ?? `Atrybut ${d.attribute_id}`}</div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-xs text-gray-500">Brak ocen atrybutów dla tej opinii.</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function RestaurantReviews({ restaurant }: Props) {
-  const reviews = (restaurant as any).reviews ?? [
-    { id: "r1", author: "Agnieszka", rating: 4.5, date: "2025-10-05", text: "Świetne miejsce, polecam pizzę. Obsługa miła, szybka dostawa." },
-    { id: "r2", author: "Tomek", rating: 3.0, date: "2025-09-20", text: "Dobre jedzenie, ale trochę zimne przy dostawie." },
-  ];
+  const rest = restaurant as any;
+
+  // prefer explicit review ids on restaurant object, otherwise use restaurant.dishes -> review.dish_id
+  const restaurantReviewIds: number[] = rest.reviews ?? [];
+  const restaurantDishIds: number[] = rest.dishes ?? [];
+
+  let reviewsToShow: Review[] = [];
+
+  if (restaurantReviewIds.length > 0) {
+    reviewsToShow = reviewData.filter((r) => restaurantReviewIds.includes(r.id));
+  } else if (restaurantDishIds.length > 0) {
+    reviewsToShow = reviewData.filter((r) => restaurantDishIds.includes(r.dish_id));
+  } else {
+    // fallback: no restaurant-specific mapping — show none (avoid showing all reviews)
+    reviewsToShow = [];
+  }
 
   return (
     <article className="bg-white dark:bg-gray-900 rounded-md p-4 sm:p-6 shadow-sm">
-      <Header restaurant={restaurant} count={reviews.length} />
+      <Header restaurant={restaurant} count={reviewsToShow.length} />
 
       <hr className="border-gray-700 my-6" />
 
@@ -212,11 +336,15 @@ export default function RestaurantReviews({ restaurant }: Props) {
       <section>
         <h2 className="text-lg font-semibold mb-4">Opinie użytkowników</h2>
         <div className="space-y-4">
-          {reviews.map((rev: any) => (
-            <ReviewCard key={rev.id} rev={rev} />
-          ))}
+          {reviewsToShow.length > 0 ? (
+            reviewsToShow.map((rev: any) => <ReviewCard key={rev.id} rev={rev} />)
+          ) : (
+            <div className="text-sm text-gray-500">Brak opinii dla tego lokalu.</div>
+          )}
         </div>
       </section>
+
+      {/* removed: Review IDs (z restaurantData) display */}
     </article>
   );
 }

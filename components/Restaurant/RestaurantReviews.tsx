@@ -54,7 +54,7 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-function Header({ restaurant, count }: { restaurant: Restaurant; count: number }) {
+function Header({ restaurant }: { restaurant: Restaurant }) {
   return (
     <header className="mb-4">
       <div className="flex items-center justify-between">
@@ -308,24 +308,34 @@ function ReviewCard({ rev }: { rev: any }) {
 export default function RestaurantReviews({ restaurant }: Props) {
   const rest = restaurant as any;
 
-  // prefer explicit review ids on restaurant object, otherwise use restaurant.dishes -> review.dish_id
   const restaurantReviewIds: number[] = rest.reviews ?? [];
   const restaurantDishIds: number[] = rest.dishes ?? [];
 
-  let reviewsToShow: Review[] = [];
+  // NEW: selection state to filter reviews by dish
+  const [selectedDishId, setSelectedDishId] = useState<number | "all">("all");
 
+  // all dishes objects for this restaurant
+  const dishesForRestaurant = dishData.filter((d) => restaurantDishIds.includes(d.id));
+
+  // base reviews derived from restaurant (unchanged logic)
+  let baseReviews: Review[] = [];
   if (restaurantReviewIds.length > 0) {
-    reviewsToShow = reviewData.filter((r) => restaurantReviewIds.includes(r.id));
+    baseReviews = reviewData.filter((r) => restaurantReviewIds.includes(r.id));
   } else if (restaurantDishIds.length > 0) {
-    reviewsToShow = reviewData.filter((r) => restaurantDishIds.includes(r.dish_id));
+    baseReviews = reviewData.filter((r) => restaurantDishIds.includes(r.dish_id));
   } else {
-    // fallback: no restaurant-specific mapping — show none (avoid showing all reviews)
-    reviewsToShow = [];
+    baseReviews = [];
   }
+
+  // NEW: currently selected dish object (null = wszystkie)
+  const selectedDish = selectedDishId === "all" ? null : dishesForRestaurant.find((d) => d.id === selectedDishId);
+
+  // apply dish filter (shows all when "all")
+  const reviewsToShow = selectedDishId === "all" ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishId);
 
   return (
     <article className="bg-white dark:bg-gray-900 rounded-md p-4 sm:p-6 shadow-sm">
-      <Header restaurant={restaurant} count={reviewsToShow.length} />
+      <Header restaurant={restaurant} />
 
       <hr className="border-gray-700 my-6" />
 
@@ -335,6 +345,47 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
       <section>
         <h2 className="text-lg font-semibold mb-4">Opinie użytkowników</h2>
+
+        {/* NEW: filter menu — wybór dania */}
+        <div className="mb-4">
+          <label className="block text-sm text-gray-600 font-semibold dark:text-gray-300 mb-2">Filtruj po daniu:</label>
+          <select
+            value={selectedDishId}
+            onChange={(e) => setSelectedDishId(e.target.value === "all" ? "all" : Number(e.target.value))}
+            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          >
+            <option value="all">— Wszystkie dania —</option>
+            {dishesForRestaurant.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Jeśli wybrano konkretne danie, pokaż jego zapisane rating (z dishData) */}
+        {selectedDish ? (
+          <div className="mb-4 flex items-center gap-3">
+            <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena dania:</div>
+
+            {/* zmniejszony odstęp między gwiazdkami a nawiasem */}
+            <div className="flex items-center gap-2">
+              <Stars rating={selectedDish.rating ?? 0} />
+              <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-4 flex items-center gap-3">
+            <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena restauracji:</div>
+
+            {/* zmniejszony odstęp między gwiazdkami a nawiasem */}
+            <div className="flex items-center gap-1">
+              <Stars rating={restaurant.rating ?? 0} />
+              <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-4">
           {reviewsToShow.length > 0 ? (
             reviewsToShow.map((rev: any) => <ReviewCard key={rev.id} rev={rev} />)
@@ -343,8 +394,6 @@ export default function RestaurantReviews({ restaurant }: Props) {
           )}
         </div>
       </section>
-
-      {/* removed: Review IDs (z restaurantData) display */}
     </article>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/lib/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Restaurant } from "@/types/restaurant";
 import { Review } from "@/types/review";
 
@@ -11,6 +11,7 @@ import { dishData } from "./data/dishData";
 import { userData } from "./data/userData";
 import { reviewData, reviewDetailsData } from "./data/reviewData";
 import { attributeData } from "./data/attributeData";
+import type { Dish } from "@/types/dish";
 
 type Props = {
   restaurant: Restaurant;
@@ -99,12 +100,35 @@ function Header({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function ReviewForm() {
-  const { isAuthenticated, loading } = useAuth();
-  const [foodQuality, setFoodQuality] = useState<number>(4);
-  const [serviceQuality, setServiceQuality] = useState<number>(4);
+function ReviewForm({
+  selectedDishId,
+  setSelectedDishId,
+  dishes,
+  onAdd,
+}: {
+  selectedDishId: number | "all";
+  setSelectedDishId: (v: number | "all") => void;
+  dishes: Dish[];
+  onAdd?: () => void;
+}) {
+  const { isAuthenticated, loading, user } = useAuth();
   const [name, setName] = useState<string>("");
   const [comment, setComment] = useState<string>("");
+  const [attrRatings, setAttrRatings] = useState<Record<number, number>>({});
+
+  const selectedDish = selectedDishId === "all" ? null : dishData.find((d) => d.id === selectedDishId);
+
+  useEffect(() => {
+    if (selectedDish) {
+      const init: Record<number, number> = {};
+      (selectedDish.dish_attributes ?? []).forEach((attrId) => {
+        init[attrId] = 8;
+      });
+      setAttrRatings(init);
+    } else {
+      setAttrRatings({});
+    }
+  }, [selectedDishId]);
 
   if (loading) {
     return <div className="mb-6 p-4 text-sm text-gray-600 dark:text-gray-400">Ładowanie...</div>;
@@ -125,67 +149,143 @@ function ReviewForm() {
     );
   }
 
+  const handleAdd = () => {
+    if (!selectedDish) return;
+
+    // require authenticated user object
+    if (!user) {
+      console.warn("Brak zalogowanego użytkownika przy dodawaniu opinii.");
+      return;
+    }
+
+    // generate new review id
+    const maxReviewId = reviewData.reduce((m, r) => (r.id > m ? r.id : m), 0);
+    const newReviewId = maxReviewId + 1;
+
+    // generate new review detail ids and push details
+    const maxDetailId = reviewDetailsData.reduce((m, d) => (d.id > m ? d.id : m), 100);
+    let nextDetailId = maxDetailId + 1;
+    const newDetailIds: number[] = [];
+
+    const ratingsArr = Object.entries(attrRatings).map(([attrIdStr, v]) => {
+      const attrId = Number(attrIdStr);
+      const detail = { id: nextDetailId++, rating: Number(v), review_id: newReviewId, attribute_id: attrId };
+      reviewDetailsData.push(detail);
+      newDetailIds.push(detail.id);
+      return detail.rating;
+    });
+
+    // compute overall_rating (integer 1..10) as average of attribute ratings
+    const overall = ratingsArr.length > 0 ? Math.round(ratingsArr.reduce((a, b) => a + b, 0) / ratingsArr.length) : 0;
+
+    const newReview = {
+      id: newReviewId,
+      comment,
+      overall_rating: overall,
+      user_id: user.id,
+      dish_id: selectedDish.id,
+      review_details: newDetailIds,
+    };
+
+    // push into reviewData
+    reviewData.push(newReview);
+
+    // update dish's reviews array and recalc dish.rating
+    const dishObj = dishData.find((d) => d.id === selectedDish.id);
+    if (dishObj) {
+      dishObj.reviews = Array.isArray(dishObj.reviews) ? [...dishObj.reviews, newReviewId] : [newReviewId];
+
+      // recalc rating: detect scale and compute avg in 1..5
+      const values = reviewData.filter((r) => r.dish_id === dishObj.id).map((r) => r.overall_rating ?? 0).filter((v) => v > 0);
+      const maxVal = values.length ? Math.max(...values) : 0;
+      const scaled = values.map((v) => (maxVal > 5 ? v / 2 : v));
+      const avg = scaled.length ? Math.round((scaled.reduce((a, b) => a + b, 0) / scaled.length) * 10) / 10 : 0;
+      dishObj.rating = avg;
+    }
+
+    // add review id to demo user (user id 1) if exists
+    const userObj = userData.find((u) => u.id === user.id);
+    if (userObj) {
+      userObj.reviews = Array.isArray(userObj.reviews) ? [...userObj.reviews, newReviewId] : [newReviewId];
+    } else {
+      // jeśli brak użytkownika w lokalnym userData, dodajemy wpis (minimalny)
+      userData.push({ id: user.id, username: (user.username as string) ?? "user", reviews: [newReviewId] });
+    }
+
+    // clear form
+    setAttrRatings({});
+    setComment("");
+    setName("");
+
+    // notify parent to re-render if provided
+    if (onAdd) onAdd();
+  };
+
   return (
     <section className="mb-6">
       <h2 className="text-lg font-semibold mb-3">Dodaj opinię</h2>
 
-      {/* Sliders for two attributes */}
-      <div className="space-y-4">
-        {/* Food quality */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Jakość jedzenia</label>
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={1}
-              max={10}
-              step={1}
-              value={foodQuality}
-              onChange={(e) => setFoodQuality(Number(e.target.value))}
-              className="w-full accent-blue-600"
-            />
-            <input
-              type="number"
-              min={1}
-              max={10}
-              step={1}
-              value={foodQuality}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                if (!Number.isNaN(v)) setFoodQuality(Math.max(1, Math.min(5, v)));
-              }}
-              className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            />
-          </div>
-        </div>
+      {/* select for choosing which dish user will rate - moved under the "Dodaj opinię" header */}
+      <div className="mb-4">
+        <label className="block text-sm text-gray-600 font-semibold dark:text-gray-300 mb-2">Wybierz danie do oceny:</label>
+        <select
+          value={selectedDishId}
+          onChange={(e) => setSelectedDishId(e.target.value === "all" ? "all" : Number(e.target.value))}
+          className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        >
+          <option value="all">— Wybierz danie —</option>
+          {dishes.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-        {/* Service quality */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Obsługa</label>
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={1}
-              max={10}
-              step={1}
-              value={serviceQuality}
-              onChange={(e) => setServiceQuality(Number(e.target.value))}
-              className="w-full accent-blue-600"
-            />
-            <input
-              type="number"
-              min={1}
-              max={10}
-              step={1}
-              value={serviceQuality}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                if (!Number.isNaN(v)) setServiceQuality(Math.max(1, Math.min(5, v)));
-              }}
-              className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-            />
+      <div className="space-y-4">
+        {/* If no dish selected, instruct user and hide attribute sliders */}
+        {!selectedDish ? (
+          <div className="rounded-md border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+            Wybierz danie z menu powyżej, aby ocenić jego atrybuty i dodać opinię.
           </div>
-        </div>
+        ) : (
+          <>
+            {/* dynamic attribute sliders for the selected dish */}
+            {(selectedDish.dish_attributes ?? []).map((attrId) => {
+              const attr = attributeData.find((a) => a.id === attrId);
+              return (
+                <div key={attrId}>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attr?.name}</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min={1}
+                      max={10}
+                      step={1}
+                      value={attrRatings[attrId] ?? 8}
+                      onChange={(e) =>
+                        setAttrRatings((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))
+                      }
+                      className="w-full accent-blue-600"
+                    />
+                    <input
+                      type="number"
+                      min={1}
+                      max={10}
+                      step={1}
+                      value={attrRatings[attrId] ?? 8}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (!Number.isNaN(v)) setAttrRatings((prev) => ({ ...prev, [attrId]: Math.max(1, Math.min(10, v)) }));
+                      }}
+                      className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
 
         {/* Name + comment */}
         <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
@@ -203,28 +303,20 @@ function ReviewForm() {
             <button
               type="button"
               onClick={() => {
-                // design-only: reset fields
-                setFoodQuality(4);
-                setServiceQuality(4);
+                setAttrRatings({});
                 setName("");
                 setComment("");
               }}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >
-              Anuluj
+              Wyczyść
             </button>
             <button
               type="button"
-              onClick={() => {
-                // design-only: console log values
-                console.log({
-                  name,
-                  foodQuality,
-                  serviceQuality,
-                  comment,
-                });
-              }}
+              onClick={handleAdd}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+              // disable submit until a dish is selected
+              disabled={!selectedDish}
             >
               Dodaj opinię
             </button>
@@ -236,7 +328,15 @@ function ReviewForm() {
 }
 
 function ReviewCard({ rev }: { rev: any }) {
-  const user = userData.find((u) => u.id === rev.user_id);
+  const auth = useAuth();
+  const authUser = auth?.user;
+
+  // first try to resolve from local userData, fallback to auth user if ids match
+  let user = userData.find((u) => u.id === rev.user_id) as any | undefined;
+  if (!user && authUser && authUser.id === rev.user_id) {
+    user = { id: authUser.id, username: (authUser.username as string) ?? "user", reviews: [] };
+  }
+
   const dish = dishData.find((d) => d.id === rev.dish_id);
 
   const details = (rev.review_details ?? [])
@@ -311,8 +411,14 @@ export default function RestaurantReviews({ restaurant }: Props) {
   const restaurantReviewIds: number[] = rest.reviews ?? [];
   const restaurantDishIds: number[] = rest.dishes ?? [];
 
-  // NEW: selection state to filter reviews by dish
-  const [selectedDishId, setSelectedDishId] = useState<number | "all">("all");
+  // NEW: two separate selects
+  // selectedDishFilter = which dish's reviews are shown in the list
+  const [selectedDishFilter, setSelectedDishFilter] = useState<number | "all">("all");
+  // selectedDishToRate = which dish is chosen in the "Dodaj opinię" form
+  const [selectedDishToRate, setSelectedDishToRate] = useState<number | "all">("all");
+
+  // version bump to force re-render after adding a review
+  const [version, setVersion] = useState(0);
 
   // all dishes objects for this restaurant
   const dishesForRestaurant = dishData.filter((d) => restaurantDishIds.includes(d.id));
@@ -327,11 +433,11 @@ export default function RestaurantReviews({ restaurant }: Props) {
     baseReviews = [];
   }
 
-  // NEW: currently selected dish object (null = wszystkie)
-  const selectedDish = selectedDishId === "all" ? null : dishesForRestaurant.find((d) => d.id === selectedDishId);
+  // currently selected dish for review-filtering (null = wszystkie)
+  const selectedDish = selectedDishFilter === "all" ? null : dishesForRestaurant.find((d) => d.id === selectedDishFilter);
 
-  // apply dish filter (shows all when "all")
-  const reviewsToShow = selectedDishId === "all" ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishId);
+  // apply dish filter for reviews (shows all when "all")
+  const reviewsToShow = selectedDishFilter === "all" ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishFilter);
 
   return (
     <article className="bg-white dark:bg-gray-900 rounded-md p-4 sm:p-6 shadow-sm">
@@ -339,7 +445,12 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
       <hr className="border-gray-700 my-6" />
 
-      <ReviewForm />
+      <ReviewForm
+        selectedDishId={selectedDishToRate}
+        setSelectedDishId={setSelectedDishToRate}
+        dishes={dishesForRestaurant}
+        onAdd={() => setVersion((v) => v + 1)}
+      />
 
       <hr className="border-gray-700 my-6" />
 
@@ -350,8 +461,8 @@ export default function RestaurantReviews({ restaurant }: Props) {
         <div className="mb-4">
           <label className="block text-sm text-gray-600 font-semibold dark:text-gray-300 mb-2">Filtruj po daniu:</label>
           <select
-            value={selectedDishId}
-            onChange={(e) => setSelectedDishId(e.target.value === "all" ? "all" : Number(e.target.value))}
+            value={selectedDishFilter}
+            onChange={(e) => setSelectedDishFilter(e.target.value === "all" ? "all" : Number(e.target.value))}
             className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value="all">— Wszystkie dania —</option>
@@ -365,21 +476,17 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         {/* Jeśli wybrano konkretne danie, pokaż jego zapisane rating (z dishData) */}
         {selectedDish ? (
-          <div className="mb-4 flex items-center gap-3">
+          <div className="mb-4 flex items-center gap-2">
             <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena dania:</div>
-
-            {/* zmniejszony odstęp między gwiazdkami a nawiasem */}
             <div className="flex items-center gap-2">
               <Stars rating={selectedDish.rating ?? 0} />
               <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
             </div>
           </div>
         ) : (
-          <div className="mb-4 flex items-center gap-3">
+          <div className="mb-4 flex items-center gap-2">
             <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena restauracji:</div>
-
-            {/* zmniejszony odstęp między gwiazdkami a nawiasem */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Stars rating={restaurant.rating ?? 0} />
               <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
             </div>

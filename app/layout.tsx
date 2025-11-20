@@ -23,7 +23,7 @@ export default function RootLayout({
       */}
       <head />
 
-      <body className={`bg-[#FCFCFC] dark:bg-black ${inter.className}`}>
+      <body className={`bg-primary-light dark:bg-bg-color-dark ${inter.className}`}>
         <Providers>
           <AuthProvider>
             <Header />

@@ -1,31 +1,27 @@
 import { notFound } from "next/navigation";
 import restaurantData from "@/components/Restaurant/data/restaurantData";
 import { Restaurant } from "@/types/restaurant";
-import RestaurantCard, { Sidebar } from "@/components/Restaurant/RestaurantCard";
+import RestaurantReviews from "@/components/Restaurant/RestaurantReviews";
 
 type Props = { params: { id: string } };
 
-export default async function RestaurantPage({ params }: Props) {
+export default async function RestaurantReviewsPage({ params }: Props) {
   const { id } = await params;
   const numericId = Number(id);
 
   const restaurant: Restaurant | undefined = restaurantData.find(
-    (restaurant) => restaurant.id === numericId
+    (r) => r.id === numericId
   );
 
   if (!restaurant) return notFound();
 
   return (
-    <section className="overflow-hidden pb-[120px] pt-[120px]">
+    <section className="overflow-hidden pt-12 pb-12 md:pt-[120px] md:pb-[120px]">
       <div className="container">
-        <div className="-mx-4 flex flex-wrap">
-          <main className="w-full px-4 lg:w-8/12">
-            <RestaurantCard restaurant={restaurant} />
+        <div className="flex flex-col lg:flex-row -mx-4">
+          <main className="w-full px-4 lg:pr-6 order-1">
+            <RestaurantReviews restaurant={restaurant} />
           </main>
-
-          <aside className="w-full px-4 lg:w-4/12">
-            <Sidebar restaurant={restaurant} />
-          </aside>
         </div>
       </div>
     </section>

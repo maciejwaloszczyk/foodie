@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import SectionTitle from "../Common/SectionTitle";
-import restaurantData from "./restaurantData";
+import restaurantData from "./data/restaurantData";
 import Image from "next/image";
 import Link from "next/link";
 

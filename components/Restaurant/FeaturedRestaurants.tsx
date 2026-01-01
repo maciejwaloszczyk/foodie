@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import SectionTitle from "../Common/SectionTitle";
 import SingleRestaurant from "./SingleRestaurant";
-import restaurantData from "./restaurantData";
+import restaurantData from "./data/restaurantData";
 
 const FeaturedRestaurants = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);

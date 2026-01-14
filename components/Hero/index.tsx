@@ -1,17 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
-import SearchBar from '@/components/Restaurant/SearchBar';
-import { Restaurant } from '@/types/restaurant';
 import { useAuth } from '@/lib/useAuth';
 
 const Hero = () => {
-  const [searchResults, setSearchResults] = useState<Restaurant[]>([]);
   const { isAuthenticated } = useAuth();
-
-  const handleSearch = (results: Restaurant[]) => {
-    setSearchResults(results);
-  };
 
   return (
     <>
@@ -22,11 +14,6 @@ const Hero = () => {
               <div className="wow fadeInUp mx-auto max-w-[800px] text-center" data-wow-delay=".2s">
                 <h1 className="mb-5 text-3xl font-bold leading-tight text-black dark:text-white sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight">Odkryj najlepsze smaki w Twojej okolicy</h1>
                 <p className="mb-12 text-base !leading-relaxed text-body-color dark:text-body-color-dark sm:text-lg md:text-xl">Foodie to Twój przewodnik po kulinarnym świecie. Znajdź najlepiej oceniane restauracje, odkryj nowe smaki i zamów jedzenie z dostawą prosto do Twojego domu. Wszystko w jednym miejscu.</p>
-
-                {/* Search Bar */}
-                <div className="mb-8">
-                  <SearchBar onSearch={handleSearch} placeholder="Wyszukaj restauracje, kuchnie..." />
-                </div>
 
                 <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
                   <Link href="#featured" className="inline-block rounded-full bg-primary px-8 py-4 text-base font-semibold text-white duration-300 ease-in-out hover:bg-primary/90">

@@ -1,8 +1,21 @@
 "use client";
 
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import RestaurantMap from "@/components/Restaurant/RestaurantMap";
+import dynamic from "next/dynamic";
 import restaurantData from "@/components/Restaurant/restaurantData";
+
+// Dynamiczny import mapy - react-leaflet nie działa po stronie serwera
+const RestaurantMap = dynamic(
+  () => import("@/components/Restaurant/RestaurantMap"),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[600px] w-full items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+        <p className="text-gray-500 dark:text-gray-400">Ładowanie mapy...</p>
+      </div>
+    )
+  }
+);
 
 export default function MapPage() {
   return (

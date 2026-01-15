@@ -1,29 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Restaurant } from "@/types/restaurant";
-import dynamic from "next/dynamic";
-
-// Dynamiczny import Leaflet aby uniknąć problemów z SSR
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 interface RestaurantMapProps {
   restaurants: Restaurant[];
@@ -65,6 +45,12 @@ const RestaurantMap = ({
     (restaurant) => restaurant.location?.lat && restaurant.location?.lng
   );
 
+  // Generuj unikalny klucz dla mapy bazujący na center i zoom
+  const mapKey = useMemo(
+    () => `map-${center[0]}-${center[1]}-${zoom}`,
+    [center, zoom]
+  );
+
   if (!isClient) {
     return (
       <div
@@ -79,6 +65,7 @@ const RestaurantMap = ({
   return (
     <div className={`relative ${className}`}>
       <MapContainer
+        key={mapKey}
         center={center}
         zoom={zoom}
         scrollWheelZoom={true}

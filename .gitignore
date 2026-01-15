@@ -66,4 +66,35 @@ jest-debug.log
 Thumbs.db
 
 # Copilot instructions
-COPILOT_INSTRUCTIONS.md
+COPILOT_INSTRUCTIONS.mdpyt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables
+scraper/.env
+*.env
+
+# Python build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg

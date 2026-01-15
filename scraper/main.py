@@ -1,4 +1,4 @@
-from scrappers.google_places import GooglePlaces
+from scrapers.google_places import GooglePlaces
 
 
 scrappy = GooglePlaces()

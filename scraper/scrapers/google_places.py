@@ -8,7 +8,15 @@ from scrapers.base_scraper import BaseScraper
 class GooglePlaces(BaseScraper):
     def fetch_data(self, query='restaurants+in+Krakow'):
         api = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
-        params = {"query": query, "key": os.environ["GOOGLE_PLACE_API_KEY"]}
+        api_key = os.environ.get("GOOGLE_PLACE_API_KEY")
+        
+        if not api_key:
+            raise ValueError(
+                "GOOGLE_PLACE_API_KEY not found in environment variables. "
+                "Please add it to .env.local file in the project root."
+            )
+        
+        params = {"query": query, "key": api_key}
 
         all_results = []
 

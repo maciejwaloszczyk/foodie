@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import json
 import logging
 from datetime import datetime
+import os
 
 class BaseScraper(ABC):
     def __init__(self):
@@ -10,7 +11,9 @@ class BaseScraper(ABC):
             level=logging.INFO,
             format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
         )
-        load_dotenv("../../.env")
+        # Ładuj .env.local z katalogu głównego projektu
+        env_path = os.path.join(os.path.dirname(__file__), "../../.env.local")
+        load_dotenv(env_path)
         self.logger = logging.getLogger(self.__class__.__name__)
         self.data = []
 

@@ -1,0 +1,602 @@
+[
+    {
+        "place_id": "ChIJxRqsu7ZbFkcRGEGGE2HCXLw",
+        "name": "NOMAD Kijovska",
+        "address": "aleja Kijowska 5/173, 30-079 Kraków, Poland",
+        "phone": "+48 530 855 130",
+        "lat": 50.0700855,
+        "lng": 19.913714,
+        "photo": "AWn5SU5MbiADjV7y34o8ZErBFgwpcxN6oqRzXBfsvUfzavSx4371qLCMQPkGiUmMsWpmK7tU9gZdV5xhsKBZXTIxk3dxTWu2DB0otVduZm3rRmT19QEBwd1gEJA00ZBaqRDUeIYWkGWq1VrByeq0A3_Eqh6sqNBMA9U4oSuJTSfUn3iwlMyQkfc9cqxF2VF68iaZkKS6_uUSl-Zth86L_D_ibwvkPnOdK1WM7sEomgG37JQRq5x5g1DM6oen11jyA9bQJ9LSaK1tTUQFjQorp6smquiIAn3YgdKkU2mEUKOHoRCZMg",
+        "website": "http://nomad-kijovska.pl/"
+    },
+    {
+        "place_id": "ChIJUWkT4vlbFkcRmsgPFz8rebo",
+        "name": "PLACEK KRÓLEWSKA NAPOLETANA",
+        "address": "Królewska 84, 30-079 Kraków, Poland",
+        "phone": "+48 725 669 966",
+        "lat": 50.0724098,
+        "lng": 19.9166389,
+        "photo": "AWn5SU4hzQ8qcYYyNvKMMyTe_DiX5EhbYnu0nEGeu3LITBnOzbwV1tbDSiPzvhfWJs7T1tOZEutRa9rp-aspex1NXfwsYCe_JmwMzi1nD9Drovg6qzR0wYbMR9MyuL1yfVN9hiYL1IU1Sjj2dK6y_U3wEsUVh3ZpN3qEojNNc0pL2xFuLW9l2VM6vemGnAdgVxe-600NHZZzDJ7kDkPbcCVmtV5B_V-Es8DzDzPS710uwdSy3AzVRQKmMlSswDE--s87pl0shSA-OjDWbq5ghcF6um17uMzQOrgyEGwv2wPa-N-iDm9pb7QtKMoIYxqZf8YJQvQnCKfklPHrD3SCSzTg1f8dpX7yzoW9q7mV0XE0sRWnlbCxEyq0Eb6phYqL6mlDkpBRZjGW80DMA1pgKnIT0lBDkiGDPL_HZ2VYl2q57I5aOr2E",
+        "website": "https://www.placeknapoletana.pl/"
+    },
+    {
+        "place_id": "ChIJH5wflXJbFkcRHyfCdyYv7I8",
+        "name": "Gossip Cafe",
+        "address": "Świętego Jana 30, 31-018 Kraków, Poland",
+        "phone": null,
+        "lat": 50.0646657,
+        "lng": 19.9394386,
+        "photo": "AWn5SU4WZBSXfmhQr6oNANkQGpTwReO725xmAYWb5j-JSM84UM-gA-JgCbKkX0HsusM8ztaS7J3C2LCaQMUm1eUYdvmoLNNAFmhmVJPOQqOU9Za5ZxS5mhEXDY6JUvbKu9rY_dyH0HlWbO6jPJydXWrO8zrvB1Y4aHZ1QDLRY775I6bPNia7mY95IvZS-1CaRkH3HEAk5hQKiUTsUPTj1aNwF5cEgKWUstW-Y1hps_Kgn9H2hpFQrF1Z9yPhqkx7zRj7NOA5C6GdEzSon9oueRWfjm-Bh1PiDqzgHfmsmEmRFb-Utg",
+        "website": "http://www.facebook.com/gossipcafekrakow"
+    },
+    {
+        "place_id": "ChIJ39HZXuVbFkcRFRXjXZ4YujE",
+        "name": "Morskie Oko",
+        "address": "plac Szczepański 8, 31-011 Kraków, Poland",
+        "phone": "+48 12 431 24 23",
+        "lat": 50.0636495,
+        "lng": 19.9361409,
+        "photo": "AWn5SU5NEXDNIBsuY__XkpNpM3P0UKC9HVNou0uHMqGhhNUQM5quzqSfjGEl-PjgcPekp_kZfrhwWT8uAwpOsokVWr7TFHilEFcEZPdkDYHQDOyB07W7DOS28OELgoxgUa5PUCIc3eE6mmSEz7autj2R15fv8H0RL77PyH4UOL1F9x61MEP-UqbUF3IchK4mXR2P9y7qOt0cQQnglC5zTIKChLRAm2V9YP2ATr-Fyg1OFWa47_vORyG7TazySpkAO-J9pRh0puFycQw5k1OS5Yr8MhhTR5bG7rY5E9i70QRtrHmqCQ",
+        "website": "http://www.morskieoko.krakow.pl/"
+    },
+    {
+        "place_id": "ChIJEx2GNAlbFkcRaj01hKr262Q",
+        "name": "Trattoria Mamma Mia",
+        "address": "Karmelicka 14, 31-128 Kraków, Poland",
+        "phone": "+48 12 430 04 92",
+        "lat": 50.06426940000001,
+        "lng": 19.9318306,
+        "photo": "AWn5SU7viM6LgKwu1bpB1Y9z7J0Id_7FJLR3BFHJzCMwPGvkCwPE7QlmFoT-vJqEWOSFAUStgFTw553qraF03Juwir8zCUdRuQ3xAP4F5evXuNSrCaijaQLAQcuLMZdGs1utVHG2F2cHk7wRipKJNsgYUtAIhcVOSwPjMO-WlM19uteJaR3Q1PN_KVDUQTzV0R30xzCJ5XaCFx7X7z0BkW8hrMY01Za__AamQfdkhR2JK9yVgYEAgMBawGDP3AKzz5vNQ85ioRvmzi6bYwSPKMk-J-u_POnnMeuZTKeDql4nXFlIlw",
+        "website": "https://mammamia.net.pl/"
+    },
+    {
+        "place_id": "ChIJoQXW6A1bFkcRoPKowJqqDJw",
+        "name": "Sioux",
+        "address": "Rynek Główny 22, 31-008 Kraków, Poland",
+        "phone": "+48 609 927 923",
+        "lat": 50.0610008,
+        "lng": 19.9361076,
+        "photo": "AWn5SU6TEmK6Q8UR8JQBbZD9vvAW8SkDawyuwKBwOA5zuMoWwu2lrD9rlMVqvSrXWTtRwUNCFrVOppIK7ZzuFai5_EDT8AxqtY7KOYl5dFbjlOViCZA_U0QZUf5xgzs6dagFwiNs-4HSWlIvMD1BzTehYkywzF8twBi1NoTsN-R8nbPdeWTua66ZdJqqoJDLCKMN17CKIA0X1267UMoO6Vix02cSUAbxOVXBul1HdatXXrJ_4hB-ELVm33ovXsEN_C195xKE9su49TTpHz3gBEyiRddnFTrPI0cioUbBXu7LJdyaeQ",
+        "website": "http://www.facebook.com/restauracjasioux"
+    },
+    {
+        "place_id": "ChIJMwXnvBFbFkcRSqyrQiUpJYQ",
+        "name": "Milkbar Tomasza",
+        "address": "Św. Tomasza 24, 33-332 Kraków, Poland",
+        "phone": "+48 12 422 17 06",
+        "lat": 50.0624251,
+        "lng": 19.9416217,
+        "photo": "AWn5SU6DNcJ2R3lYbTG1RVQYUrWlnlTpAbxSdxy15-FxPzuyh8IBzt6mjsF4EZJQuk_Ee6XN2QxOjtJRlZpMCtgtxlWXpEbL5s6dWrwiPaZJLANkUZ54bnfgyZaNLwiwimB0_7p0Od-vm_3zks6ULjrw182QHlnq1NrVzjReICGKE5wYXzZn7gPqZjpgY1_wYCPfOrrNtFkZ7hvXjsgBTEDvksrai_3PmRM4kEuuJwiz08CakOH3TgaprF2QDZxsg3hH1I25ODigK7n-JKlXeFZ5Sy-pCNG0QN-joJtiKRrXe-Pf-HoL3EHiSmYUOwnRKr2CiQtHkt5CWg7ppHuDaDiq48zsiqNW9cKzsaXyTsCSkJ4trNjwe0h6_JS2tAYc3Kjo3qSxRrAu92GaEuTJxHCCaZF-dNDDbhcgvIFQmojPt1ZeVw",
+        "website": "https://milkbar-tomasza-krakow.pl/"
+    },
+    {
+        "place_id": "ChIJWyv_zTdbFkcRTsJDHLWhKRA",
+        "name": "Balagan Street Food & coffee",
+        "address": "al. 3 Maja 51a, 30-062 Kraków, Poland",
+        "phone": "+48 509 981 098",
+        "lat": 50.063198,
+        "lng": 19.9080583,
+        "photo": "AWn5SU4kp4N5DYIpLdQhsCvASzYWS6ffKDmjOqbOzsAUPF7cOsj0lqaYs2QxrliykGrRI3Ueez5put_pI9u5EmfqQKKdDZPBCzt7I_zyWLmmJjCadx_qbKGvFet_7zJVREDgvmUrbHP9YIVtnOxPoq_Ul9ZZsG_ABqpw8C6mOuaylDkyQL80-CkyW8zgjr2Zodoo5QdfUl_dcb7kmI2T387ikw-jHQfP6HbwQ0rWdH5VtxRomQpABnGqKwnboh24BfjGkPbpxuQzZu-__PtWR1wMT9x873YhnOHddHpfAptUqiCgjw",
+        "website": "https://www.instagram.com/balagan_street_food_coffee?igsh=MXQ2Zm12dmFyODF2NA==&utm_source=qr"
+    },
+    {
+        "place_id": "ChIJyQ6hOXxbFkcReXZv_w0GJsE",
+        "name": "Pizzaria Vicenti I Pizza al Taglio, Italian Restaurant",
+        "address": "Kazimierza Wielkiego 45, 30-074 Kraków, Poland",
+        "phone": null,
+        "lat": 50.072858,
+        "lng": 19.9204545,
+        "photo": "AWn5SU4NXE0dXOHYdb0rt-Ebj-NcyJvjH3SPxL_yTGEsTU8BCkDUX67JRDlf8VAhb1YhIupdbnIhOAYu3v4pLHRjc_8SQNIFUDI77KjVCc_g_XGd6pCZqyf-DqrGMvd849JpZ13-iIQVC7tfQjabezZBLQ3HsTnQ-Q1q6sUSKNwCeSkgZbPFPRVnk2U8t0vS68mZG8RoHC9kyQAJFP8INgwNiQFivS2nn19XVgjDvZcDE0qb1Y6aF-AMhyWnr19jIyAPtGbhjbkANJh9kr1NbRGQ3uc-CyIHjHcphjgvSlYB-Aei0oovAWzSJkicb440l3ikdqd089_McEpL75v-OVcCe2xXTWji_mF5OaP_jQzMmIrueKWUydZkLTwaTbdypC-V_XM1n_-AnlJgMvZp-ogVWOFwi2-PANWeX4hjL_X7Lxg1bBjIbCYSzsIdo9_EzmHu",
+        "website": "https://www.facebook.com/pizzeriavicenti"
+    },
+    {
+        "place_id": "ChIJ6XdtZr1bFkcRtPJZVhN6Nys",
+        "name": "Trattoria Cichy Kącik",
+        "address": "Daniela Chodowieckiego 1, 30-065 Kraków, Poland",
+        "phone": "+48 795 700 725",
+        "lat": 50.06279259999999,
+        "lng": 19.9041721,
+        "photo": "AWn5SU4EPPVGrulNMLa9XNw-Hw5zFr3ZFqkdw04tBsNmkAivbvLTYIZIfRjXXEuFKLKgPGzgotovPKcdBbPq_llofxL90zvZ0ljKEJFEzNZCbbZ9Uj7CO3urCWjvTvc8QER7YUd9hkofUqnXfWMB_kiTh7E4YQ3gbU8dTCW54zGtqnfdQPGgfvPkh-TTGf4c2DzIHnSiXRaxD3BxNluvDmc-v_ZtY8ikCxG_HREpp9d8BxLbDdVMwzBOg_ZmocUUnaK_nwrgoxdwIBaOmpHka0IQ5RJ1juUXT_zdqjN2mQz7GO3NK34APOjSezTcuM5jbxTZ_DszoQ_LwS5XwDQf4IElauOd0c3Ec_B5KF2vWoSzxEKwYpgWUejNfkOTOOzUWd96S-4OO3uZBKouHc4eI9FPK5kiZZZIJCxTOsgbJ_Uq3PoxSDEc",
+        "website": "https://www.trattoriacichykacik.pl/"
+    },
+    {
+        "place_id": "ChIJXawaRxBbFkcRx-yOIyoSLO8",
+        "name": "Szalone Widelce",
+        "address": "Szpitalna 40, 31-024 Kraków, Poland",
+        "phone": "+48 12 422 23 46",
+        "lat": 50.0643181,
+        "lng": 19.942157,
+        "photo": "AWn5SU7L7jxhJYW9PAEtAGt9SeH_knrHBHi4XNXMlJzgWufXJzgkyz6USa6Msq-zYcDQedCKaxUDBVm_TfIe232y9TSovynknsaKTRE0LgtJrESyX5NAMk8CkT26E3BRsBvgHPookQ_IkhPpClyveznktDVEiqB0rrP6sAQ24lYvODsk-2KLclXKCh9BZGqtATiEQiQoI3oFmEsjrM4E4Slnpj8tsgkCAUPUGtmbdnQjjYSXGXzuIajqeadLVw_jc4On-9jy6hJsdYrSVveFkDOcd6FPtll2wRLW3QowDWvTjw6ThQwc8CYbOBrBjACEq_7hgJlKfynf-SslBwSPobr3B3ddNGEKrZCcisWVh3WRLrzmxJ0O-rUkUK5peQJv1ZwOhjI7jPMVKE4rmObMzg8ttMBLJGFFrr6WHi9wothyjy781w",
+        "website": "http://szalonewidelce.pl/"
+    },
+    {
+        "place_id": "ChIJfffMZglbFkcR1evSvkqd5Os",
+        "name": "Dynia Resto Bar",
+        "address": "Krupnicza 20, 31-123 Kraków, Poland",
+        "phone": "+48 12 430 08 38",
+        "lat": 50.0633578,
+        "lng": 19.9291073,
+        "photo": "AWn5SU5rJoSxxxvSydfH0VkAQnhVmByJx0JrkzluBR7Gq7GOLnGgvsWNMImR7sv_IYB4yejUnR8ucUpeDRkoKgv2MmhjTcRGlsJA5_wtDOW3zIb-UUUUua7SjCtiRdguGn24npWyIByd3ucLIOPtBtE7yQxSDR-HAdaE_wETz7-bOm8E_BH-I8iuA_KLqj3DcmlIyrNcNY5Yq9YUTgFo5z1tDMXaFSpePMOoo_AMy--BoM0M-skK-IfgyxzodQbUU1C8_-D6hs8DyRgvs16O1Y-me_Ngor_VndKcxtd76Fk9GqLycmiTITU-qLDBUFQcwGI-1lqtID4XZ7SWt1TvxfNxhqvywmBaZwwWQwCtW_r-sqC7bWJ6aUcf2m1-vVrapxp3z2OEa_mC7qDRrXVwtBV0p2OTf5u_NJoKLToGpxEqAPS4Qg",
+        "website": "https://dynia.krakow.pl/"
+    },
+    {
+        "place_id": "ChIJ1Uph_BJbFkcRUpnptYJza-o",
+        "name": "Czarna Kaczka / Black Duck",
+        "address": "Poselska 22, 31-002 Kraków, Poland",
+        "phone": "+48 500 195 149",
+        "lat": 50.0582485,
+        "lng": 19.9391763,
+        "photo": "AWn5SU5FRGzIC3PlOrrctZ_9vJ-ta8uJ7p_XU4IVjhZ53VrgUAoz3-eaSl1ZLswSRFHzhKIsoD5HRF4dX1hG7AVfTApGDqw8zA2ROOGD49bcTLqG6YRZ0lf7axX04C8zkprYL5H3-p_egmYWvGeHiVzlcq2LqoamsfrXbBDSqYhzn7lpmuYpyyYSfJ3v0Yzpn5iP-O1o5L-SmRx1TCas3zmb9PCBewhdaVQ86Xeoiq_gUxOZsxj_bdmRs2kQhUrcsUAPYeS-7YO9XHtUE6EjBz0x2sw1G1xgN9sEMaqNzZcFME5M7g",
+        "website": "https://czarnakaczka.pl/"
+    },
+    {
+        "place_id": "ChIJOwun9qZbFkcRhz16dLOWt44",
+        "name": "Laila",
+        "address": "Czarnowiejska 51, 30-049 Kraków, Poland",
+        "phone": "+48 509 942 573",
+        "lat": 50.0671593,
+        "lng": 19.9205749,
+        "photo": "AWn5SU6_wvrtAZcU7U_1ILp20tOoms_mS_fWsCe_6S-pJfrX23o9AHh5FyLAxEI55bs5mX5rvWrTeynML3qC7lbH9Vl7LQ61nYSaRS4H0hXKEtoo3v6vClH8K85n7d8_5_7jaeeEnihSlDsFyWRqQxnoFE73qs8VT3Wuo-sFJjN4aZjDU9uTxtKAfPWjHsZPMJx3C0XhMkWh9t5yBjuWFaEULLlz_LmNoVxOV7crXunfIksLqHv_4uS-Q7BJpvfXf7bDZ0HPV51w8L5ue90Ux-o2AhtDwLHkTcAdLO5NAt43H2obBg",
+        "website": null
+    },
+    {
+        "place_id": "ChIJgc1jpMpbFkcRbaadHGJLqas",
+        "name": "Radiova Bistro&Cafe | Lunch Kraków | Śniadania Kraków",
+        "address": "Aleja Juliusza Słowackiego 22, 30-034 Kraków, Poland",
+        "phone": "+48 12 633 79 67",
+        "lat": 50.0716864,
+        "lng": 19.9286347,
+        "photo": "AWn5SU7xsX9AWc4aYowdB-_gPG6z621WEX3tMXa-2FSlDGwUbaI9khfW1hEomJy6vwhJXnu4ZH9nbkrvCWm9JaF88oyOlNH0VmajileQH8fwCQQt_56KN5TZBGZX78u3CMhh08wNp3nDxpfqMo9pP1w6vf89wk73mLC5OYtwVAMjFgGqFNEz47bcaFQt4XO0ovLpRtrlCJ69QPTNoK2-5kz1yyxwc2mIyKo3BcnoWgZJHvLCJaEb_p_ncPYXH0Ga491_tj6er9SsVfKz3sUTYuTAAMV7uY9aRj5HRuxqWdvruaw3qA",
+        "website": "https://radiova.pl/"
+    },
+    {
+        "place_id": "ChIJJRfsyg5bFkcR_q19Gp-hRWg",
+        "name": "Smak",
+        "address": "Karmelicka 10, 33-128 Kraków, Poland",
+        "phone": "+48 12 431 21 49",
+        "lat": 50.0640368,
+        "lng": 19.9321667,
+        "photo": "AWn5SU57xoyfY5hbHF9VRTN9IsQjVzOr1udTbB_QTdbeQ9eTpbefgFbe-Y77c_zYioTyiOMfFl9KvSx_qsPJrW-ys8hQrrPJspsC9M9actOLRW_jFK-K6lXKgMAxYc-QcsrEiy3t43Q1Zgb1GS46BXBohFXAu_SZkvuCXKusiD0m_1VuZjP86dqZoL7seXZb0AaJMKRm--c_cKyRbSkqX4R4F-RVIvKCRG2yiZb0pOLNNT6gaG0RATCC2N0-nuSq0-Foy8Fr03KwXp4_90AfsW2tmRW4skIwrPA4B49Qej56iegXU861nWfiK4U6x1fGYilzQH5gCDUz_nxBsFzwwf7WhoC-xINaxEZN2GSQCH5KMa99kXG1XwxhLzGWD0YuUZBmYkv35dd6-WApVSxCW3G0bkDG2mdQjWYn7-bPfQdqzV9EHQ",
+        "website": "http://www.facebook.com/barsmak.krakow"
+    },
+    {
+        "place_id": "ChIJZ5-0ia9bFkcRrfzOm32DGW0",
+        "name": "Phuong Dong. Bar orientalny",
+        "address": "Juliusza Lea 34, 30-052 Kraków, Poland",
+        "phone": "+48 12 637 73 33",
+        "lat": 50.07099239999999,
+        "lng": 19.9156024,
+        "photo": "AWn5SU4V2tNNJbYd8lCc_5_TB-tnGQaNfH4ToELdf1valG4KkxcLRiv05Wnwhb4hNw3o6pH5rK2LC7JH9Cqapaz4RG32jJju8KwnFxcw1QncEZqGkueLkd4zltJgUgbtOB1c_ErE8cTbSSuAYlVwDxDhS3ymJj8yiFGERrBjyrbBALUj2eg5mRq8HfrsA-vGhDDhiNQa8jtMHTtl22kWpObHpdqazgnhnq6qZiwIhDGQcX8TWGmpi-msaJnsz7Kn7-Gm-2FDUPbDXWGHtnpBQ3G4M5zzTscBGEHx66ilCCXZ_YL-Ed-Q_5MwykwiJQUN60Xp4SD7NSwSHudURJ400-9UcHtgxy0o7ysScbdxpojQLP3fjeqFFyvcH6FBa933F_qdm6Gtn6RVZzv2krWcpdV0LZ5UNdtm4xLhMF8wECz0ekPX-kRo",
+        "website": "http://www.bar-orientalny.pl/"
+    },
+    {
+        "place_id": "ChIJn_dYiglbFkcR8-6jAb2PI5s",
+        "name": "Poco Loco Czysta",
+        "address": "Czysta 9, 31-121 Kraków, Poland",
+        "phone": "+48 690 800 805",
+        "lat": 50.063949,
+        "lng": 19.926475,
+        "photo": "AWn5SU57KBU0V2JrGKPe7gaUDmJVjO8hcs1fcfTTfsLvJPQROBFfKmacvqX52bRa-t6T8zgyZvhJ2jCW5rOipUNM8bjfMoMsEtcCBWpR6qcvKMGa-WxFGCHVnE1hR68UVJhl6X2EHvxFpFhRT8ORFsrRP1bRQTQHez3j2PX_lsegaNK7JvrV--f-ukWp9z4VAudvvl7sIpvaALDXuqGj5DcJ4MgQGg8UsgOZXuuz6XRKykHJ4po4SKyz6l0MD6_hxgOfnxZXxfZVEKQoEkdd_MVXSucNZP_5dXZh2lJAarzvIQiPhA",
+        "website": "https://www.pocolocokrakow.pl/"
+    },
+    {
+        "place_id": "ChIJN9gUQ2pbFkcRC6_kiZbyTNQ",
+        "name": "Plac Nowy 1 | Restaurant & Cocktail Bar",
+        "address": "plac Nowy 1, 31-056 Kraków, Poland",
+        "phone": "+48 12 442 77 00",
+        "lat": 50.05141829999999,
+        "lng": 19.9454059,
+        "photo": "AWn5SU726hrQitztoZDTngCkJnskRJitvvCXFq9HiYazCCzo7QnZnyFVP1P1qC1PDQ72i_Imp2fspHbsK-x--ItgxhkwpBNz1cU3I1LZn8Xj4BVNehf9QEFLZfjBJN-6NU0_G6HUM8nB7RW6jpZqNCoy8Le8PdkEu02j2J3pTvOWTqKzw-J75jFOoytK7vDtr6Z9zjVwtYI-6_K59hK3OLPD2PBnt0IvRlX9MtUo_5PX9A0B-pc2SjMEd0zzZYcKsoFEAfD6wI7JBfWRLv30XAK-1xo9L5YWz6Oorlhaf2vBrNq_ig",
+        "website": "https://www.placnowy1.pl/?utm_source=gmb&utm_medium=button"
+    },
+    {
+        "place_id": "ChIJ9zgGRqFbFkcRvF8niJCEW8A",
+        "name": "Miski na Lea",
+        "address": "Juliusza Lea 17b, 30-048 Kraków, Poland",
+        "phone": "+48 690 969 639",
+        "lat": 50.07033,
+        "lng": 19.9196297,
+        "photo": "AWn5SU4otI2-Sn57cgZ4_YlWA2ttYFvDzyunmuhnTGm_4L-OtnilXx5SHNye3J8CXabdC-hJ6J8oWicrcvVkjRrvjkHILLlGSQj0aWWf1fu84EkuvbJ_YcO_nxKz1djWKC5Fw2l39bQHOzIEhgQmReCBsCsbBfbJjvS_Mq0VY0seiWBJ3zcN69lJbNtpLWWDW8EaVcUCAOr8AnNsGJQpSfICvkWXJEmAkHjMoyCJcekZx32EaCoP3mItKyZCZjCLUhYF7-Z6tTuwibwM3zfwYisjzotK53A11AtWW-8N4mPDLA8OLtEum8XE4dajXaD8iSL2IdjVlaTBnfJTyrDnV_eJhvaWTaVnCDx55Lh_761nCJuQXz-fKg1vKjkHo1yIJgL5boxQUUrhtgNBuMIgVC6vRs6rR_Xr9nSgiiVF8AIikm4BDt7C",
+        "website": "https://www.miski.pl/"
+    },
+    {
+        "place_id": "ChIJYUw9i5FbFkcRYXPmDnNWK8M",
+        "name": "Bona Restaurant&Bar",
+        "address": "Królewska 6, 30-045 Kraków, Poland",
+        "phone": "+48 12 629 90 00",
+        "lat": 50.07031449999999,
+        "lng": 19.923868,
+        "photo": "AWn5SU4n2TIN1Ji6pul-XMkKUrFPU6o19BhMeQ3OeUqJQ0JZD_DWSQLngi0i6wEUmbz9odDrVncK1qpFSTpQ9gkBKsGPuAJWB8JHDOWwHNCSc37FU_0KU_NxhmnERvy-OM7RLmPeq2GLel7gc8NdsDGKUBLTS5TI3Cy2bLQSmeo6qZ4BVmzy2BNHoHEr1JTn1Sk0DDTSfhhUCDD4gb8c1vgiQ8SwI5bMu_t7s3phZfzcuw88Z7EWomLE5w6W9W9Z7I7IDX7Tq8qZTsuozEJqg1mk4rKLHrykNxNLj0pjcXBlzat54g",
+        "website": "https://www.crownhotel.pl/restauracja/restauracja-wloska-bona"
+    },
+    {
+        "place_id": "ChIJkbJLhA5bFkcR9dxapj9grYA",
+        "name": "Pizzatopia",
+        "address": "Szewska 22, 31-009 Kraków, Poland",
+        "phone": "+48 532 820 862",
+        "lat": 50.0628924,
+        "lng": 19.9338609,
+        "photo": "AWn5SU4hGmqaH4zmy7OWmMo81vrwSrzek_31tul5YPPX2jOpIX2j4ty_0imbuRnBsPgHukyQG9ipI3SzwKwLHYxmAHxcRAXIeNxyvVvkeP_KHH-U2gOzvqK-yirX6D7vVgh2Q95XkxD1_plZGdIRuNkPJ8ndOAdlOEs2IvUDfVRs50Ta-gyfFP1H9dYE_VST2_HqgZZhn3ydaeC7QLjiIxiaygT1xgmpOAdLLEkAAeuVpmfbV2aaYPVlGhH-_g1-PHMkNqG6-5-0kphRyT44H5nm2pV8-TWhrs1XzI0MNySbe4ICKGzrYF0LTM04O3MT45ZPYR07WehclnJkCjRcdB-6TSejs-bDFdRoRNN7W1VcSzmhiqz9AUv7mMfvkeeRx-LIFR4Pm2lrNskHeW8Ov71joXIhUCZtG75rY6dAFl2i47Lweg",
+        "website": "https://pizzatopia.com/?utm_source=googlemaps&utm_medium=organic&utm_campaign=wizytowki"
+    },
+    {
+        "place_id": "ChIJKVdCun5bFkcR653a4WqSZ3A",
+        "name": "Bonjour Pho",
+        "address": "Krupnicza 12/LU4, 31-123 Kraków, Poland",
+        "phone": "+48 517 352 666",
+        "lat": 50.0633482,
+        "lng": 19.9304584,
+        "photo": "AWn5SU7mfV4T-5o2j8LU1o3HD1NCq2j2OkXJzVTkUVtBhhqeFYRFBUvjUNwX3B4AEPSPs09NvNgHKF-WK5xvw60PhD0wNhVkOX5QFlV06PzTpApgUXbqSO4vVlVokwEyTR_gqDiIPNstkzD8PEnJg62dmfVX75MUFjQGqxEv-479UHZSmPQ7CB3d7Y_G2LFln8BhKKnriiEOpCoeW9DmmnqDiSqRBbJKVFgFLT33nWThZFjXznbNAzcmCja2ZJy7yOP0F-0OBEg69WtIGwNJhVIz_Z8DFHzQCcMnGr6IFMPLDDjqPA",
+        "website": "https://www.facebook.com/BonjourPhoRestaurant/"
+    },
+    {
+        "place_id": "ChIJ_x5OFAxbFkcR-I31JD-mzuc",
+        "name": "Restauracja Smakołyki",
+        "address": "Floriana Straszewskiego 28, 31-113 Kraków, Poland",
+        "phone": "+48 570 660 607",
+        "lat": 50.0614836,
+        "lng": 19.9317281,
+        "photo": "AWn5SU6UDmyVgeP8E5-ImpikXsGo-ztz82NYPh7ugFF6wf1s_ov-UFYbT8okRF6Sf0dk26qEvaJBUXhEeyb4dCKgzjQHEOcH7Acd4aVxqspgOdPsnjUJApHykvyyU7MaQm2MMroYTHTZGd5Kd8qM2g-IQuboQiqvuJ-dKoYYKOImkHmp1a1oOJG9ppmdlwtkSsnfB9fGTdO4UV2F7s4_aekvLgwEZMT5WMb-OsckapYz-sUgtuIxw7jB8y8sguPrVt24P5Z5wZvDLwkpBdT1kxjZPpSxSG5_uAs0sStcBGUlnKVqow",
+        "website": "http://www.smakolyki.eu/"
+    },
+    {
+        "place_id": "ChIJsTXv-KhbFkcRUwMOe2L4614",
+        "name": "Do Syta",
+        "address": "Kazimierza Wielkiego 2, 30-074 Kraków, Poland",
+        "phone": "+48 516 583 407",
+        "lat": 50.071317,
+        "lng": 19.924964,
+        "photo": "AWn5SU7mPrTUum-22ACBAJcRhS-53wG9P-8vMkJYp5ZyyjCsjBWyLTCZEJAnqwqbltIN04Ys4kDlnd-A38cTfR5M_E1SOe4AxFEfes2n7cpFFIoGvnWROwikdksk0ss8wgRiPKGOl0J8z1cUlsapfX7LXToggdZ5r7m3y_xTbb3UgnqFdkmdcsJnfhxlB6Hef__pdBiIm29U80e8IjjMM3ubvPQJ74AS7t-SyxR8TLOXmdIcPONpJBYMm4FCadYTYpCrqwHXkb_Zb24gIhJMMlbWeG2r9LrpKBCrRpO1e1hrWrnsvw",
+        "website": "http://www.dosytakrakow.pl/"
+    },
+    {
+        "place_id": "ChIJK1FbSA5bFkcRoFVcQzMJ2uU",
+        "name": "Gościnna Chata Restaurant",
+        "address": "Sławkowska 10, 31-014 Kraków, Poland",
+        "phone": "+48 12 423 76 76",
+        "lat": 50.06370520000001,
+        "lng": 19.9374815,
+        "photo": "AWn5SU6AhS-xfE1BOCRmXWmN0azNus6IR7vSEs9387AYByXsp_aiJSSeX4DSOnTuMnCxlApNFbStZnwq6hLwH-_q0GktKpyOT1atnzA9iWbGf478_qP-Qp34JliKTTtm_Y7JtdQrLXB4sNQp0V7A-x1MuCW1MioEjGkhdT16TZDJhsu_uZzCTrkWqarhPaYPr8MBqWVU6n6YxjMj07fHHDRGMGDWR6AU5-sXs8D_m_DWqIF5l6eJliQD7xoCmXENOMJyp5oh6_n-ZT7ftWtCYTUk-cKlnmJUJFbiZMPsnIzej61SkQ",
+        "website": "https://goscinnachata.com/"
+    },
+    {
+        "place_id": "ChIJk66ZjbJbFkcRt65xt77T-ic",
+        "name": "Vegan AF Ramen",
+        "address": "Krupnicza 28/1, 31-123 Kraków, Poland",
+        "phone": "+48 798 071 631",
+        "lat": 50.0632732,
+        "lng": 19.928166,
+        "photo": "AWn5SU4_FAwozE47W3qM0tHiSacNe3n6zV4_dKiK8o1_MCL0TVFHd-E1JiVLFnihromvQ6Yb_gfCAZfFGFDrWbH8fvK9znpRPHh6pYDDUnSawhmv0U6OvC-naloFw019cfnbHUTJq5hIplcJfdCyX8JjImQMIWERuWcdzZXstsFHJ7nu7HcJRnd3Mt5Zw2H4nnI7sedHfCiT4sKbVstagMAXGVPLR1LQqTeLUQSUBiHwbOZQ-lA0Bkt6W_z1yw-OgH8a_hVSM05-IF7A92pkLNCynS0fqKnp9_qmsfxcRqcPIGWCrA",
+        "website": "https://www.veganaframen.pl/"
+    },
+    {
+        "place_id": "ChIJY-pLvAlbFkcRtY3CCwM2Hoo",
+        "name": "Veganic Restaurant",
+        "address": "Karmelicka 34, 31-124 Kraków, Poland",
+        "phone": "+48 668 468 469",
+        "lat": 50.0660585,
+        "lng": 19.929732,
+        "photo": "AWn5SU6FRpMYn8hV8rA3sTwMPKeUF1PZ1f0YjcSWLTJetRbZUmMaavq3p855F22tJguyZanKZ4wHwB87jizICDbGTHspTXaoYHG-w3OlcItLj8cmxKrKV_bVYFGHPL0teZAMltKntUsRMCWqNqfgxo_5AegfBurBuvBv70_z2YwHaaHCXYm7GOgjONMQUCfHbOSKiVkgwbh9kdKFx58K9NWG4kjF12aTjrc3U4-wQP4i57PhTfAZe0s3gwRWpucxqidIW33ULhJ9UVQ9pBnVwnMZ9xzmoORHa2LLJZZIZ2N2_Hlgiw",
+        "website": "https://veganic.restaurant/"
+    },
+    {
+        "place_id": "ChIJjeOyKABbFkcRBlMIQ8E5bNs",
+        "name": "Simba Tacos",
+        "address": "Aleja Juliusza Słowackiego 3, 33-332 Kraków, Poland",
+        "phone": "+48 797 131 934",
+        "lat": 50.0694163,
+        "lng": 19.9270243,
+        "photo": "AWn5SU4PV9g8cDCxc7E9d0Wc29vCuC4datIhJ5o_c3J1B-CjovtI4TbNDfTQr7gPoYiCqvqg7XWd-AFDprMO_uROWpxWtIgUbGsQCUyrs9gcNI8D5EzLxC43si_5-ofszf3oR0pSIvRXmG6NwUJRiAy-Bzhq6FBTOdsGQSy0LDVEX_ap3Oj7lRtObwYaxmdXKrr2IMrmuUcdMylYz3gN0PruJ9AsNlclXELEBINusG0uAacUNqV2eM0qRYvV0MGzddVWELcVsgrRPMAfiFwpy2dKyOAwcsyltybbDbensocIrTquRg",
+        "website": "https://www.facebook.com/profile.php?id=61556417219302"
+    },
+    {
+        "place_id": "ChIJBz-hBbFbFkcR9cKOR-NQOJs",
+        "name": "Restauracja Mazaya",
+        "address": "Krupnicza 22, 31-123 Kraków, Poland",
+        "phone": "+48 731 337 887",
+        "lat": 50.0633457,
+        "lng": 19.9288365,
+        "photo": "AWn5SU7ZS-zqA7yRXFUTnT22Ignx_IPiBU5ai9OfI0LPr7-XdNgzSJ2O_2C97UNmn8xS9BL0JIKb_e7hd_5uSmsqubk7rkmDThb42zDAYRfUk5OpqC3o8fuGnOcC8Q3pYgFW7Sls4jDHKo0RLnze_rHBKS9NUi2erIRey2XKs4lFwg4nN0GD3V1ee3OYV2kBQdZNCsbk02HLjqqeT-257YcopCrC5G2sjkxxMSzYeUaO2gK4Hu3XLkKGaMMr3hN842zXyI4rdklTZl5YDbfAuYt8KvNg3qzGt4doKpcwsMNLsqcakQ",
+        "website": "https://mazaya-falafel.com/"
+    },
+    {
+        "place_id": "ChIJTfeCMqRbFkcRG5EebAxLjPw",
+        "name": "Żaczek - Bar Mleczny",
+        "address": "Czarnowiejska 75, 30-049 Kraków, Poland",
+        "phone": "+48 12 633 96 76",
+        "lat": 50.067811,
+        "lng": 19.9175579,
+        "photo": "AWn5SU6xJTNALjSjW5a1meMzBl_7mPYCiJLsjgZ3gaCGtYrYMNwFbJrianBNMos4TbSIznQCVE2Tb9LWJjFhxlnklO7WwS-9G7MYs5_bZGsAytrSec1KiuYDrXah3uPmJ17pbyXF2p799WtdTtE9hnToV-XNIiZqM86_glwjv6o-sYMvAorCqIlsVvREajEjardo5ppVml4ATXC6Hl1VXVPVIb2o2HZc4ZxM6hAbRQgBFOqvrbtvvItGLM-DwOelXhCTRUtM8K04S2Ws4TkfkHKS8VnPwBam5BMNdxjnBplgfAl-Ew",
+        "website": "http://www.jubilat.com.pl/"
+    },
+    {
+        "place_id": "ChIJuaKgPWpbFkcR1BEMavHF11Y",
+        "name": "Starka | Restaurant & Vodkas",
+        "address": "Józefa 14, 31-056 Kraków, Poland",
+        "phone": "+48 690 419 543",
+        "lat": 50.0506783,
+        "lng": 19.9443417,
+        "photo": "AWn5SU4Q8Y48lixOCLEvk2Q1VkutOGvMHR9jj2mdJDgvD0AXgy6yPvbXjImOxNZcliLYgLvzNRHW544pG4HbXmcoLeZqjpsTAQukX8w6iavOKGgQ70nzYLTeSIlbrNxYw4bKVomXgvqIBXHuZQjSZJXUm5XzoZK1YYCJbikrCelYWkfg1KVihYaeEiD2llhkxSXC67vHLzv4yn1C2QyWUdQtP_chDvf4WmpCndl2wn0S9k8Kahwn7Vcw1S5pZC9geTsbrr-kraAXQ14bjx7JNsGYMiAmCJssjW_SK-BdATxaEz0B-g",
+        "website": "http://www.starka-restauracja.pl/"
+    },
+    {
+        "place_id": "ChIJa40KDahbFkcRwUT_HGWxeSY",
+        "name": "Bococa Bistro",
+        "address": "Bococa Bistro, plac Inwalidów 7, 30-962 Kraków, Poland",
+        "phone": "+48 509 970 909",
+        "lat": 50.0697444,
+        "lng": 19.9260306,
+        "photo": "AWn5SU5TWClSb2Y731dTTVdpjHFfsszUmoE-6ILHjb-Zj9a6PDT3o3W7c3_Bp5up98Qla_OHDoOrBR6U3iv2a1aOjtwknRxpvEkv6-dWwImMDu3-_Nhm3iB-jNxZijyVUgTQeAvRGUIuLNEdqp2DrggbvirGCajrf7kG3UjTjqwG-dM567hK0t_NGRFNJfbs-9GNQ_Q7IDqq7jmol9d9At4dBVU2DDR2ysRzKp7AFSu5tNrQYZU1K5kYbXK3a7q-vZAnR4stG5lamSgVSPMxAtenozd5nQ5HEMQ7eaR6yuNnKMsvoA",
+        "website": "https://www.facebook.com/bococabistro/"
+    },
+    {
+        "place_id": "ChIJF3jqK2tbFkcRtcoOZW_IO_A",
+        "name": "Old Town Restaurant and Wine Bar",
+        "address": "Bracka 6, 31-005 Kraków, Poland",
+        "phone": "+48 12 357 48 59",
+        "lat": 50.0601897,
+        "lng": 19.9363463,
+        "photo": "AWn5SU5H4celV1FFW47AD7lRnCxGLBtlZXtUjczy5M1li7tl3MdD3_tKz0aWG96eEaSRIbtohuwliKmVy9DgJqVuWe-6gEM7SUEbCrIzQM9aUwniknpj_yAq7mwOh30msP4NiqZ0-0wVRoQt4PUCcGcovWEJlBSIuMyFnXlzK-ja8DkrDti1NMIge-fFlPBjUxEQgnqBDvzxvp6rBEDE5Z4uHXmkFx5kwNjNSX-lXguT0WJGUey2RzUQx6YwrYVZKoHcaHHIucUQ7NuVPS4BgAKtpZKdB8MaZLhwHz8-nHxY4ULgTDH_PFLoKLNEi-7SrTsUy1Zo3CgrRmQJKq_mKUpu-copBzkLvJ3v4FmCR2impx9kEwdz7GaRf3wcpKnqwFCV5MeksXZEGB-GxRCeErHVzKtFZ6ZWu9Z_tDTLY6Gl3WoW8kp_5BAXWGqKipb6L3Q5",
+        "website": "https://old-town.com.pl/"
+    },
+    {
+        "place_id": "ChIJTQC_xwlbFkcRC4vD8H85s60",
+        "name": "Pizzeria z dowozem Capri New Kraków Centrum",
+        "address": "Fryderyka Chopina 33, 30-049 Kraków, Poland",
+        "phone": "+48 12 630 99 99",
+        "lat": 50.0679645,
+        "lng": 19.9185111,
+        "photo": "AWn5SU71nWwR_5YLbsaNOK6-PcymD19MUh2AAJk9wIqLwTxILhZ3SSrX9k3UMGRGovVP9zwQ7ARBi8qJUWfIViMZoduozSOJ0ue-whdYbxmVZq5BYzOpyXNbRdtCY5lZ_6ZQxXgyjJmLOE-m6SXLMJVZ20g5jSlShpec_orLvPDGKL-Fp9Re2SedY8AJzlTKLepSmJL6bRckLiHk6JOdKyWojOygUnypIiPP99SNNMIVqtNfpfLMkbLeNmdjUO9nb9I3Fj_C9earDe3joGybRgvvKcJzW8QkczXko8v-TDKFB7gorg",
+        "website": "https://www.caprinew.pl/?utm_source=google&utm_medium=gmf&utm_content=chopina&utm_campaign=local"
+    },
+    {
+        "place_id": "ChIJdZ6mhQ5bFkcRUUGFNgZdKKA",
+        "name": "Boscaiola Restaurant",
+        "address": "Szewska 10, 31-009 Kraków, Poland",
+        "phone": "+48 690 950 077",
+        "lat": 50.06249589999999,
+        "lng": 19.9347704,
+        "photo": "AWn5SU4YHSJFacq4d4rdnYh71Jf8yOzk9zpfUiTZtG4UBkxC8yAC_E9t-fI73vbcYD8EJNyAC0nSUF-i6RNAq37B93tyHaia9XbeAh5SdoqyKfxlQsz1N_E4FxCmNlwt0QijMwTMcq_m5sb1SSN3P11-wgslPIziDsFLphSrcDYgRnljs9AJ2JspokhqjS7qwKjrWlAD38dTiJaKoZ_hHMcJ2j8unyBs3edVGvIe5n2lMi81_k6pOsiPIK_NWWXU3DR3xAJ7UuTZGC1jwc4wG26uqskFWz_d7QYbcRg_YxroMHyV9A",
+        "website": "http://boscaiola.eu/"
+    },
+    {
+        "place_id": "ChIJDzlVvQlbFkcRMeR_n0azTXU",
+        "name": "Mr Pancake.",
+        "address": "Krupnicza 21A, 31-123 Kraków, Poland",
+        "phone": "+48 662 005 060",
+        "lat": 50.0638575,
+        "lng": 19.9284066,
+        "photo": "AWn5SU6e4iPsFHMxAybm0xrH3nygNXolpsxnGcER4GM_bQZfNmUiknN3-OEl2lhPTDekHsAIFE18yoav9TK6U2vrcmkXWn8EOdIK0eyR53fw0sebu2bXsTUOeZKAO1pMG0nDpwOb_6mLTqeVvvLK2HR0OFlsHiKc4q0VDdO6DCv7nlP1lZ0RBajU6n3TBDO_JikO468Wl13LmYTGh5jXxvhlJKR7LZz9KpGgjRFJlSRqDQ79wBPv0_4FgnzAX-1PU2_U1g0t--_thlMdpi1ZyeLaAeTA_dOSaps5FdaYzX3a2b_HvhOge-KqlnnyOkgD9rR3xbObBZ7WXUnt3GeOyk-4D4YRi6bkEzu4j6dEXWl6Yjk5E4Ytfjuas3yaRM1qxjepvnMmsfmHQiadslPjSM7RNnN3_a43a9TwUX8MdfnJ8ZuqEzkS",
+        "website": "https://foodxkrk.goorder.pl/"
+    },
+    {
+        "place_id": "ChIJcy4is7FbFkcRJjbENnvcI4k",
+        "name": "Phuong Hoang | Bar orientalny",
+        "address": "Kadecka 8, 30-078 Kraków, Poland",
+        "phone": "+48 12 636 80 55",
+        "lat": 50.0741823,
+        "lng": 19.9124447,
+        "photo": "AWn5SU7aEla-TVXKQ_2ajOV4uw92KUwsR9T5USHI_-ZDzc6XuKuYdLRG5thYHG9WR_KgxExlm8lrOHaeBVAngcSv39eBHci8R01MdOrnL92ef2hGyF2ZQAoMhd_d784JbQwwhmJeGiegzWVCkMnIZdUwQbv_NTP0L9ZzucaeeWIpgCkh0ak9gB23JojTB145awFrlODbtZnpPJ5hGVOm9x3F26ieHJFMjLQ_6ua4bFukZpAgU4oGKqMD8s4vCMV-uO9MA3ApdxKtex4YSgj7OHHTxYiyU5spWFoGTJutUoE7sk1SjTOfHbFyxS3TqECYQtCRtoYjCPF81HrVZq-xzm87qgqE-esrvbOtjMZ6wfBryDPnHjp7sxDxBZopSRFbSrMtQNqAaY-zCI6z9HBRfUuk3q1NV8Q_T609Tt5D9jgiqvgDhQ",
+        "website": null
+    },
+    {
+        "place_id": "ChIJYxyfh2lbFkcRa5oGzbImzRc",
+        "name": "Pierwszy Stopień Restaurant",
+        "address": "Krakowska 17, 31-062 Kraków, Poland",
+        "phone": "+48 577 767 670",
+        "lat": 50.04999249999999,
+        "lng": 19.9425796,
+        "photo": "AWn5SU4Q1l9SCgA2PPftnkX368b7qEWameUrSWnI1GdOEoQG3LnXvWggU1CiaAQnZlap06DmsDig5k8EZtQEsVg8CGZW052Cp70qnYCSlS7wdvVkj6473EL2x7Ojvm2FaIKk7NUDcLaOWJx4bn10hTlgyjCG_9iEkMxL-kXA0zbXMsz-hjM8O--q7d_-FHVusrnoTyL5DoyXqzsxo_VIAcBSHNj3CbWCCofDM6Wc41O9E2KgjAu6ckEwjEDpemDn7q99RZj5EnkZpP4YtVIOkvjIYaQ0PEFOAj6onf1IxMRx49yrag",
+        "website": "http://pierwszystopien.pl/"
+    },
+    {
+        "place_id": "ChIJDXVa30FbFkcR8S7Bl2_l6iM",
+        "name": "Kolanko No 6 Restaurant",
+        "address": "Józefa 17, 31-056 Kraków, Poland",
+        "phone": "+48 509 669 959",
+        "lat": 50.0509294,
+        "lng": 19.9461595,
+        "photo": "AWn5SU5HLYwu1I2n-l4N1k0Twz9MxE-kFOZFvY5ft0ibem3tKMNFW4DocdistDNPHjKeDSN9l0BehB3HOXdmwHPLLdfljub6QVyA_o31uXdHpozV58lAU3U3YufafBkJjoQCH485qj42kyJNABGeeQUn687FZ53lkNzjmbBLoioH4d_VSJOAO-QzDOBAxlDdwx_PtA2SaAb-FRncsZLO8RVzK1dWpQ0WFeW52VRLs-6FPbSKviK7at63R-rtGmH3rAZfWI94Dp1wqr0XChNmtcOBoKVS8OabhKyCY2Vgvl2VhmfFrw",
+        "website": "http://www.kolanko.net/"
+    },
+    {
+        "place_id": "ChIJnXSOv2VbFkcRBlLFShJ2X-Q",
+        "name": "FAR EAST | Restauracja azjatycka | Kraków | Bronowice Ramen, Tom Yam, Zupa Pho, Jedzenie z dostawą, Na wynos, Pad Tai",
+        "address": "Piastowska 30, 30-070 Kraków, Poland",
+        "phone": "+48 572 780 970",
+        "lat": 50.071138,
+        "lng": 19.9038319,
+        "photo": "AWn5SU7vp5lYHR3KGTgA-kHFS6R1PBVKPWULGLiqt2A8sXmfu3dNa-fMJREKMMaz6AB722tzM06HsKsftyTnHafv7FzZjjnY4Q0T0cq7w5IqYuap2txtrw84lM6_4cO39dyCLXFzJ8OW933lxbOxMQHZFDdnZazfxCBWb8vkeOU4DcQOgt2VoretykeT94p97r5TPnpZYtNmZIDJZ6JK7q4rB6o0YqgGuwHDT2rEm6_fM_YnM-7TeSAbgMR4ByvOAhXKv7wy_-4RWdQRxFANcyUz4kqZRd1Wfx0Bk9xPJWibe5PPYQ",
+        "website": "https://fareast.pl/"
+    },
+    {
+        "place_id": "ChIJcdIa6LtbFkcRZdCxhwXW9Q8",
+        "name": "Olive",
+        "address": "Witolda Budryka 4, 30-072 Kraków, Poland",
+        "phone": "+48 12 617 53 53",
+        "lat": 50.0680604,
+        "lng": 19.9081036,
+        "photo": "AWn5SU6D3aYbqMNtbFSxHE7aHBk-W7CDt09blvTnRYaEMJf_Wi4oXowbjOM-xNa6v08NuHJ2dDs1A2KmvKDEmaVUQkopfFnRnf0YwsgjLZlX-HfstfUl8BRBWv8rCkQRlB3B6X-b1iq1jo5v3MkCeRUHLd9_Kf6WmkH8lt-sbyfuYAOiitMC4bQlV6KG2M0LkHg_RR-CZjle-7GQpyaAmrRHOKUcYdFuDp2iSCEpJgwqarv0Zb2faeA5Z5kkgqXDsKBXgQuiUwYoDIML0sPJd8jZsfHoeKEfcGjMHoAkvcoGE-SQMg",
+        "website": "https://www.bistro.klubstudio.pl/"
+    },
+    {
+        "place_id": "ChIJ_Q2jV7FbFkcRhqzxb1-XX1c",
+        "name": "Pizzeria N1",
+        "address": "Kawiory 35, 30-055 Kraków, Poland",
+        "phone": "+48 573 827 900",
+        "lat": 50.0680539,
+        "lng": 19.9098549,
+        "photo": "AWn5SU7AX1G3ExrhyjDvMIJ8wsUWB5pHScv36ebwEv0cVErbPk9cqS6YVpfdjgU5fGtrhAv4usz-l4JsSXFCKJ5nfv7iamBGIaifscfic34sEabpselvndhrjseKn0X_ShBq7RPsj5ad8rVg-ER0VsFC7ICkwQ92wdqsTXzerQwC0Zjw1zKe38dkQ0UWZCTfBtbCLTH3don4UjWmIKCCGgLinYVvtjt4iiPUW1dRlbILnJIIMQqF6gKo6WoPpfhLp-6LXQrm1F0Q3Q1z9Yn-WQzOOHD5r8Oh-gfzl4zMglRfyVhpJw",
+        "website": "https://pizzeria1.pl/"
+    },
+    {
+        "place_id": "ChIJLfyClbZbFkcRjCAxjaC0FH4",
+        "name": "Wavelove",
+        "address": "Podchorążych 3, 30-084 Kraków, Poland",
+        "phone": "+48 513 321 919",
+        "lat": 50.0757172,
+        "lng": 19.9072209,
+        "photo": "AWn5SU5QuMPAnzZRVhBjGYrOhFW6CzLODlDP2P2mEMZZOZKvO4exhRLxmtPBTxGFeZrjlFeeH4BDYfG0ut9KiOp3OSV5pjIUrC0TYIJ1H_DofT83pPQjOtYNmikfqLsmizfwccEXlG78VeZuVFXeJqFUfr1EUsicon-ApOxJsXY0zfYxw_fhT4XL5zDouNi93_9vsB2deup25JDv-B3gOCu6eyze3HTbZDj6k-TptNk4tPdmDdr-T4gvD-HKr1Q6H0Gi_fC0vssawFr8O5EyoDd1wP4oHimIlTWuqyXT-TLoRfBuhNYk-CZuIPpqnXp9okm8hxItrpnIH-Ub8_187hgxciIH4-fiD2GpGho-rs2ice1LiPO5Zr6eDq-cTIUvDyr-BOoQxdkK9Hneg7i-6mh6i-qgLmuUq3MxIUR0DOqwEarxpHk",
+        "website": "https://wavelove.pl/"
+    },
+    {
+        "place_id": "ChIJBfBVkmRbFkcRpnSIift-G1I",
+        "name": "Współwinni Kraków",
+        "address": "Armii Krajowej 19, 30-150 Kraków, Poland",
+        "phone": "+48 508 426 951",
+        "lat": 50.0706855,
+        "lng": 19.8942378,
+        "photo": "AWn5SU6kODEvQMlNDOxWYqiszhPLqTgKCelaXv17AXJl0OK2yZLFxxNqG-ta__If9UHvyAGbqMAv2-D-aiEYvMxSA64Zqvt4JqIcBcf9K400Iqq8L2VAZhXEtUAZrCQDuQ467pB8eXZdyTzBnDH_K4X1xrDjQirOsavL-04UcxYbnLg7uLd6Gx1s0cse9guqPJyyWfqfNiMy13HkuSdqK5z1XLH-S-hoZz0FZllBXgMxLvDiUPSF9Geyaq97g38YCqWy6z04HFlVHQxxuCgdRSUpTcI991wJuCGHd6s3_oJ-92BhJA",
+        "website": "https://www.wspolwinni.pl/pl/"
+    },
+    {
+        "place_id": "ChIJxYq7m7JbFkcRpAX1OK395XQ",
+        "name": "Kluska na Placu",
+        "address": "plac Szczepański 7, 31-011 Kraków, Poland",
+        "phone": "+48 798 845 715",
+        "lat": 50.0640971,
+        "lng": 19.9361737,
+        "photo": "AWn5SU6h8V3m0kTyJTo09lpTubaABboCF9JvxDi4GlOOQLDUkFScf1EeV2UDHRaM62oGvGCIkrtrx1Fhq7mKQWciDfGokShqNy3KlI1qDV9qZkMf6aRP1DILOp7k6_kZwaAQFMYpwi3vnQYeKqLUl8U6Y8BmvVbpQrFsITMuH5f3w_z2Qb3q6R1fO_p2f2-c6PM4FD0n_2G8QC5qElZZGymk9Hxcj2HEvPXxiw4givT9ZfThcfAE3XLFnEcQMhyK2zFfzRXuS2t2XeQmqGzfVgw0xVOqpAVa3ov6sr_CaUeSfLqVaA",
+        "website": "https://www.kluskanaplacu.pl/"
+    },
+    {
+        "place_id": "ChIJLWH5rtJbFkcRPw8-uS-Ielo",
+        "name": "Alibi",
+        "address": "Armii Krajowej 6, 30-150 Kraków, Poland",
+        "phone": "+48 502 179 192",
+        "lat": 50.070797,
+        "lng": 19.901377,
+        "photo": "AWn5SU7GASS_W_r3wgKwafEl9FeLJgboxCKQyCtPkoQ5nDIMuUKcG9OZOVIXKfVOcE2dfvzlRwT7FgbAtQkJa9fl_2wkiQHwMsUc0MGKnkbzervL4wPJ-fK4xbhsh2OTtoLWxrhYFmTmLF_raKJ8NUwGamJQEp1ektuw_xb4s9JJeTGnzgFcQJ5MvhQNTXI0WQuQmaN4JKpw_9SZfCoPClX-uOoiOOxix_bYOmaN8Z_oR9Kqs-1eI-xQa73fSnhLf9ca2pfplc3EGKHPgEhzbm244aAX5mMuWJaQgvQonhwVRaCPlw",
+        "website": "https://www.facebook.com/alibi.restauracja/"
+    },
+    {
+        "place_id": "ChIJmyruN7BbFkcRXaLdhrydo30",
+        "name": "Świat Pierogów",
+        "address": "Królewska 92, 30-076 Kraków, Poland",
+        "phone": "+48 503 940 834",
+        "lat": 50.0736591,
+        "lng": 19.9115134,
+        "photo": "AWn5SU4CeSor4652M13FnveFGwVvY_JjyqafekEEelETBhqluT4gHUvLKocm4GfJhAjxihcVaMdJkQJ-dzSC7xNQfKGEc_1JlsEMTNMB9HTGymarrCKZL0fbehGMaaia0m7M5yt22sbnLEceboYiOThXBO9-7UdGR0tceR7vDvO20D0Egt1SR5cQZuJlmv340-1OellV8yeV9psZYfz5rf8YU0SrKc4BY8t6ISuJa2pred1cEcEH9p-LrDARkjBC8ANUKaYK2Pk0-z9b_m__mTDSpFhN1_ucpit-DNsyuhz_O6vDXevPyTro16EJem35CGhPOGvdITDYRcO8oLLMQ2UuAIaOR-6adWwjoxLDUSx1zI1kVOH9uMwbzWZ1-dHk36ADwTe8U61VcA1mjvhRS5ksMuJQCnPC_uBCIotzyvcTx2iBeqg",
+        "website": "http://swiat-pierogow.pl/"
+    },
+    {
+        "place_id": "ChIJl3_5_V9bFkcRxNm0mpGrLGk",
+        "name": "Turlaj Klopsa",
+        "address": "Karmelicka 60, 33-332 Kraków, Poland",
+        "phone": "+48 783 758 974",
+        "lat": 50.067981,
+        "lng": 19.9275343,
+        "photo": "AWn5SU4q7jcFhitFZYwTVz0nZEfGIxOGrSEZSQDW9oosusQWSisfieQyDByimz3qyOhKVCPA7r7MRpDOZP-hrY9znqH-hslaJK53uPXCbkfCzNgb0mjxdYG75owoTwHRC2zqUWugEr2is6FhI3hFnLLDF1uQ_7863GEjRlXCWKZJhi-Ifma4dY1ig13z_ALGCYI3dk2cobUPX5wwqgEgI2dfY1T8Bmkc8hApMjQBVhg66hsoI-jkPKffpueabrvuhkHx2lYLnhoXuTtTgVogzWcZBir9B2tQG6iCgVhkUI8MJrDqKQ",
+        "website": "http://www.turlajklopsa.pl/"
+    },
+    {
+        "place_id": "ChIJFclRb6RbFkcREZzANLHNRBM",
+        "name": "Wine Garage Józefitów restaurant & wine bar",
+        "address": "Józefitów 8, 30-039 Kraków, Poland",
+        "phone": "+48 730 250 006",
+        "lat": 50.0710333,
+        "lng": 19.9241194,
+        "photo": "AWn5SU56qB_Wi870hnsa-QYtFDvSM2srVmb0OlwhXcjv0V9gi_0VrL6hEYS3-gPXOx_R4YUy57WeR2oyJBsU_o5G22UIucPQ94khx60EN5C76pqW_k4o0zvK41-IopSJAiaHOpEytZjCD34PJWBdU2HasSBSkymBU9jwbJI567KSb7_tl6Wcpd9YvLPfLJ7xy7bzVuaQXWmHsg3rkR0LNMyeeoLQWMFpIuBNYdWP0ezdNvKixGgTWL2N8-u7v-_gfYQOmjt9x-lnlZQ_99aU4bxldV-eIdb9V5jfmyI-MtW_85GXBQ",
+        "website": "http://winegarage.pl/"
+    },
+    {
+        "place_id": "ChIJnzjeug1bFkcRozdqs6CPhWY",
+        "name": "Padre Restaurant",
+        "address": "Wiślna 11, 31-007 Kraków, Poland",
+        "phone": "+48 12 430 62 99",
+        "lat": 50.06016109999999,
+        "lng": 19.9341943,
+        "photo": "AWn5SU4JdDFPdRQTZZbpwnbx5R5z_O46uwIwkAHGAiv8J-Sua_bc_u-HU5v0U9YD3XSp79Lf6ISuqLcO6z10J-58L-S8ivwdmhTAxIqwgEUKfuCA7sonjzYQCv8mu1ONZfY0y04i9l-4NxRpSkUf7S5AuOEtgh2R632o4eAg0pCN4GUk88Z7--7E_Wvggn9Es_WcxVpFpTZBciXWUCM3y4C4hsNZG4ez26hVZbnEXBF2GHb9h3fPZj8HsDJy3I5UKS3cfYdOC0nymemhkmAUOhGX3yt9spmywi4c-O77zgww0s6Zyw",
+        "website": "https://epadre.pl/"
+    },
+    {
+        "place_id": "ChIJXU-6FghbFkcRQ5siUksRJm4",
+        "name": "Doskoi Kraków - Japanese Food",
+        "address": "Karmelicka 54/2, 31-128 Kraków, Poland",
+        "phone": "+48 730 788 947",
+        "lat": 50.0677009,
+        "lng": 19.9279446,
+        "photo": "AWn5SU6QY1YHN4xuVVb5OlaRqC0u6FMAfnQcCNOq9dWLFZYoQltrIxamKrBE0jodlBbw_lSGmlew_zqTzALPe30JPPsQ15GRwA6-AYgK_RtaY6cziYBoO6YTiHlIUM0fCwYmiBbimngGvd-FuGR14N-uFdgJl3l8Itj_KeWnoiX4nP-MuOENUUeuPSWMbE9XbrFbX69vaMEP531Gve_mUgYKTIvs4LRkyf9NlHQNRr3sk0naavvjMxtmiDthDJG1lIMEKx1iY62xjl3P-1pFJb1-ZA_Tf05RWdUBGAtx5WNJRNj0KQ",
+        "website": "https://doskoi-krakow-japanese.localo.site/?utm_source=google_profile&utm_campaign=localo&utm_medium=mainlink"
+    },
+    {
+        "place_id": "ChIJu61XJDhbFkcRkMRuQq1rwGM",
+        "name": "Dinner Safari African Restaurant",
+        "address": "Krowoderska 46, 31-158 Kraków, Poland",
+        "phone": "+48 729 600 150",
+        "lat": 50.0709253,
+        "lng": 19.9343635,
+        "photo": "AWn5SU6TQfp0_lWzqMzw-QmXOJ7EXBYnZScj0neAUmG38lDvCS3grDcGdH7tbuFHbCbXR0pBCK1R_VjZnUTSbOnnZ1sU9tFoZYsciqm-DemeGqGdf94qZ4PH6ZZ9_DWWUF5busRU_6AoFZ1_t1EIWPEuAo47pOClzsN2ypndrE6t_jjxDZFcBAyfPhVV7UB2v1cM9LjYuMmJnqQk3Sk2eS_mcD2r7lGKHEROjzg2UQmUMRSpb9mLVRYsnX0boIYpahkZJLs-8nMYXIR13LXuF0IpCWpIBrBUZ0RxkJvCjyxVgI7cAzkI6GCjR5IeCev030T8ubdO5fKw8IEs6tvMYGF9ss_Ux6SGWNAE4RnRNWvQIHncpr-yD06-D1EZn3XCt05tzDP6VuiUnnjzUIyLxI0-n0bfDGGXHvcFd8_xw4x6kLCplg",
+        "website": null
+    },
+    {
+        "place_id": "ChIJf_fJ3A1bFkcReBPkLXMdbhs",
+        "name": "La Grande Mamma",
+        "address": "Rynek Główny 26, 31-008 Kraków, Poland",
+        "phone": "+48 782 297 716",
+        "lat": 50.0612259,
+        "lng": 19.9355602,
+        "photo": "AWn5SU6BnglxsxFNnMOqG_HB3EzHF8kQJA5k9JTGR48laNZ3s9uCUldg_-IkgZ3elmjgU5BcI_A91qK-XggZuPZpUsmchr3pkdUV8OrDkKTCyq74Ku1abRakAXOfDmdUVfvyoTPzVFbiAWZVAroJW_7i8H5AGjlf3XmcPMvOH1xIUwWa1vG4cNIeDaJ5sJzJsXEOMiTJVGjgORR0ESHQYiJgec9P8EQ6lFLuil37wSrCOcWrAHFQFaHt-WigkAULSg_0OIXLXybvPbxJYDtRs7QPo5MwIKhuv26qrr_Qs9Qp0Y7yOA",
+        "website": "http://lagrandemamma.pl/"
+    },
+    {
+        "place_id": "ChIJ8f4YlmxbFkcRW1mJQ24Dmjk",
+        "name": "Pod Wawelem Kompania Kuflowa",
+        "address": "Świętej Gertrudy 26/29, 31-048 Kraków, Poland",
+        "phone": "+48 12 421 23 36",
+        "lat": 50.054876,
+        "lng": 19.939403,
+        "photo": "AWn5SU5jTB_r21rBA0mlfxSSLSvMRGauxgodLN40Q-dDWGa_8oiMdefydELiJSjn6sFBU6_HipaRG-MBbr4DhkDUngA8NvtY2K4ILt9p2ZZOkxwq1_vO6aFWzARwv8Uow8v4t6oxsBrfoYzzjDeqS5MI9NATNaMT8q43Mcm5Ioszi2wDHdg3VTssDhmgCGDfWYndxCzd_W4sL81fc5zuyUFbGyAPYMYngefaO8232JyW3XCb28hv49Y3Rp6XgizY38u7QjMDXm49JcxHmt3biqqUq-SWiDwDOF7ByHZnowsfGPRXnA",
+        "website": "http://www.podwawelem.eu/"
+    },
+    {
+        "place_id": "ChIJ-0zQTw5bFkcRj5HIUaamG68",
+        "name": "W Starej Kuchni Restaurant",
+        "address": "Św. Tomasza 8, 31-014 Kraków, Poland",
+        "phone": "+48 12 428 00 22",
+        "lat": 50.0638616,
+        "lng": 19.9367491,
+        "photo": "AWn5SU7tG-6Z8OPcGJtiNPURhsG_lHYOdl_JW8d1ODx3T8jnrqqmmQdkMeyACktsVaq-_TOsUePQ1tvVX1HqQA3NyaPXCqi6NJQ4k8heAfs540GxP3iV9yQ_mb9u-ODgX6KOyk7-4S_xJ2yOiYcmn15789fVc-jqS3UdUH08zPa4ol8f5loE9GCj8stIUZrf2nVDbP8Q1PuoTwhqIcX5Z5ZdbbYeE0z9EtJ57D_bg9HBmZvLPS8rjSxy1JXN0b7mVqrFff7DQb9o9_6ZuNng_g97oNUAGT5hPRmg2xmyAM0jaMzoxQ",
+        "website": "http://www.wstarejkuchni.pl/"
+    },
+    {
+        "place_id": "ChIJSa3yK9lbFkcRdxpE2IalSO8",
+        "name": "Kombinat Bistro & Coffee",
+        "address": "Kazimierza Wielkiego 117, 30-074 Kraków, Poland",
+        "phone": "+48 797 980 909",
+        "lat": 50.0752271,
+        "lng": 19.9111459,
+        "photo": "AWn5SU5IJtj02IPTmvpB1K1akpTU_-_ZeJUd2YCu8m0H_gNWTQCumRtELuI5-w_7ot8ZpI4bIXZOHKcFNBdjYBW77kyNxcAqCeUEDLGNRTiQz0RaE80F4I2hSLUggGtcp70IN_kp1jmRghX7InOI57B2ILUzw1iphxs-yWt7JuWQkYtIMzFUTrvgYtn5qiJcx6o8thtV6mpaNTgKI3SSW38kKnF5O-uevTYwUozU0WLvmKvF4IAV1ncuVj07wQIgqzkechVUpAgg_ol03ltKZ8dQf3bwf94tNluLJI56_RppFKijtQ",
+        "website": "https://www.kombinatkrakow.pl/?utm_source=Google&utm_medium=wizytowka&utm_campaign=www&utm_id=onboarding"
+    },
+    {
+        "place_id": "ChIJl4anketbFkcRXPiCoRymsWQ",
+        "name": "Family Bistro",
+        "address": "Królewska 55, 30-081 Kraków, Poland",
+        "phone": "+48 690 969 000",
+        "lat": 50.0732862,
+        "lng": 19.9167457,
+        "photo": "AWn5SU7REL3h_u4-ZnoMYbVjomlou-C_Zi6uiWobe_V9yXljMQubTxWVE90Ks8DWoIH_VHnG26M-koG4sWfih8EjOp58RJ1pm8FZtBwr5OK3tG2LDWfYeHPY59g3YJ-8AVQorEGldSE4_6rz6iajbk6i4-CE2Hpxs65otnnaR5RrpaMrzIVy1_y27e23_5shJqmW8qA3tse60IwALAfVNqp0U6IR7tUBv9CTeNBYgn4u1c_fh2CB304_AfuP1nuhe3RScImTRW6rI1RxQkQMBJT8dAkmIgVlRHooB4KOUcTTtHah1w",
+        "website": "http://www.familybistro.pl/"
+    },
+    {
+        "place_id": "ChIJK6mP8hJbFkcRU0HOaYLnzaw",
+        "name": "Pod Aniołami Restaurant",
+        "address": "Grodzka 35, 31-001 Kraków, Poland",
+        "phone": "+48 12 430 21 13",
+        "lat": 50.0583,
+        "lng": 19.937727,
+        "photo": "AWn5SU65IQopoj4LRysFinKfrxsVa2ihO34U081CnbKJfZPFZmbGt-AehV-v7oceauNMjZNXUs82WVeJY941SdHNZ1OHzXN-XrjVh3VFhvnqo72XPXxJecC_vFb_GJ79zV88qEYCONwcbxDuv7asS0N6hkI9Ztpu4nlLF-E6OwOsYDILiyEsgMcwVfGqFnKsd-E5X7rxrWrhk8tOa99EQrmHTRBqIvjBlFQIh_01thW1UNX92J-w7ESvrK-sxWeO60XkRUhhieEg0pXcSpiF3ODiHCzNMMjRFIcNvmIhG143NF3_nw",
+        "website": "http://www.podaniolami.pl/"
+    },
+    {
+        "place_id": "ChIJ96n9QDZbFkcRUBS-CpHvtfQ",
+        "name": "THE BAP",
+        "address": "PL, Lucjana Rydla 32, 30-122 Kraków, Poland",
+        "phone": "+48 571 603 138",
+        "lat": 50.07872889999999,
+        "lng": 19.9020187,
+        "photo": "AWn5SU6Fc0OUZVVkcO_jtfShdghoZm6z_aSZWADbEN7TshnZsPN7BaDZhiF30bu2L9uU1yV-kCYU2EA9x6l3oBRHAAi-NuMrEhOh85hgr7w6ZdtfacEXnqWNfOnTXdoA30I7iBVBmGb_F_E8aQVik3068fVp59HuhWvevbngrUDE7DVKZI5UCz2wASmBp4rEMokuNgXD69_FXAeQ7IcRm51D5RYL2btYeQbYAN9-PXckh7Vd7-w_aXcxEKRKR_YiwR-rVNbwNBW8iiaI6no__fqi656XryQmGjpko3K9CYGUW5C1Rw",
+        "website": "http://www.instagram.com/thebap_krk"
+    }
+]

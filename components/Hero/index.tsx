@@ -19,9 +19,8 @@ const Hero = () => {
                 </h1>
                 <p className="mb-12 text-base !leading-relaxed text-light dark:text-body-color-dark sm:text-lg md:text-xl"> {/* <-- ZMIANA (kolor tekstu) */}
                   Foodie to Twój przewodnik po kulinarnym świecie. Znajdź
-                  najlepiej oceniane restauracje, odkryj nowe smaki i zamów
-                  jedzenie z dostawą prosto do Twojego domu. Wszystko w jednym
-                  miejscu.
+                  najlepiej oceniane restauracje, odkryj nowe smaki i samodzielnie oceniaj dania w precyzyjny sposób. 
+                  Wszystko w jednym miejscu.
                 </p>
                 <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
                   <Link

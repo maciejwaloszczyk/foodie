@@ -16,20 +16,15 @@ const Footer = () => {
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-5/12">
               <div className="mb-12 max-w-[360px] lg:mb-16">
                 
-                {/* ZMIANY POZYCJI:
-                    1. 'w-[240px]' - Rozmiar bez zmian.
-                    2. 'ml-14' - ZWIĘKSZONO przesunięcie w PRAWO (z ml-4 na ml-14).
-                    3. '-mt-10 lg:-mt-14' - Wysokość bez zmian (jest dobra).
-                    4. 'mb-8' - Odstęp od dołu bez zmian.
-                */}
-                <Link 
-                  href="/" 
+                {/* Twoje ustawienia logo zachowane bez zmian */}
+                <Link
+                  href="/"
                   className="block w-[240px] ml-14 -mt-10 mb-8 lg:-mt-14"
                 >
                   <Image
                     src={getImagePath("/images/logo/logo-2.svg")}
                     alt="logo"
-                    width={240} 
+                    width={240}
                     height={240}
                     priority
                     className="w-full h-auto object-contain"
@@ -37,11 +32,12 @@ const Footer = () => {
                 </Link>
 
                 <p className="mb-9 text-base leading-relaxed text-light dark:text-body-color-dark">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Integer lobortis.
+                  Foodie to Twój przewodnik po kulinarnym świecie. Odkrywaj najlepsze smaki w swojej okolicy i 
+                  oceniaj po swojemu.
                 </p>
 
                 <div className="flex items-center">
+                  {/* Facebook Icon */}
                   <a
                     href="#"
                     aria-label="social-link"
@@ -57,6 +53,7 @@ const Footer = () => {
                       <path d="M8.13643 7H6.78036H6.29605V6.43548V4.68548V4.12097H6.78036H7.79741C8.06378 4.12097 8.28172 3.89516 8.28172 3.55645V0.564516C8.28172 0.254032 8.088 0 7.79741 0H6.02968C4.11665 0 2.78479 1.58064 2.78479 3.92339V6.37903V6.94355H2.30048H0.65382C0.314802 6.94355 0 7.25403 0 7.70564V9.7379C0 10.1331 0.266371 10.5 0.65382 10.5H2.25205H2.73636V11.0645V16.7379C2.73636 17.1331 3.00273 17.5 3.39018 17.5H5.66644C5.81174 17.5 5.93281 17.4153 6.02968 17.3024C6.12654 17.1895 6.19919 16.9919 6.19919 16.8226V11.0927V10.5282H6.70771H7.79741C8.11222 10.5282 8.35437 10.3024 8.4028 9.96371V9.93548V9.90726L8.74182 7.95968C8.76604 7.7621 8.74182 7.53629 8.59653 7.31048C8.54809 7.16935 8.33016 7.02823 8.13643 7Z" />
                     </svg>
                   </a>
+                  {/* Twitter / X Icon */}
                   <a
                     href="#"
                     aria-label="social-link"
@@ -72,6 +69,7 @@ const Footer = () => {
                       <path d="M16.3024 2.26027L17.375 1.0274C17.6855 0.693493 17.7702 0.436644 17.7984 0.308219C16.9516 0.770548 16.1613 0.924658 15.6532 0.924658H15.4556L15.3427 0.821918C14.6653 0.282534 13.8185 0 12.9153 0C10.9395 0 9.3871 1.48973 9.3871 3.21062C9.3871 3.46747 9.41532 3.57021L9.5 4.0839L8.90726 4.05822C5.29435 3.95548 2.33065 1.13014 1.85081 0.642123C1.06048 1.92637 1.5121 3.15925 1.99194 3.92979L2.95161 5.36815L1.42742 4.5976C1.45565 5.67637 1.90726 6.52397 2.78226 7.14041L3.54435 7.65411L2.78226 7.93665C3.2621 9.24658 4.33468 9.78596 5.125 9.99144L6.16935 10.2483L5.18145 10.8647C3.60081 11.8921 1.625 11.8151 0.75 11.738C2.52823 12.8682 4.64516 13.125 6.1129 13.125C7.21371 13.125 8.03226 13.0223 8.22984 12.9452C16.1331 11.25 16.5 4.82877 16.5 3.54452V3.36473L16.6694 3.26199C17.629 2.44007 18.0242 2.00342 18.25 1.74658C18.1653 1.77226 18.0524 1.82363 17.9395 1.84932L16.3024 2.26027Z" />
                     </svg>
                   </a>
+                  {/* Instagram Icon */}
                   <a
                     href="#"
                     aria-label="social-link"
@@ -91,109 +89,111 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* --- KOLUMNA 2 --- */}
+            {/* --- KOLUMNA 2: Nawigacja --- */}
             <div className="w-full px-4 sm:w-1/2 md:w-1/2 lg:w-2/12 xl:w-2/12">
               <div className="mb-12 lg:mb-16">
                 <h2 className="mb-10 text-xl font-bold text-text-main dark:text-white">
-                  Useful Links
+                  Nawigacja
                 </h2>
                 <ul>
                   <li>
-                    <a
+                    <Link
+                      href="/about"
+                      className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                    >
+                      O nas
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/pricing"
+                      className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                    >
+                      Cennik
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       href="/blogs"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
                     >
                       Blog
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/pricing"
-                      className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
-                    >
-                      Pricing
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/about"
-                      className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
-                    >
-                      About
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
             </div>
 
-            {/* --- KOLUMNA 3 --- */}
+            {/* --- KOLUMNA 3: Strefa Prawna --- */}
             <div className="w-full px-4 sm:w-1/2 md:w-1/2 lg:w-2/12 xl:w-2/12">
               <div className="mb-12 lg:mb-16">
                 <h2 className="mb-10 text-xl font-bold text-text-main dark:text-white">
-                  Terms
+                  Strefa Prawna
                 </h2>
                 <ul>
                   <li>
-                    <a
+                    <Link
                       href="#"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
                       onClick={(e) => e.preventDefault()}
                     >
-                      TOS
-                    </a>
+                      Regulamin Serwisu
+                    </Link>
                   </li>
                   <li>
-                    <a
+                    <Link
                       href="#"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
                       onClick={(e) => e.preventDefault()}
                     >
-                      Privacy Policy
-                    </a>
+                      Polityka Prywatności
+                    </Link>
                   </li>
                   <li>
-                    <a
+                    <Link
                       href="#"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
                       onClick={(e) => e.preventDefault()}
                     >
-                      Refund Policy
-                    </a>
+                      Zwroty i Reklamacje
+                    </Link>
                   </li>
                 </ul>
               </div>
             </div>
 
-            {/* --- KOLUMNA 4 --- */}
+            {/* --- KOLUMNA 4: Pomoc --- */}
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-3/12">
               <div className="mb-12 lg:mb-16">
                 <h2 className="mb-10 text-xl font-bold text-text-main dark:text-white">
-                  Support & Help
+                  Pomoc
                 </h2>
                 <ul>
                   <li>
-                    <a
+                    <Link
                       href="/contact"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
                     >
-                      Open Support Ticket
-                    </a>
+                      Kontakt
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="/"
+                    <Link
+                      href="#"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                      onClick={(e) => e.preventDefault()}
                     >
-                      Terms of Use
-                    </a>
+                      Centrum Pomocy
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="/about"
+                    <Link
+                      href="#"
                       className="mb-4 inline-block text-base text-light duration-300 hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                      onClick={(e) => e.preventDefault()}
                     >
-                      About
-                    </a>
+                      Najczęstsze pytania (FAQ)
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -203,29 +203,12 @@ const Footer = () => {
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[#D2D8E183] to-transparent dark:via-[#959CB183]"></div>
           <div className="py-8">
             <p className="text-center text-base text-light dark:text-body-color-dark">
-              Template by UIdeck and Next.js Templates. Distributed by{" "}
-              <a
-                target="_blank"
-                href="https://nextjstemplates.com/"
-                rel="nofollow noopener noreferrer"
-                className="hover:text-primary"
-              >
-                Next.js Templates
-              </a>
-              . Distributed by{" "}
-              <a
-                target="_blank"
-                href="https://themewagon.com/"
-                rel="nofollow noopener noreferrer"
-                className="hover:text-primary"
-              >
-                ThemeWagon
-              </a>
+              &copy; {new Date().getFullYear()} Foodie. Wszelkie prawa zastrzeżone.
             </p>
           </div>
         </div>
-        
-        {/* Dekoracyjne tła SVG */}
+
+        {/* Dekoracyjne tła SVG - bez zmian */}
         <div className="absolute right-0 top-14 z-[-1]">
           <svg
             width="55"

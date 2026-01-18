@@ -10,7 +10,7 @@ import menuData from "./menuData";
 
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  
+
   // Navbar toggle
   const [navbarOpen, setNavbarOpen] = useState(false);
   const navbarToggleHandler = () => {
@@ -20,19 +20,26 @@ const Header = () => {
   // Sticky Navbar
   const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
-    if (window.scrollY >= 80) {
-      setSticky(true);
-    } else {
-      setSticky(false);
+    if (typeof window !== "undefined") {
+      if (window.scrollY >= 80) {
+        setSticky(true);
+      } else {
+        setSticky(false);
+      }
     }
   };
+
   useEffect(() => {
     window.addEventListener("scroll", handleStickyNavbar);
-  });
+    handleStickyNavbar();
+    return () => {
+      window.removeEventListener("scroll", handleStickyNavbar);
+    };
+  }, []);
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
-  const handleSubmenu = (index) => {
+  const handleSubmenu = (index: any) => {
     if (openIndex === index) {
       setOpenIndex(-1);
     } else {
@@ -45,39 +52,64 @@ const Header = () => {
   return (
     <>
       <header
-        className={`header left-0 top-0 z-40 flex w-full items-center ${
+        // WYSOKOŚĆ: 70px
+        style={{
+            height: sticky ? "70px" : "auto",
+            transition: "all 0.3s ease-in-out"
+        }}
+       className={`header left-0 top-0 z-40 flex w-full items-center ${
           sticky
-            ? "fixed z-[9999] bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm transition dark:bg-gray-dark dark:shadow-sticky-dark"
-            : "absolute bg-transparent"
+            ? "fixed z-[9999] bg-primary-light !bg-opacity-95 shadow-sticky backdrop-blur-sm dark:bg-bg-color-dark dark:shadow-sticky-dark !py-0" 
+            : "absolute bg-transparent py-8"
         }`}
       >
-        <div className="container">
-          <div className="relative -mx-4 flex items-center justify-between">
-            <div className="w-60 max-w-full px-4 xl:mr-12">
+        <div className="container h-full">
+          <div className="relative -mx-4 flex items-center justify-between h-full">
+            
+            {/* LOGO */}
+            <div className="w-60 max-w-full px-4 xl:mr-12 flex items-center h-full">
               <Link
                 href="/"
-                className={`header-logo block w-full ${
-                  sticky ? "py-5 lg:py-2" : "py-8"
-                } `}
+                className={`block w-full transition-all duration-300 ease-in-out hover:scale-110 ${
+                  sticky ? "!py-0" : "py-2"
+                }`}
               >
-                <Image
-                  src={getImagePath("/images/logo/logo-2.svg")}
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="w-full dark:hidden"
-                />
-                <Image
-                  src={getImagePath("/images/logo/logo.svg")}
-                  alt="logo"
-                  width={140}
-                  height={30}
-                  className="hidden w-full dark:block"
-                />
+                {/* WARUNEK 1: NIE-przyklejony (Pełne logo) */}
+                {!sticky && (
+                  <Image
+                    src={getImagePath("/images/logo/logo-2.svg")}
+                    alt="logo"
+                    width={140}
+                    height={30}
+                    className="w-full dark:hidden"
+                  />
+                )}
+                {!sticky && (
+                  <Image
+                    src={getImagePath("/images/logo/logo-2.svg")} // ZMIANA: logo-2.svg zamiast logo.svg
+                    alt="logo"
+                    width={140}
+                    height={30}
+                    className="hidden w-full dark:block"
+                  />
+                )}
+
+                {/* WARUNEK 2: PRZYKLEJONY (Ikonka) */}
+                {sticky && (
+                  <Image
+                    src={getImagePath("/images/logo/logo.svg")}
+                    alt="logo"
+                    width={70} 
+                    height={70}
+                    // ZMIANA: Dodałem 'translate-y-2', żeby przesunąć logo w dół i odkleić od górnej krawędzi
+                    className="!w-auto !h-[70px] object-contain scale-150 origin-left ml-1 translate-y-1"
+                  />
+                )}
               </Link>
             </div>
-            <div className="flex w-full items-center justify-between px-4">
-              <div>
+
+            <div className="flex w-full items-center justify-between px-4 h-full">
+              <div className="flex items-center h-full">
                 <button
                   onClick={navbarToggleHandler}
                   id="navbarToggler"
@@ -85,24 +117,24 @@ const Header = () => {
                   className="absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden"
                 >
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-text-main transition-all duration-300 dark:bg-white ${
                       navbarOpen ? " top-[7px] rotate-45" : " "
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-text-main transition-all duration-300 dark:bg-white ${
                       navbarOpen ? "opacity-0 " : " "
                     }`}
                   />
                   <span
-                    className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300 dark:bg-white ${
+                    className={`relative my-1.5 block h-0.5 w-[30px] bg-text-main transition-all duration-300 dark:bg-white ${
                       navbarOpen ? " top-[-8px] -rotate-45" : " "
                     }`}
                   />
                 </button>
                 <nav
                   id="navbarCollapse"
-                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-white px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
+                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-white px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-bg-color-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
                     navbarOpen
                       ? "visibility top-full opacity-100"
                       : "invisible top-[120%] opacity-0"
@@ -114,10 +146,12 @@ const Header = () => {
                         {menuItem.path ? (
                           <Link
                             href={menuItem.path}
-                            className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
+                            className={`flex text-base lg:mr-0 lg:inline-flex lg:px-0 ${
+                              sticky ? "!py-0" : "py-6"
+                            } ${
                               usePathName === menuItem.path
                                 ? "text-primary dark:text-white"
-                                : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
+                                : "text-text-main hover:text-primary dark:text-white/70 dark:hover:text-white"
                             }`}
                           >
                             {menuItem.title}
@@ -126,11 +160,17 @@ const Header = () => {
                           <>
                             <p
                               onClick={() => handleSubmenu(index)}
-                              className="flex cursor-pointer items-center justify-between py-2 text-base text-dark group-hover:text-primary dark:text-white/70 dark:group-hover:text-white lg:mr-0 lg:inline-flex lg:px-0 lg:py-6"
+                              className={`flex cursor-pointer items-center justify-between py-2 text-base text-text-main group-hover:text-primary dark:text-white/70 dark:group-hover:text-white lg:mr-0 lg:inline-flex lg:px-0 ${
+                                sticky ? "!py-0" : "py-6"
+                              }`}
                             >
                               {menuItem.title}
                               <span className="pl-3">
-                                <svg width="25" height="24" viewBox="0 0 25 24">
+                                <svg
+                                  width="25"
+                                  height="24"
+                                  viewBox="0 0 25 24"
+                                >
                                   <path
                                     fillRule="evenodd"
                                     clipRule="evenodd"
@@ -141,7 +181,7 @@ const Header = () => {
                               </span>
                             </p>
                             <div
-                              className={`submenu relative left-0 top-full rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 dark:bg-dark lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
+                              className={`submenu relative left-0 top-full rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 dark:bg-bg-color-dark lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
@@ -149,7 +189,7 @@ const Header = () => {
                                 <Link
                                   href={submenuItem.path}
                                   key={index}
-                                  className="block rounded py-2.5 text-sm text-dark hover:text-primary dark:text-white/70 dark:hover:text-white lg:px-3"
+                                  className="block rounded py-2.5 text-sm text-text-main hover:text-primary dark:text-white/70 dark:hover:text-white"
                                 >
                                   {submenuItem.title}
                                 </Link>
@@ -162,15 +202,17 @@ const Header = () => {
                   </ul>
                 </nav>
               </div>
-              <div className="flex items-center justify-end pr-16 lg:pr-0">
+              <div className="flex items-center justify-end pr-16 lg:pr-0 h-full">
                 {isAuthenticated ? (
                   <>
-                    <span className="hidden px-4 py-3 text-base font-medium text-dark dark:text-white md:block">
+                    <span className="hidden px-4 py-3 text-base font-medium text-text-main dark:text-white md:block">
                       Witaj, {user?.username}
                     </span>
                     <button
                       onClick={logout}
-                      className="ease-in-up hidden rounded-full bg-primary px-8 py-3 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9"
+                      className={`ease-in-up hidden rounded-full bg-primary px-8 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9 ${
+                        sticky ? "!py-2" : "py-3"
+                      }`}
                     >
                       Wyloguj
                     </button>
@@ -179,19 +221,23 @@ const Header = () => {
                   <>
                     <Link
                       href="/signin"
-                      className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
+                      className={`hidden px-7 text-base font-medium text-text-main hover:opacity-70 dark:text-white md:block ${
+                        sticky ? "!py-2" : "py-3"
+                      }`}
                     >
                       Zaloguj się
                     </Link>
                     <Link
                       href="/signup"
-                      className="ease-in-up hidden rounded-full bg-primary px-8 py-3 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9"
+                      className={`ease-in-up hidden rounded-full bg-primary px-8 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9 ${
+                        sticky ? "!py-2" : "py-3"
+                      }`}
                     >
                       Zarejestruj się
                     </Link>
                   </>
                 )}
-                <div>
+                <div className={`flex items-center ${sticky ? "scale-90" : ""}`}>
                   <ThemeToggler />
                 </div>
               </div>

@@ -1,11 +1,11 @@
-"use client";
-import ScrollUp from "@/components/Common/ScrollUp";
-import Hero from "@/components/Hero";
-import FeaturedRestaurants from "@/components/Restaurant/FeaturedRestaurants";
-import TopRated from "@/components/Restaurant/TopRated";
-import OurChoice from "@/components/Restaurant/OurChoice";
-import NearbyRestaurants from "@/components/Restaurant/NearbyRestaurants";
-import { useAuth } from "@/lib/useAuth";
+'use client';
+import ScrollUp from '@/components/Common/ScrollUp';
+import Hero from '@/components/Hero';
+import FilteredRestaurantsSection from '@/components/Restaurant/FilteredRestaurantsSection';
+import FeaturedRestaurants from '@/components/Restaurant/FeaturedRestaurants';
+import TopRated from '@/components/Restaurant/TopRated';
+import NearbyRestaurants from '@/components/Restaurant/NearbyRestaurants';
+import { useAuth } from '@/lib/useAuth';
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -23,8 +23,8 @@ export default function Home() {
       <ScrollUp />
       {!isAuthenticated && <Hero />}
       <FeaturedRestaurants />
+      <FilteredRestaurantsSection />
       <TopRated />
-      <OurChoice />
       <NearbyRestaurants />
     </>
   );

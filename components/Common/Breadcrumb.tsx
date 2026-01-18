@@ -9,7 +9,10 @@ const Breadcrumb = ({
 }) => {
   return (
     <>
-      <section className="relative z-10 overflow-hidden pt-28 lg:pt-[150px]">
+      {/* ZMIANA TUTAJ: Jeszcze większy padding górny */}
+      {/* Było: pt-44 lg:pt-[200px] */}
+      {/* Jest: pt-52 lg:pt-[250px] - teraz treść powinna być wyraźnie pod nagłówkiem */}
+      <section className="relative z-10 overflow-hidden pt-52 lg:pt-[250px]">
         <div className="container">
           <div className="-mx-4 flex flex-wrap items-center">
             <div className="w-full px-4 md:w-8/12 lg:w-7/12">

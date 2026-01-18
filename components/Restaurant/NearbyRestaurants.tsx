@@ -21,7 +21,7 @@ const NearbyRestaurants = () => {
   }, []);
 
   return (
-    <section className="bg-white dark:bg-gray-dark py-16 md:py-20 lg:py-28">
+    <section className="bg-primary-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28"> {/* <-- ZMIANA TŁA */}
       <div className="container">
         <SectionTitle
           title="W twojej okolicy"
@@ -31,14 +31,14 @@ const NearbyRestaurants = () => {
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div> {/* <-- SAM SIĘ NAPRAWIŁ */}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {nearbyRestaurants.map((restaurant, index) => (
               <div
                 key={restaurant.id}
-                className="wow fadeInUp hover:shadow-two dark:hover:shadow-gray-dark group relative overflow-hidden rounded-sm bg-white shadow-one duration-300 dark:bg-dark"
+                className="wow fadeInUp hover:shadow-two dark:hover:shadow-gray-dark group relative overflow-hidden rounded-sm bg-white shadow-one duration-300 dark:bg-bg-color-dark" // <-- ZMIANA (dark tło)
                 data-wow-delay={`.${index + 1}s`}
               >
                 <Link
@@ -59,45 +59,45 @@ const NearbyRestaurants = () => {
                   <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
                     <div>
                       <div className="mb-2 flex items-start justify-between">
-                        <h3 className="text-xl font-bold text-black hover:text-primary dark:text-white dark:hover:text-primary sm:text-2xl">
+                        <h3 className="text-xl font-bold text-text-main hover:text-primary dark:text-white dark:hover:text-primary sm:text-2xl"> {/* <-- ZMIANA (kolor tekstu) */}
                           {restaurant.name}
                         </h3>
-                        <div className="ml-4 flex items-center rounded-full bg-primary/10 px-3 py-1">
+                        <div className="ml-4 flex items-center rounded-full bg-primary/10 px-3 py-1"> {/* <-- SAM SIĘ NAPRAWIŁ */}
                           <svg
-                            className="mr-1 h-4 w-4 fill-current text-yellow-400"
+                            className="mr-1 h-4 w-4 fill-current text-yellow" // <-- ZMIANA (kolor gwiazdki)
                             viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                           </svg>
-                          <span className="text-sm font-semibold text-dark dark:text-white">
+                          <span className="text-sm font-semibold text-text-main dark:text-white"> {/* <-- ZMIANA (kolor tekstu) */}
                             {restaurant.rating.toFixed(1)}
                           </span>
                         </div>
                       </div>
 
-                      <p className="mb-3 text-sm font-medium text-body-color dark:text-body-color-dark">
+                      <p className="mb-3 text-sm font-medium text-light dark:text-body-color-dark"> {/* <-- ZMIANA (kolor tekstu) */}
                         {restaurant.cuisine} • {restaurant.priceRange}
                       </p>
 
                       {restaurant.description && (
-                        <p className="mb-4 text-base text-body-color dark:text-body-color-dark">
+                        <p className="mb-4 text-base text-light dark:text-body-color-dark"> {/* <-- ZMIANA (kolor tekstu) */}
                           {restaurant.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 border-t border-body-color border-opacity-10 pt-4 dark:border-white dark:border-opacity-10">
+                    <div className="flex flex-wrap items-center gap-4 border-t border-stroke border-opacity-10 pt-4 dark:border-white dark:border-opacity-10"> {/* <-- ZMIANA (kolor linii) */}
                       {restaurant.distance && (
                         <div className="flex items-center">
                           <svg
-                            className="mr-2 h-5 w-5 fill-current text-primary"
+                            className="mr-2 h-5 w-5 fill-current text-primary" // <-- SAM SIĘ NAPRAWIŁ
                             viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path d="M10 0C6.134 0 3 3.134 3 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5S8.619 4.5 10 4.5s2.5 1.119 2.5 2.5S11.381 9.5 10 9.5z" />
                           </svg>
-                          <span className="font-semibold text-dark dark:text-white">
+                          <span className="font-semibold text-text-main dark:text-white"> {/* <-- ZMIANA (kolor tekstu) */}
                             {restaurant.distance}
                           </span>
                         </div>
@@ -105,20 +105,20 @@ const NearbyRestaurants = () => {
 
                       <div className="flex items-center">
                         <svg
-                          className="mr-2 h-5 w-5 fill-current text-body-color dark:text-body-color-dark"
+                          className="mr-2 h-5 w-5 fill-current text-light dark:text-body-color-dark" // <-- ZMIANA (kolor ikony)
                           viewBox="0 0 20 20"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm.5-13H9v6l5.25 3.15.75-1.23-4.5-2.67V5z" />
                         </svg>
-                        <span className="text-sm text-body-color dark:text-body-color-dark">
+                        <span className="text-sm text-light dark:text-body-color-dark"> {/* <-- ZMIANA (kolor tekstu) */}
                           {restaurant.deliveryTime}
                         </span>
                       </div>
 
                       <div className="flex items-center">
                         <svg
-                          className="mr-2 h-5 w-5 fill-current text-body-color dark:text-body-color-dark"
+                          className="mr-2 h-5 w-5 fill-current text-light dark:text-body-color-dark" // <-- ZMIANA (kolor ikony)
                           viewBox="0 0 20 20"
                           xmlns="http://www.w3.org/2000/svg"
                         >
@@ -129,7 +129,7 @@ const NearbyRestaurants = () => {
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-sm text-body-color dark:text-body-color-dark">
+                        <span className="text-sm text-light dark:text-body-color-dark"> {/* <-- ZMIANA (kolor tekstu) */}
                           {restaurant.reviewCount} recenzji
                         </span>
                       </div>

@@ -9,7 +9,9 @@ const FeaturedRestaurants = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const featuredRestaurants = restaurantData.filter((restaurant) => restaurant.isPromoted);
+  const featuredRestaurants = restaurantData.filter(
+    (restaurant) => restaurant.isPromoted,
+  );
 
   const checkScrollability = () => {
     if (scrollContainerRef.current) {
@@ -39,7 +41,7 @@ const FeaturedRestaurants = () => {
   return (
     <section
       id="featured"
-      className="bg-gray-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28"
+      className="bg-primary-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28" // <-- ZMIANA TŁA
     >
       <div className="container">
         <SectionTitle
@@ -56,7 +58,7 @@ const FeaturedRestaurants = () => {
               aria-label="Przewiń w lewo"
             >
               <svg
-                className="h-6 w-6 fill-current text-dark dark:text-white"
+                className="h-6 w-6 fill-current text-text-main dark:text-white" // <-- ZMIANA KOLORU IKONY
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -72,7 +74,10 @@ const FeaturedRestaurants = () => {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {featuredRestaurants.map((restaurant) => (
-              <div key={restaurant.id} className="min-w-[300px] flex-shrink-0 sm:min-w-[350px] lg:min-w-[400px]">
+              <div
+                key={restaurant.id}
+                className="min-w-[300px] flex-shrink-0 sm:min-w-[350px] lg:min-w-[400px]"
+              >
                 <SingleRestaurant restaurant={restaurant} />
               </div>
             ))}
@@ -85,7 +90,7 @@ const FeaturedRestaurants = () => {
               aria-label="Przewiń w prawo"
             >
               <svg
-                className="h-6 w-6 fill-current text-dark dark:text-white"
+                className="h-6 w-6 fill-current text-text-main dark:text-white" // <-- ZMIANA KOLORU IKONY
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >

@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation";
-import restaurantData from "@/components/Restaurant/data/restaurantData";
-import { Restaurant } from "@/types/restaurant";
-import RestaurantReviews from "@/components/Restaurant/RestaurantReviews";
+import { notFound } from 'next/navigation';
+import { Restaurant } from '@/types/restaurant';
+import RestaurantReviews from '@/components/Restaurant/RestaurantReviews';
+import { getRestaurantById } from '@/lib/restaurants';
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
 type Props = { params: { id: string } };
 
@@ -9,27 +11,40 @@ export default async function RestaurantReviewsPage({ params }: Props) {
   const { id } = await params;
   const numericId = Number(id);
 
-  const restaurant: Restaurant | undefined = restaurantData.find(
-    (r) => r.id === numericId
-  );
+  try {
+    const result = await getRestaurantById(numericId);
+    const apiRestaurant = result.data;
 
-  if (!restaurant) return notFound();
+    if (!apiRestaurant) return notFound();
 
-  return (
-    <section className="overflow-hidden pt-12 pb-12 md:pt-[120px] md:pb-[120px]">
-      <div className="container">
-        <div className="flex flex-col lg:flex-row -mx-4">
-          <main className="w-full px-4 lg:pr-6 order-1">
-            <RestaurantReviews restaurant={restaurant} />
-          </main>
+    const restaurant: Restaurant = {
+      id: apiRestaurant.id,
+      name: apiRestaurant.name,
+      address: apiRestaurant.address,
+      cuisine: apiRestaurant.cuisine || 'Nieznana kuchnia',
+      rating: apiRestaurant.avg_rating || 0,
+      reviewCount: apiRestaurant.reviewCount || 0,
+      priceRange: apiRestaurant.priceRange || '—',
+      deliveryTime: apiRestaurant.deliveryTime || '—',
+      distance: apiRestaurant.distance || '—',
+      isPromoted: apiRestaurant.promoted || false,
+      image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : null,
+      description: apiRestaurant.description || 'Brak opisu.',
+    };
+
+    return (
+      <section className="overflow-hidden pt-12 pb-12 md:pt-[120px] md:pb-[120px]">
+        <div className="container">
+          <div className="flex flex-col lg:flex-row -mx-4">
+            <main className="w-full px-4 lg:pr-6 order-1">
+              <RestaurantReviews restaurant={restaurant} />
+            </main>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-export async function generateStaticParams() {
-  return restaurantData.map((r) => ({
-    id: String(r.id),
-  }));
+      </section>
+    );
+  } catch (error) {
+    console.error('Failed to fetch restaurant:', error);
+    return notFound();
+  }
 }

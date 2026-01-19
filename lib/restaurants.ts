@@ -41,11 +41,18 @@ export async function getRestaurants(params?: { search?: string; cuisine?: strin
   // Populate relacji (jeśli masz)
   url.searchParams.append('populate', '*');
 
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const response = await fetch(url.toString(), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     cache: 'no-store', // lub 'force-cache' w zależności od potrzeb
   });
 
@@ -54,4 +61,38 @@ export async function getRestaurants(params?: { search?: string; cuisine?: strin
   }
 
   return response.json();
+}
+
+export async function getRestaurantById(id: string | number) {
+  const url = new URL(`${STRAPI_URL}/api/restaurants`);
+  url.searchParams.append('filters[id][$eq]', String(id));
+  url.searchParams.append('populate', '*');
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers,
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch restaurant with id ${id}. Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const restaurant = data.data?.[0];
+
+  if (!restaurant) {
+    throw new Error(`Restaurant with id ${id} not found`);
+  }
+
+  return { data: restaurant, meta: data.meta };
 }

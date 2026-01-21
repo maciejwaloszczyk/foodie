@@ -53,7 +53,7 @@ class TripAdvisorScraper(BaseScraper):
         
         params = {
             "key": api_key,
-            "language": "en",
+            "language": "pl",
             "currency": "PLN"
         }
         headers = {"accept": "application/json"}
@@ -68,7 +68,7 @@ class TripAdvisorScraper(BaseScraper):
 
     def get_place_photos(self, location_id):
         """
-        TripAdvisor często oddziela zdjęcia od szczegółów.
+        TripAdvisor oddziela zdjęcia od szczegółów.
         Endpoint: /api/v1/location/{locationId}/photos
         """
         api_key = os.environ.get("TRIPADVISOR_API_KEY")
@@ -81,7 +81,6 @@ class TripAdvisorScraper(BaseScraper):
             if response.status_code == 200:
                 photos_data = response.json()
                 if "data" in photos_data and len(photos_data["data"]) > 0:
-                    # Pobieramy URL zdjęcia w dużej rozdzielczości (original lub large)
                     images = photos_data["data"][0].get("images", {})
                     return images.get("large", {}).get("url")
             return None

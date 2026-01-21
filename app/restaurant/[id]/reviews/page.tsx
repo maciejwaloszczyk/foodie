@@ -17,11 +17,14 @@ export default async function RestaurantReviewsPage({ params }: Props) {
 
     if (!apiRestaurant) return notFound();
 
+    // Pobierz kategorie i połącz je w jeden string
+    const categories = Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia';
+
     const restaurant: Restaurant = {
       id: apiRestaurant.id,
       name: apiRestaurant.name,
       address: apiRestaurant.address,
-      cuisine: apiRestaurant.cuisine || 'Nieznana kuchnia',
+      cuisine: categories,
       rating: apiRestaurant.avg_rating || 0,
       reviewCount: apiRestaurant.reviewCount || 0,
       priceRange: apiRestaurant.priceRange || '—',

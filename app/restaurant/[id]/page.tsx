@@ -18,15 +18,12 @@ export default async function RestaurantPage({ params }: Props) {
     if (!apiRestaurant) return notFound();
 
     // Mapowanie danych z API na typ Restaurant
-    const imageUrl = apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : null;
+    const cover = apiRestaurant.cover;
 
-    // Debug: loguj dostępne pola
-    console.log('API Restaurant data:', apiRestaurant);
+    const imageUrl = cover?.formats?.large?.url ? `${STRAPI_URL}${cover.formats.large.url}` : cover?.formats?.medium?.url ? `${STRAPI_URL}${cover.formats.medium.url}` : cover?.url ? `${STRAPI_URL}${cover.url}` : null;
 
     // Pobierz kategorie i połącz je w jeden string
     const categories = Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia';
-
-    console.log('Categories:', categories);
 
     const restaurant: Restaurant = {
       id: apiRestaurant.id,

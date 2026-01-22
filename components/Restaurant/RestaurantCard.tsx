@@ -34,13 +34,13 @@ function Header({ restaurant }: Props) {
 }
 
 function ImageBlock({ restaurant }: Props) {
-  const imageSrc = restaurant.image ? restaurant.image : '/images/blog/image-placeholder.jpg';
-  const imageAlt = restaurant.image == '' ? 'Brak zdjęcia restauracji' : restaurant.name;
+  const imageSrc = restaurant.image ?? '/images/blog/image-placeholder.jpg';
+  const imageAlt = restaurant.image ? restaurant.name : 'Brak zdjęcia restauracji';
 
   return (
     <div className="w-full rounded overflow-hidden mb-6">
       <div className="relative w-full h-56 sm:h-72 md:h-96">
-        <img src={imageSrc} alt={imageAlt} className="absolute h-full w-full object-cover" />
+        <Image src={imageSrc} alt={imageAlt} fill priority quality={90} sizes="(max-width: 768px) 100vw, 1024px" className="object-cover" />
       </div>
     </div>
   );

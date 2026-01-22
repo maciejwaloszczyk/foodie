@@ -1,27 +1,77 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import SearchBar from '@/components/Restaurant/SearchBar';
 import RestaurantFilters from '@/components/Restaurant/RestaurantFilters';
 import SingleRestaurant from '@/components/Restaurant/SingleRestaurant';
 import { Restaurant } from '@/types/restaurant';
-import restaurantData from '@/components/Restaurant/data/restaurantData';
+import { getRestaurants } from '@/lib/restaurants';
 
 const FilteredRestaurantsSection = () => {
-  const [searchResults, setSearchResults] = useState<Restaurant[]>(restaurantData);
+  const [searchResults, setSearchResults] = useState<Restaurant[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('default');
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+
+  // Load initial restaurants on mount
+  useEffect(() => {
+    const loadInitialRestaurants = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getRestaurants();
+        const restaurants =
+          response.data?.map((apiRestaurant: any) => ({
+            id: apiRestaurant.id,
+            name: apiRestaurant.name,
+            address: apiRestaurant.address,
+            cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
+            rating: apiRestaurant.avg_rating || 0,
+            reviewCount: apiRestaurant.reviewCount || 0,
+            priceRange: apiRestaurant.priceRange || '—',
+            deliveryTime: apiRestaurant.deliveryTime || '—',
+            distance: apiRestaurant.distance || '—',
+            isPromoted: apiRestaurant.promoted || false,
+            image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
+            description: apiRestaurant.description || '',
+            location: apiRestaurant.latitude && apiRestaurant.longitude ? { lat: apiRestaurant.latitude, lng: apiRestaurant.longitude } : undefined,
+          })) || [];
+        setSearchResults(restaurants);
+      } catch (error) {
+        console.error('Failed to load restaurants:', error);
+        setSearchResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialRestaurants();
+  }, []);
 
   const handleSearch = (results: Restaurant[]) => {
     setSearchResults(results);
   };
+
+  // Resetuj stronę po zmianie wyników lub filtrów
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchResults, selectedCategory, selectedRating, sortBy]);
+
+  // Scroll do góry listy przy zmianie strony
+  useEffect(() => {
+    if (resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [currentPage]);
 
   // Kombinuj wyniki wyszukiwania z filtrami i sortowaniem
   const finalResults = useMemo(() => {
     let results = searchResults;
 
     if (selectedCategory) {
-      results = results.filter((restaurant) => restaurant.cuisine === selectedCategory);
+      results = results.filter((restaurant) => restaurant.cuisine?.includes(selectedCategory));
     }
 
     if (selectedRating > 0) {
@@ -50,6 +100,13 @@ const FilteredRestaurantsSection = () => {
     return sortedResults;
   }, [searchResults, selectedCategory, selectedRating, sortBy]);
 
+  const pageSize = 24;
+  const totalPages = Math.max(1, Math.ceil(finalResults.length / pageSize));
+  const paginatedResults = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return finalResults.slice(start, start + pageSize);
+  }, [finalResults, currentPage]);
+
   const handleFilterChange = (category: string, rating: number) => {
     setSelectedCategory(category);
     setSelectedRating(rating);
@@ -70,13 +127,13 @@ const FilteredRestaurantsSection = () => {
           </div>
 
           {/* Wyniki */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3" ref={resultsRef}>
             <div className="mb-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-dark dark:text-white">Wszystkie restauracje</h2>
                   <p className="mt-2 text-sm text-body-color dark:text-body-color-dark">
-                    Znaleziono <span className="font-bold">{finalResults.length}</span> restauracji
+                    Znaleziono <span className="font-bold">{isLoading ? '...' : finalResults.length}</span> restauracji
                   </p>
                 </div>
 
@@ -86,7 +143,7 @@ const FilteredRestaurantsSection = () => {
                     Sortuj:
                   </label>
                   <div className="relative inline-block">
-                    <select className="appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-dark focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-dark dark:text-white" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    <select className="appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-sm text-dark focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-dark dark:text-white" value={sortBy} onChange={(e) => setSortBy(e.target.value)} disabled={isLoading}>
                       <option value="default">Trafność (największa)</option>
                       <option value="rating">Ocena (malejąco)</option>
                       <option value="reviews">Liczba opinii (malejąco)</option>
@@ -101,9 +158,13 @@ const FilteredRestaurantsSection = () => {
               </div>
             </div>
 
-            {finalResults.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center py-20">
+                <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+              </div>
+            ) : finalResults.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {finalResults.map((restaurant) => (
+                {paginatedResults.map((restaurant) => (
                   <SingleRestaurant key={restaurant.id} restaurant={restaurant} />
                 ))}
               </div>
@@ -114,6 +175,20 @@ const FilteredRestaurantsSection = () => {
                 </svg>
                 <h3 className="mt-4 text-lg font-medium text-dark dark:text-white">Brak restauracji</h3>
                 <p className="mt-2 text-body-color dark:text-body-color-dark">Spróbuj zmienić kryteria wyszukiwania lub filtrowania</p>
+              </div>
+            )}
+
+            {!isLoading && finalResults.length > 0 && (
+              <div className="mt-8 flex items-center justify-center gap-3">
+                <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-md border border-gray-300 px-3 py-2 text-sm text-dark transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-white dark:hover:border-primary">
+                  Poprzednia
+                </button>
+                <span className="text-sm text-body-color dark:text-body-color-dark">
+                  Strona <span className="font-semibold text-dark dark:text-white">{currentPage}</span> z <span className="font-semibold text-dark dark:text-white">{totalPages}</span>
+                </span>
+                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-md border border-gray-300 px-3 py-2 text-sm text-dark transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-white dark:hover:border-primary">
+                  Następna
+                </button>
               </div>
             )}
           </div>

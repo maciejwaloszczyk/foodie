@@ -1,5 +1,6 @@
 from scrapers.google_places import GooglePlaces
+from scrapers.google_places_csv import GooglePlacesCsv
 
 
-scrappy = GooglePlaces()
-scrappy.run("restaurants+in+Krakow")
+scrappy = GooglePlacesCsv()
+scrappy.run("najlepszy+kebab+w+Warszawie")

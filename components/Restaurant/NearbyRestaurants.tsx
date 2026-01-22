@@ -52,13 +52,13 @@ const NearbyRestaurants = () => {
   }, []);
 
   return (
-    <section className="bg-white dark:bg-gray-dark py-16 md:py-20 lg:py-28">
+    <section className="bg-primary-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28"> {/* <-- ZMIANA TŁA */}
       <div className="container">
         <SectionTitle title="W twojej okolicy" paragraph="Znajdź najlepsze restauracje w Twojej okolicy" center />
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+            <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div> {/* <-- SAM SIĘ NAPRAWIŁ */}
           </div>
         ) : nearbyRestaurants.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
@@ -103,7 +103,7 @@ const NearbyRestaurants = () => {
                       {restaurant.description && <p className="mb-4 text-base text-body-color dark:text-body-color-dark">{restaurant.description}</p>}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 border-t border-body-color border-opacity-10 pt-4 dark:border-white dark:border-opacity-10">
+                    <div className="flex flex-wrap items-center gap-4 border-t border-stroke border-opacity-10 pt-4 dark:border-white dark:border-opacity-10"> {/* <-- ZMIANA (kolor linii) */}
                       {restaurant.distance && (
                         <div className="flex items-center">
                           <svg className="mr-2 h-5 w-5 fill-current text-primary" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

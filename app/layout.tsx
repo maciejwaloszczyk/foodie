@@ -7,6 +7,8 @@ import { AuthProvider } from "@/lib/useAuth";
 import { Inter } from "next/font/google";
 import "node_modules/react-modal-video/css/modal-video.css";
 import "../styles/index.css";
+import { usePathname } from "next/navigation";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,20 +17,39 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html suppressHydrationWarning lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.js. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
+  const pathname = usePathname();
 
-      <body className={`bg-[#FCFCFC] dark:bg-black ${inter.className}`}>
+  // Lista stron, na których NIE chcemy nagłówka i stopki
+  const noHeaderFooterRoutes = ["/error", "/404", "/403", "/signin", "/signup"];
+
+  // Sprawdzamy, czy obecna ścieżka jest na liście wykluczonych
+  const showHeaderFooter = !noHeaderFooterRoutes.includes(pathname);
+
+  return (
+    <html suppressHydrationWarning lang="pl">
+      {/* TUTAJ ZMIANA: Zamiast <head /> wpisaliśmy tagi na sztywno.
+         To rozwiązuje problem braku tytułu w komponentach "use client".
+      */}
+    <head>
+        <title>Foodie - Odkryj najlepsze smaki</title>
+        <meta name="description" content="Najlepsze jedzenie w Twojej okolicy." />
+        {/* Wymuszamy nowe logo parametrem ?v=2 */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
+
+
+
+      <body className={`bg-primary-light dark:bg-bg-color-dark ${inter.className}`}>
         <Providers>
           <AuthProvider>
-            <Header />
+            {/* Wyświetlamy Header tylko jeśli nie jesteśmy na stronie logowania/błędu */}
+            {showHeaderFooter && <Header />}
+            
             {children}
-            <Footer />
+            
+            {/* Wyświetlamy Footer tylko jeśli nie jesteśmy na stronie logowania/błędu */}
+            {showHeaderFooter && <Footer />}
+            
             <ScrollToTop />
           </AuthProvider>
         </Providers>
@@ -36,5 +57,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-import { Providers } from "./providers";

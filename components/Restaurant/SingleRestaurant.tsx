@@ -1,6 +1,6 @@
-import { Restaurant } from "@/types/restaurant";
-import Image from "next/image";
-import Link from "next/link";
+import { Restaurant } from '@/types/restaurant';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const SingleRestaurant = ({ restaurant }: { restaurant: Restaurant }) => {
   const {

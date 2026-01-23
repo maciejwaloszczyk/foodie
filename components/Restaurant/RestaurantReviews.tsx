@@ -5,12 +5,7 @@ import { useAuth } from '@/lib/useAuth';
 import { useState, useEffect } from 'react';
 import { Restaurant } from '@/types/restaurant';
 import { Review } from '@/types/review';
-
-// data imports used to resolve names/attributes for rendering reviews
-import { dishData } from './data/dishData';
-import { userData } from './data/userData';
-import { reviewData, reviewDetailsData } from './data/reviewData';
-import { attributeData } from './data/attributeData';
+import { getReviewsByRestaurant, getDishesByRestaurant } from '@/lib/reviews';
 import type { Dish } from '@/types/dish';
 
 type Props = {
@@ -76,10 +71,6 @@ function Header({ restaurant }: { restaurant: Restaurant }) {
 
       <div className="flex flex-wrap items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
         <span className="text-gray-800 dark:text-gray-200">{restaurant.cuisine}</span>
-        <span className="text-gray-800 dark:text-gray-200">•</span>
-        <span className="text-gray-800 dark:text-gray-200">{restaurant.priceRange}</span>
-        <span className="text-gray-800 dark:text-gray-200">•</span>
-        <span className="text-gray-800 dark:text-gray-200">{restaurant.deliveryTime}</span>
         {restaurant.isPromoted && (
           <>
             <span className="text-gray-800 dark:text-gray-200">•</span>
@@ -99,30 +90,44 @@ function Header({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function ReviewForm({ selectedDishId, setSelectedDishId, dishes, onAdd, onOpenEdit }: { selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
+function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, onAdd, onOpenEdit }: { selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; baseReviews: any[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
   const { isAuthenticated, loading, user, token } = useAuth();
   const [name, setName] = useState<string>('');
   const [comment, setComment] = useState<string>('');
+  const [rating, setRating] = useState<number>(3);
   const [attrRatings, setAttrRatings] = useState<Record<number, number | string>>({});
+  const [dishAttributes, setDishAttributes] = useState<any[]>([]);
   const [showDuplicatePopup, setShowDuplicatePopup] = useState(false);
   const [duplicateTargetId, setDuplicateTargetId] = useState<number | null>(null);
 
   // const [isSubmitting, setIsSubmitting] = useState(false);
   // const [submissionError, setSubmissionError] = useState<string | null>(null);
 
-  const selectedDish = selectedDishId === 'all' ? null : dishData.find((d) => d.id === selectedDishId);
+  const selectedDish = selectedDishId === 'all' ? null : dishes.find((d) => d.id === selectedDishId);
 
   useEffect(() => {
-    if (selectedDish) {
+    if (selectedDishId === 'all' || !selectedDishId) {
+      setDishAttributes([]);
+      setAttrRatings({});
+      return;
+    }
+
+    // Atrybuty są już w selectedDish.dish_attributes
+    if (selectedDish && selectedDish.dish_attributes) {
+      const attributes = selectedDish.dish_attributes;
+      setDishAttributes(attributes);
+
+      // Initialize attribute ratings
       const init: Record<number, number> = {};
-      (selectedDish.dish_attributes ?? []).forEach((attrId) => {
-        init[attrId] = 8;
+      attributes.forEach((attr: any) => {
+        init[attr.id] = 8;
       });
       setAttrRatings(init);
     } else {
+      setDishAttributes([]);
       setAttrRatings({});
     }
-  }, [selectedDishId]);
+  }, [selectedDishId, selectedDish]);
 
   if (loading) {
     return <div className="mb-6 p-4 text-sm text-gray-600 dark:text-gray-400">Ładowanie...</div>;
@@ -151,84 +156,17 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, onAdd, onOpenEd
       return;
     }
 
-    // prevent same user from adding multiple reviews for the same dish
-    const existingReview = reviewData.find((r) => r.dish_id === selectedDish.id && r.user_id === user.id);
+    // Check if user already has a review for this dish
+    const existingReview = baseReviews.find((r) => r.dish_id === selectedDish.id && r.user_id === user.id);
     if (existingReview) {
       setDuplicateTargetId(existingReview.id);
       setShowDuplicatePopup(true);
       return;
     }
 
-    // // generate new review id
-    const maxReviewId = reviewData.reduce((m, r) => (r.id > m ? r.id : m), 0);
-    const newReviewId = maxReviewId + 1;
-
-    // // generate new review detail ids and push details
-    const maxDetailId = reviewDetailsData.reduce((m, d) => (d.id > m ? d.id : m), 100);
-    let nextDetailId = maxDetailId + 1;
-    const newDetailIds: number[] = [];
-
-    // build weighted list of attribute ratings (and persist review detail records)
-    const weightedItems: { rating: number; weight: number }[] = [];
-    Object.entries(attrRatings).forEach(([attrIdStr, v]) => {
-      const attrId = Number(attrIdStr);
-      const attr = attributeData.find((a) => a.id === attrId);
-      const weight = attr?.weight ?? 1;
-      const ratingValRaw = Number(v as any);
-      const ratingVal = Number.isNaN(ratingValRaw) ? 8 : Math.max(1, Math.min(10, ratingValRaw));
-      const detail = { id: nextDetailId++, rating: ratingVal, review_id: newReviewId, attribute_id: attrId };
-      reviewDetailsData.push(detail);
-      newDetailIds.push(detail.id);
-      weightedItems.push({ rating: ratingVal, weight });
-    });
-
-    // compute overall_rating scaled to 1..5 using weighted average of attributes (attributes rated 1..10)
-    const totalWeight = weightedItems.reduce((s, it) => s + it.weight, 0);
-    const weightedSum = weightedItems.reduce((s, it) => s + it.rating * it.weight, 0);
-    const avgOn10 = totalWeight > 0 ? weightedSum / totalWeight : 0;
-    // normalize to 1..5 scale and round to one decimal
-    const overall = avgOn10 > 0 ? Math.round((avgOn10 / 2) * 10) / 10 : 0;
-
-    const newReview = {
-      id: newReviewId,
-      comment,
-      overall_rating: overall,
-      user_id: user.id,
-      dish_id: selectedDish.id,
-      review_details: newDetailIds,
-    };
-
-    // push into reviewData
-    reviewData.push(newReview);
-
-    // update dish's reviews array and recalc dish.rating
-    const dishObj = dishData.find((d) => d.id === selectedDish.id);
-    if (dishObj) {
-      dishObj.reviews = Array.isArray(dishObj.reviews) ? [...dishObj.reviews, newReviewId] : [newReviewId];
-
-      // recalc dish rating as average of stored overall_rating values (assumed 1..5 scale)
-      const values = reviewData
-        .filter((r) => r.dish_id === dishObj.id)
-        .map((r) => r.overall_rating ?? 0)
-        .filter((v) => v > 0);
-      const avg = values.length ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10 : 0;
-      dishObj.rating = avg;
-    }
-
-    // add review id to demo user (user id 1) if exists
-    const userObj = userData.find((u) => u.id === user.id);
-    if (userObj) {
-      userObj.reviews = Array.isArray(userObj.reviews) ? [...userObj.reviews, newReviewId] : [newReviewId];
-    } else {
-      // jeśli brak użytkownika w lokalnym userData, dodajemy wpis (minimalny)
-      userData.push({ id: user.id, username: (user.username as string) ?? 'user', reviews: [newReviewId] });
-    }
-
-    setAttrRatings({});
-    setComment('');
-    setName('');
-    setSelectedDishId('all');
-    if (onAdd) onAdd();
+    // TODO: Implementacja dodawania opinii
+    // Gdy Strapi będzie miał uprawnienia do ustawiania relacji dla JWT
+    alert('Funkcja dodawania opinii jest w trakcie pracy. Spróbuj później!');
   };
 
   return (
@@ -249,33 +187,33 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, onAdd, onOpenEd
       </div>
 
       <div className="space-y-4">
-        {/* If no dish selected, instruct user and hide attribute sliders */}
+        {/* If no dish selected, instruct user and hide sliders */}
         {!selectedDish ? (
-          <div className="rounded-md border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">Wybierz danie z menu powyżej, aby ocenić jego atrybuty i dodać opinię.</div>
+          <div className="rounded-md border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">Wybierz danie z menu powyżej, aby ocenić je i dodać opinię.</div>
         ) : (
           <>
-            {/* dynamic attribute sliders for the selected dish */}
-            {(selectedDish.dish_attributes ?? []).map((attrId) => {
-              const attr = attributeData.find((a) => a.id === attrId);
+            {/* Attribute sliders for the selected dish */}
+            {dishAttributes.map((attr) => {
+              const val = attrRatings[attr.id] ?? 8;
               return (
-                <div key={attrId}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attr?.name}</label>
+                <div key={attr.id}>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attr.name}</label>
                   <div className="flex items-center gap-3">
-                    <input type="range" min={1} max={10} step={1} value={Number(attrRatings[attrId] ?? 8)} onChange={(e) => setAttrRatings((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))} className="w-full accent-blue-600" />
+                    <input type="range" min={1} max={10} step={1} value={Number(val)} onChange={(e) => setAttrRatings((prev) => ({ ...prev, [attr.id]: Number(e.target.value) }))} className="w-full accent-blue-600" />
                     <input
                       type="number"
                       min={1}
                       max={10}
                       step={1}
-                      value={attrRatings[attrId] === '' ? '' : (attrRatings[attrId] ?? 8)}
+                      value={val === '' ? '' : val}
                       onChange={(e) => {
                         const raw = e.target.value;
                         if (raw === '') {
-                          setAttrRatings((prev) => ({ ...prev, [attrId]: '' }));
+                          setAttrRatings((prev) => ({ ...prev, [attr.id]: '' }));
                           return;
                         }
                         const v = Number(raw);
-                        if (!Number.isNaN(v)) setAttrRatings((prev) => ({ ...prev, [attrId]: Math.max(1, Math.min(10, v)) }));
+                        if (!Number.isNaN(v)) setAttrRatings((prev) => ({ ...prev, [attr.id]: Math.max(1, Math.min(10, v)) }));
                       }}
                       className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     />
@@ -283,24 +221,25 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, onAdd, onOpenEd
                 </div>
               );
             })}
-          </>
-        )}
 
-        {/* Name + comment - only visible when a dish is selected */}
-        {selectedDish ? (
-          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
-            <div className="sm:col-span-6">
+            {/* Comment section */}
+            <div>
               <label className="block text-xs text-white mb-1">Treść opinii</label>
               <textarea value={comment} onChange={(e) => setComment(e.target.value)} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[120px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" placeholder="Napisz, co Ci się podobało / nie podobało..." />
             </div>
+          </>
+        )}
 
+        {/* Buttons - only visible when a dish is selected */}
+        {selectedDish ? (
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
             <div className="sm:col-span-6 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
                   setAttrRatings({});
-                  setName('');
                   setComment('');
+                  setName('');
                 }}
                 className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >
@@ -344,31 +283,23 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, onAdd, onOpenEd
   );
 }
 
-function ReviewCard({ rev, onModify, editOpen, onCloseEdit }: { rev: any; onModify?: (opts?: { showSuccess?: boolean; action?: 'add' | 'edit' | 'delete' }) => void; editOpen?: boolean; onCloseEdit?: () => void }) {
+function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any; onModify?: (opts?: { showSuccess?: boolean; action?: 'add' | 'edit' | 'delete' }) => void; editOpen?: boolean; onCloseEdit?: () => void; dishes?: any[] }) {
   const auth = useAuth();
   const authUser = auth?.user;
   const [isEditing, setIsEditing] = useState(false);
   const [editComment, setEditComment] = useState<string>(rev.comment ?? '');
-  const [editDetailsMap, setEditDetailsMap] = useState<Record<number, number>>({});
 
-  // first try to resolve from local userData, fallback to auth user if ids match
-  let user = userData.find((u) => u.id === rev.user_id) as any | undefined;
+  // Get user from API data or auth user if they are the reviewer
+  let user = { id: rev.user_id, username: rev.username ?? 'Anonim' } as any;
   if (!user && authUser && authUser.id === rev.user_id) {
-    user = { id: authUser.id, username: (authUser.username as string) ?? 'user', reviews: [] };
+    user = { id: authUser.id, username: (authUser.username as string) ?? 'user' };
   }
 
-  const dish = dishData.find((d) => d.id === rev.dish_id);
-
-  const details = (rev.review_details ?? []).map((id: number) => reviewDetailsData.find((rd) => rd.id === id)).filter(Boolean) as any[];
+  const details = [] as any[];
 
   // populate edit map when entering edit mode
   useEffect(() => {
     if (isEditing) {
-      const map: Record<number, number> = {};
-      details.forEach((d) => {
-        if (d) map[d.attribute_id] = d.rating;
-      });
-      setEditDetailsMap(map);
       setEditComment(rev.comment ?? '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -406,29 +337,11 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit }: { rev: any; onModi
                   Edytuj
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     // delete flow
                     if (!confirm('Czy na pewno chcesz usunąć tę opinię?')) return;
-                    // remove review from reviewData
-                    const idx = reviewData.findIndex((r) => r.id === rev.id);
-                    if (idx !== -1) reviewData.splice(idx, 1);
-                    // remove review details
-                    for (let i = reviewDetailsData.length - 1; i >= 0; i--) {
-                      if (reviewDetailsData[i].review_id === rev.id) reviewDetailsData.splice(i, 1);
-                    }
-                    // remove from dish.reviews and recalc dish.rating
-                    const dishObj = dishData.find((d) => d.id === rev.dish_id);
-                    if (dishObj) {
-                      dishObj.reviews = Array.isArray(dishObj.reviews) ? dishObj.reviews.filter((id) => id !== rev.id) : [];
-                      const values = reviewData
-                        .filter((r) => r.dish_id === dishObj.id)
-                        .map((r) => r.overall_rating ?? 0)
-                        .filter((v) => v > 0);
-                      dishObj.rating = values.length ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10 : 0;
-                    }
-                    // remove from userData
-                    const u = userData.find((uu) => uu.id === rev.user_id);
-                    if (u) u.reviews = Array.isArray(u.reviews) ? u.reviews.filter((id) => id !== rev.id) : [];
+                    // Delete would be handled through API in future
+                    // For now, just refresh
                     if (onModify) onModify({ showSuccess: true, action: 'delete' });
                     if (onCloseEdit) onCloseEdit();
                   }}
@@ -445,31 +358,31 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit }: { rev: any; onModi
       {/* DESCRIPTION + Produkt (produkt przeniesiony tutaj ponad opis) */}
       <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3">
         <div className="text-sm text-gray-500 mb-2">
-          Danie: <span className="font-semibold text-gray-800 dark:text-gray-200">{dish?.name ?? '—'}</span>
+          Danie: <span className="font-semibold text-gray-800 dark:text-gray-200">{rev.dish_name ?? '—'}</span>
         </div>
         <p className="text-gray-800 dark:text-gray-200 text-base whitespace-pre-line font-medium">{rev.comment}</p>
       </div>
 
       {/* ATTRIBUTES */}
       <div className="border-t border-gray-100 dark:border-gray-800 px-4 py-3 bg-gray-50 dark:bg-gray-900">
-        <div className="text-xs text-gray-500 mb-2">Oceny atrybutów</div>
-        <div className="space-y-2">
-          {details.length > 0 ? (
-            details.map((d) => {
-              const attr = attributeData.find((a) => a.id === d.attribute_id);
+        {rev.attribute_ratings && Object.keys(rev.attribute_ratings).length > 0 ? (
+          <div className="space-y-2">
+            <div className="text-xs text-gray-600 font-semibold dark:text-gray-400 mb-2">Oceny atrybutów:</div>
+            {Object.entries(rev.attribute_ratings).map(([attrId, rating]: [string, any]) => {
+              const dish = dishes?.find((d) => d.id === rev.dish_id);
+              const attrName = dish?.dish_attributes?.find((a: any) => a.id === Number(attrId))?.name || `Atrybut #${attrId}`;
+              const displayRating = Number(rating) * 2; // backend stores 0-5, show as 0-10
               return (
-                <div key={d.id} className="flex items-center gap-3 text-sm text-gray-700 font-medium dark:text-gray-300">
-                  <span title={`${d.rating}/10`} className={`inline-flex items-center justify-center w-10 h-6 rounded-full text-xs font-semibold ${getBadgeClasses(d.rating)}`}>
-                    {d.rating}
-                  </span>
-                  <div>{attr?.name ?? `Atrybut ${d.attribute_id}`}</div>
+                <div key={attrId} className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700 dark:text-gray-300">{attrName}</span>
+                  <span className={`px-2 py-1 rounded text-xs font-semibold ${getBadgeClasses(displayRating)}`}>{displayRating}/10</span>
                 </div>
               );
-            })
-          ) : (
-            <div className="text-xs text-gray-500">Brak ocen atrybutów dla tej opinii.</div>
-          )}
-        </div>
+            })}
+          </div>
+        ) : (
+          <div className="text-xs text-gray-500">Brak szczegółowych ocen atrybutów</div>
+        )}
       </div>
 
       {isEditing && (
@@ -482,92 +395,12 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit }: { rev: any; onModi
                 <textarea value={editComment} onChange={(e) => setEditComment(e.target.value)} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[100px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
               </div>
 
-              <div>
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Oceny atrybutów</div>
-                <div className="space-y-3">
-                  {Object.keys(editDetailsMap).length > 0 ? (
-                    Object.keys(editDetailsMap).map((k) => {
-                      const attrId = Number(k);
-                      const attr = attributeData.find((a) => a.id === attrId);
-                      const val = editDetailsMap[attrId] ?? 8;
-                      return (
-                        <div key={attrId} className="flex items-center gap-3">
-                          <div className="w-full">
-                            <label className="block text-xs text-gray-600 dark:text-gray-300 mb-1">{attr?.name ?? `Atrybut ${attrId}`}</label>
-                            <input type="range" min={1} max={10} step={1} value={val} onChange={(e) => setEditDetailsMap((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))} className="w-full accent-blue-600" />
-                          </div>
-                          <input
-                            type="number"
-                            min={1}
-                            max={10}
-                            step={1}
-                            value={val}
-                            onChange={(e) => {
-                              const raw = e.target.value;
-                              const v = Number(raw);
-                              if (!Number.isNaN(v)) setEditDetailsMap((prev) => ({ ...prev, [attrId]: Math.max(1, Math.min(10, v)) }));
-                            }}
-                            className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-sm text-gray-500">Brak atrybutów do edycji.</div>
-                  )}
-                </div>
-              </div>
-
               <div className="flex justify-end gap-3">
                 <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
                   Anuluj
                 </button>
                 <button
                   onClick={() => {
-                    // apply edits: update reviewDetailsData and reviewData, recalc overall and dish rating
-                    // ensure numeric ratings
-                    const weightedItems: { rating: number; weight: number }[] = [];
-                    // update existing detail entries or create if missing
-                    let maxDetailId = reviewDetailsData.reduce((m, d) => (d.id > m ? d.id : m), 100);
-                    Object.entries(editDetailsMap).forEach(([attrIdStr, v]) => {
-                      const attrId = Number(attrIdStr);
-                      const ratingVal = Number(v as any);
-                      const attr = attributeData.find((a) => a.id === attrId);
-                      const weight = attr?.weight ?? 1;
-                      // find existing detail record
-                      const existing = reviewDetailsData.find((rd) => rd.review_id === rev.id && rd.attribute_id === attrId);
-                      if (existing) {
-                        existing.rating = ratingVal;
-                      } else {
-                        maxDetailId += 1;
-                        reviewDetailsData.push({ id: maxDetailId, rating: ratingVal, review_id: rev.id, attribute_id: attrId });
-                        // also add to review's review_details array if present
-                        if (Array.isArray(rev.review_details)) rev.review_details.push(maxDetailId);
-                      }
-                      weightedItems.push({ rating: ratingVal, weight });
-                    });
-
-                    const totalWeight = weightedItems.reduce((s, it) => s + it.weight, 0);
-                    const weightedSum = weightedItems.reduce((s, it) => s + it.rating * it.weight, 0);
-                    const avgOn10 = totalWeight > 0 ? weightedSum / totalWeight : 0;
-                    const overall = avgOn10 > 0 ? Math.round((avgOn10 / 2) * 10) / 10 : 0;
-
-                    const reviewObj = reviewData.find((r) => r.id === rev.id);
-                    if (reviewObj) {
-                      reviewObj.comment = editComment;
-                      reviewObj.overall_rating = overall;
-                    }
-
-                    // recalc dish rating
-                    const dishObj = dishData.find((d) => d.id === rev.dish_id);
-                    if (dishObj) {
-                      const values = reviewData
-                        .filter((r) => r.dish_id === dishObj.id)
-                        .map((r) => r.overall_rating ?? 0)
-                        .filter((v) => v > 0);
-                      dishObj.rating = values.length ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10 : 0;
-                    }
-
                     setIsEditing(false);
                     if (onModify) onModify({ showSuccess: true, action: 'edit' });
                     if (onCloseEdit) onCloseEdit();
@@ -588,9 +421,6 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit }: { rev: any; onModi
 export default function RestaurantReviews({ restaurant }: Props) {
   const rest = restaurant as any;
 
-  const restaurantReviewIds: number[] = rest.reviews ?? [];
-  const restaurantDishIds: number[] = rest.dishes ?? [];
-
   const [selectedDishFilter, setSelectedDishFilter] = useState<number | 'all'>('all');
   const [selectedDishToRate, setSelectedDishToRate] = useState<number | 'all'>('all');
 
@@ -598,17 +428,68 @@ export default function RestaurantReviews({ restaurant }: Props) {
   const [showGlobalSuccess, setShowGlobalSuccess] = useState(false);
   const [globalSuccessAction, setGlobalSuccessAction] = useState<'add' | 'edit' | 'delete' | null>(null);
   const [editReviewId, setEditReviewId] = useState<number | null>(null);
+  const [baseReviews, setBaseReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dishesForRestaurant, setDishesForRestaurant] = useState<any[]>([]);
 
-  const dishesForRestaurant = dishData.filter((d) => restaurantDishIds.includes(d.id));
+  // Fetch reviews from API on mount and when version changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching data for restaurant ID:', rest.id, 'Type:', typeof rest.id);
 
-  let baseReviews: Review[] = [];
-  if (restaurantReviewIds.length > 0) {
-    baseReviews = reviewData.filter((r) => restaurantReviewIds.includes(r.id));
-  } else if (restaurantDishIds.length > 0) {
-    baseReviews = reviewData.filter((r) => restaurantDishIds.includes(r.dish_id));
-  } else {
-    baseReviews = [];
-  }
+        // Fetch all dishes for this restaurant
+        const dishesResponse = await getDishesByRestaurant(rest.id);
+        const allDishes = (dishesResponse.data || []).map((dish: any) => ({
+          id: dish.id,
+          documentId: dish.documentId,
+          name: dish.name,
+          dish_attributes: (dish.dish_attributes || []).map((da: any) => ({
+            id: da.attribute?.id || da.id,
+            name: da.attribute?.name || `Atrybut #${da.id}`,
+          })),
+        }));
+        setDishesForRestaurant(allDishes);
+        console.log('Dishes fetched:', allDishes);
+
+        // Fetch reviews
+        const response = await getReviewsByRestaurant(rest.id);
+        const apiReviews = response.data || [];
+        console.log('API reviews raw:', apiReviews);
+
+        // Map API reviews to component format
+        const mappedReviews = apiReviews.map((review: any) => {
+          const detailRatings = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute && typeof d.rating !== 'undefined').map((d: any) => [d.attribute.id, d.rating])) : {};
+
+          return {
+            id: review.id,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt,
+            dish_id: review.dish?.id,
+            dish_name: review.dish?.name,
+            user_id: review.users_permissions_user?.id,
+            username: review.users_permissions_user?.username,
+            overall_rating: review.rating,
+            documentId: review.documentId,
+            attribute_ratings: review.attribute_ratings || detailRatings || {},
+          };
+        });
+
+        setBaseReviews(mappedReviews);
+        console.log('Reviews fetched:', mappedReviews);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setBaseReviews([]);
+        setDishesForRestaurant([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [rest.id, version]);
 
   // currently selected dish for review-filtering (null = wszystkie)
   const selectedDish = selectedDishFilter === 'all' ? null : dishesForRestaurant.find((d) => d.id === selectedDishFilter);
@@ -640,7 +521,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
       <hr className="border-gray-700 my-6" />
 
-      <ReviewForm selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
+      <ReviewForm selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} baseReviews={baseReviews} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
 
       <hr className="border-gray-700 my-6" />
 
@@ -649,47 +530,53 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         <h2 className="text-lg font-semibold mb-4">Opinie użytkowników</h2>
 
-        <div className="mb-4">
-          <label className="block text-sm text-gray-600 font-semibold dark:text-gray-300 mb-2">Filtruj po daniu:</label>
-          <select value={selectedDishFilter} onChange={(e) => setSelectedDishFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-            <option value="all">— Wszystkie dania —</option>
-            {dishesForRestaurant.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {selectedDish ? (
-          <div className="mb-4 flex items-center gap-2">
-            <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena dania:</div>
-            <div className="flex items-center gap-2">
-              <Stars rating={selectedDish.rating ?? 0} />
-              <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
-            </div>
-          </div>
+        {loading ? (
+          <div className="text-sm text-gray-600 dark:text-gray-400">Ładowanie opinii...</div>
         ) : (
-          <div className="mb-4 flex items-center gap-2">
-            <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena restauracji:</div>
-            <div className="flex items-center gap-2">
-              <Stars rating={restaurant.rating ?? 0} />
-              <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
+          <>
+            <div className="mb-4">
+              <label className="block text-sm text-gray-600 font-semibold dark:text-gray-300 mb-2">Filtruj po daniu:</label>
+              <select value={selectedDishFilter} onChange={(e) => setSelectedDishFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                <option value="all">— Wszystkie dania —</option>
+                {dishesForRestaurant.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
-        )}
 
-        {userReviews.length > 0 && (
-          <div className="mb-6">
-            <div className="space-y-4">
-              {userReviews.map((rev: any) => (
-                <ReviewCard key={rev.id} rev={rev} onModify={handleModify} editOpen={editReviewId === rev.id} onCloseEdit={() => setEditReviewId(null)} />
-              ))}
-            </div>
-          </div>
-        )}
+            {selectedDish ? (
+              <div className="mb-4 flex items-center gap-2">
+                <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena dania:</div>
+                <div className="flex items-center gap-2">
+                  <Stars rating={selectedDish.rating ?? 0} />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-4 flex items-center gap-2">
+                <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena restauracji:</div>
+                <div className="flex items-center gap-2">
+                  <Stars rating={restaurant.rating ?? 0} />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
+                </div>
+              </div>
+            )}
 
-        <div className="space-y-4">{otherReviews.length > 0 ? otherReviews.map((rev: any) => <ReviewCard key={rev.id} rev={rev} onModify={handleModify} editOpen={editReviewId === rev.id} onCloseEdit={() => setEditReviewId(null)} />) : <div className="text-sm text-gray-500">Brak opinii dla tego lokalu.</div>}</div>
+            {userReviews.length > 0 && (
+              <div className="mb-6">
+                <div className="space-y-4">
+                  {userReviews.map((rev: any) => (
+                    <ReviewCard key={rev.id} rev={rev} onModify={handleModify} editOpen={editReviewId === rev.id} onCloseEdit={() => setEditReviewId(null)} dishes={dishesForRestaurant} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">{otherReviews.length > 0 ? otherReviews.map((rev: any) => <ReviewCard key={rev.id} rev={rev} onModify={handleModify} editOpen={editReviewId === rev.id} onCloseEdit={() => setEditReviewId(null)} dishes={dishesForRestaurant} />) : <div className="text-sm text-gray-500">Brak opinii dla tego lokalu.</div>}</div>
+          </>
+        )}
 
         {showGlobalSuccess && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

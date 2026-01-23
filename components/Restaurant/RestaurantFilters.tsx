@@ -1,7 +1,7 @@
 'use client';
-import { useMemo } from 'react';
-import { getUniqueCuisines, getRatingRanges } from '@/lib/filterUtils';
-import restaurantData from './data/restaurantData';
+import { useEffect, useState } from 'react';
+import { getRatingRanges } from '@/lib/filterUtils';
+import { getCategories } from '@/lib/restaurants';
 
 interface RestaurantFiltersProps {
   selectedCategory: string;
@@ -10,8 +10,27 @@ interface RestaurantFiltersProps {
 }
 
 const RestaurantFilters = ({ selectedCategory, selectedRating, onFilterChange }: RestaurantFiltersProps) => {
-  const cuisines = useMemo(() => getUniqueCuisines(restaurantData), []);
+  const [cuisines, setCuisines] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const ratingRanges = getRatingRanges();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getCategories();
+        const categoryNames = response.data?.map((cat: any) => cat.name || cat).filter(Boolean) || [];
+        setCuisines(categoryNames);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        setCuisines([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleCategoryChange = (category: string) => {
     if (onFilterChange) {
@@ -47,18 +66,24 @@ const RestaurantFilters = ({ selectedCategory, selectedRating, onFilterChange }:
       {/* Kategoria */}
       <div className="mb-6 border-b border-gray-200 pb-6 dark:border-gray-700">
         <h4 className="mb-3 font-medium text-dark dark:text-white">Kuchnia</h4>
-        <div className="space-y-2">
-          <label className="flex cursor-pointer items-center">
-            <input type="radio" name="category" value="" checked={selectedCategory === ''} onChange={(e) => handleCategoryChange(e.target.value)} className="h-4 w-4 cursor-pointer text-primary" />
-            <span className="ml-3 text-sm text-body-color dark:text-body-color-dark">Wszystkie</span>
-          </label>
-          {cuisines.map((cuisine) => (
-            <label key={cuisine} className="flex cursor-pointer items-center">
-              <input type="radio" name="category" value={cuisine} checked={selectedCategory === cuisine} onChange={(e) => handleCategoryChange(e.target.value)} className="h-4 w-4 cursor-pointer text-primary" />
-              <span className="ml-3 text-sm text-body-color dark:text-body-color-dark">{cuisine}</span>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-primary border-t-transparent"></div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <label className="flex cursor-pointer items-center">
+              <input type="radio" name="category" value="" checked={selectedCategory === ''} onChange={(e) => handleCategoryChange(e.target.value)} className="h-4 w-4 cursor-pointer text-primary" />
+              <span className="ml-3 text-sm text-body-color dark:text-body-color-dark">Wszystkie</span>
             </label>
-          ))}
-        </div>
+            {cuisines.map((cuisine) => (
+              <label key={cuisine} className="flex cursor-pointer items-center">
+                <input type="radio" name="category" value={cuisine} checked={selectedCategory === cuisine} onChange={(e) => handleCategoryChange(e.target.value)} className="h-4 w-4 cursor-pointer text-primary" />
+                <span className="ml-3 text-sm text-body-color dark:text-body-color-dark">{cuisine}</span>
+              </label>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Ocena */}

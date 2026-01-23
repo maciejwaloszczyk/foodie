@@ -6,9 +6,8 @@ export async function getRestaurants(params?: { search?: string; cuisine?: strin
   // Strapi używa qs (query string) do zaawansowanego filtrowania
   // Dla wyszukiwania po nazwie/lokalizacji:
   if (params?.search) {
-    url.searchParams.append('filters[$or][0][name][$containsi]', params.search);
-    url.searchParams.append('filters[$or][1][address][$containsi]', params.search);
-    url.searchParams.append('filters[$or][2][cuisine][$containsi]', params.search);
+    // Spróbuj prostszej składni - filtruj tylko po nazwie
+    url.searchParams.append('filters[name][$containsi]', params.search);
   }
 
   // Filtrowanie po kuchni:
@@ -40,17 +39,87 @@ export async function getRestaurants(params?: { search?: string; cuisine?: strin
 
   // Populate relacji (jeśli masz)
   url.searchParams.append('populate', '*');
+  // Pobierz większą paczkę, żeby paginować po stronie frontu
+  url.searchParams.append('pagination[pageSize]', '200');
+
+  console.log('Fetching restaurants from:', url.toString());
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(url.toString(), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     cache: 'no-store', // lub 'force-cache' w zależności od potrzeb
   });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch restaurants. Status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function getRestaurantById(id: string | number) {
+  const url = new URL(`${STRAPI_URL}/api/restaurants`);
+  url.searchParams.append('filters[id][$eq]', String(id));
+  url.searchParams.append('populate', '*');
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers,
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch restaurant with id ${id}. Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const restaurant = data.data?.[0];
+
+  if (!restaurant) {
+    throw new Error(`Restaurant with id ${id} not found`);
+  }
+
+  return { data: restaurant, meta: data.meta };
+}
+
+export async function getCategories() {
+  const url = new URL(`${STRAPI_URL}/api/categories`);
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers,
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch categories. Status: ${response.status}`);
   }
 
   return response.json();

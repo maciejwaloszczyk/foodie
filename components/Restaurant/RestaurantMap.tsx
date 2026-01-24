@@ -45,6 +45,33 @@ const RestaurantMap = ({
     (restaurant) => restaurant.location?.lat && restaurant.location?.lng
   );
 
+  // Dodaj mały offset do restauracji z tymi samymi współrzędnymi
+  const restaurantsWithOffset = useMemo(() => {
+    const coordMap = new Map<string, number>();
+    
+    return restaurantsWithLocation.map((restaurant) => {
+      const key = `${restaurant.location!.lat.toFixed(4)},${restaurant.location!.lng.toFixed(4)}`;
+      const count = coordMap.get(key) || 0;
+      coordMap.set(key, count + 1);
+      
+      // Dodaj offset dla duplikatów (spirala wokół punktu)
+      if (count > 0) {
+        const angle = (count * 45) * (Math.PI / 180); // co 45 stopni
+        const offset = 0.0003 * count; // mały offset
+        return {
+          ...restaurant,
+          location: {
+            lat: restaurant.location!.lat + offset * Math.cos(angle),
+            lng: restaurant.location!.lng + offset * Math.sin(angle),
+          },
+        };
+      }
+      return restaurant;
+    });
+  }, [restaurantsWithLocation]);
+
+  console.log(`🗺️ Mapa otrzymała ${restaurants.length} restauracji, z lokalizacją: ${restaurantsWithLocation.length}`);
+
   // Generuj unikalny klucz dla mapy bazujący na center i zoom
   const mapKey = useMemo(
     () => `map-${center[0]}-${center[1]}-${zoom}`,
@@ -58,6 +85,19 @@ const RestaurantMap = ({
         style={{ minHeight: "400px" }}
       >
         <p className="text-gray-500 dark:text-gray-400">Ładowanie mapy...</p>
+      </div>
+    );
+  }
+
+  if (restaurantsWithLocation.length === 0) {
+    return (
+      <div
+        className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 ${className}`}
+        style={{ minHeight: "400px" }}
+      >
+        <p className="text-gray-500 dark:text-gray-400">
+          Brak restauracji do wyświetlenia
+        </p>
       </div>
     );
   }
@@ -77,7 +117,7 @@ const RestaurantMap = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {restaurantsWithLocation.map((restaurant) => (
+        {restaurantsWithOffset.map((restaurant) => (
           <Marker
             key={restaurant.id}
             position={[restaurant.location!.lat, restaurant.location!.lng]}

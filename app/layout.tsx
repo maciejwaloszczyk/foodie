@@ -9,6 +9,7 @@ import "node_modules/react-modal-video/css/modal-video.css";
 import "../styles/index.css";
 import { usePathname } from "next/navigation";
 import { Providers } from "./providers";
+import "leaflet/dist/leaflet.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

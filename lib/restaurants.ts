@@ -1,5 +1,7 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
+import { getAllRestaurantStats } from './reviews';
+
 export async function getRestaurants(params?: { search?: string; cuisine?: string; minRating?: number; sortBy?: string }) {
   const url = new URL(`${STRAPI_URL}/api/restaurants`);
 
@@ -48,7 +50,7 @@ export async function getRestaurants(params?: { search?: string; cuisine?: strin
     'Content-Type': 'application/json',
   };
 
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -75,7 +77,7 @@ export async function getRestaurantById(id: string | number) {
     'Content-Type': 'application/json',
   };
 
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -107,7 +109,7 @@ export async function getCategories() {
     'Content-Type': 'application/json',
   };
 
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -123,4 +125,23 @@ export async function getCategories() {
   }
 
   return response.json();
+}
+
+// Pobiera restauracje z dynamicznymi statystykami z opinii
+export async function getRestaurantsWithStats(params?: { search?: string; cuisine?: string; minRating?: number; sortBy?: string }) {
+  const [restaurantsData, statsMap] = await Promise.all([getRestaurants(params), getAllRestaurantStats()]);
+
+  // Dodaj statystyki do każdej restauracji
+  const restaurantsWithStats =
+    restaurantsData.data?.map((restaurant: any) => {
+      const stats = statsMap.get(restaurant.id);
+      return {
+        ...restaurant,
+        // Użyj dynamicznych statystyk jeśli są, w przeciwnym razie fallback do wartości z API
+        avg_rating: stats?.avgRating ?? restaurant.avg_rating ?? 0,
+        reviewCount: stats?.reviewCount ?? restaurant.reviewCount ?? 0,
+      };
+    }) || [];
+
+  return { data: restaurantsWithStats, meta: restaurantsData.meta };
 }

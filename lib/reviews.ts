@@ -1,11 +1,27 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
-export async function postReview(token: string, payload: any) {
+interface AttributeRating {
+  attributeId?: number;
+  attributeDocumentId?: string;
+  rating: number;
+}
+
+interface ReviewPayload {
+  data: {
+    dish: string;
+    rating: number;
+    comment: string;
+    attributeRatings?: AttributeRating[];
+  };
+}
+
+export async function postReview(token: string, payload: ReviewPayload) {
   if (!token) {
     throw new Error('Authentication token is missing for API request.');
   }
 
-  const url = `${STRAPI_URL}/api/reviews`;
+  // Używamy lokalnego API route który pośredniczy w komunikacji ze Strapi
+  const url = '/api/reviews';
 
   const response = await fetch(url, {
     method: 'POST',
@@ -13,12 +29,17 @@ export async function postReview(token: string, payload: any) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      dishId: payload.data.dish,
+      rating: payload.data.rating,
+      comment: payload.data.comment,
+      attributeRatings: payload.data.attributeRatings || [],
+    }),
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    const errorMessage = errorData.error?.message || `Failed to create review. Status: ${response.status}`;
+    const errorMessage = errorData.error || `Failed to create review. Status: ${response.status}`;
     throw new Error(errorMessage);
   }
 
@@ -39,7 +60,10 @@ export async function getDishesByRestaurant(restaurantId: number | string) {
   const url = new URL(`${STRAPI_URL}/api/dishes`);
   // Najpierw spróbuj po id, jeśli nie zadziała, frontend będzie mieć `documentId` do REST
   url.searchParams.append('filters[restaurant][id][$eq]', String(numericId));
-  url.searchParams.append('populate[dish_attributes][populate]', 'attribute');
+  // Poprawny format dla nested populate w Strapi v4/v5
+  url.searchParams.append('populate[dish_attributes][populate][attribute][fields][0]', 'id');
+  url.searchParams.append('populate[dish_attributes][populate][attribute][fields][1]', 'documentId');
+  url.searchParams.append('populate[dish_attributes][populate][attribute][fields][2]', 'name');
   url.searchParams.append('pagination[limit]', '100');
 
   console.log('Fetching dishes with URL:', url.toString());
@@ -48,7 +72,7 @@ export async function getDishesByRestaurant(restaurantId: number | string) {
     'Content-Type': 'application/json',
   };
 
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -98,7 +122,7 @@ export async function getReviewsByRestaurant(restaurantId: number | string) {
     'Content-Type': 'application/json',
   };
 
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -116,4 +140,82 @@ export async function getReviewsByRestaurant(restaurantId: number | string) {
   }
 
   return response.json();
+}
+
+export async function getRestaurantStats(restaurantId: number | string) {
+  try {
+    const reviewsData = await getReviewsByRestaurant(restaurantId);
+    const reviews = reviewsData.data || [];
+
+    const reviewCount = reviews.length;
+    const avgRating = reviewCount > 0 ? reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount : 0;
+
+    return {
+      reviewCount,
+      avgRating: Math.round(avgRating * 10) / 10, // zaokrąglenie do 1 miejsca po przecinku
+    };
+  } catch (error) {
+    console.error('Error fetching restaurant stats:', error);
+    return { reviewCount: 0, avgRating: 0 };
+  }
+}
+
+// Pobiera wszystkie opinie i oblicza statystyki dla wszystkich restauracji
+export async function getAllRestaurantStats(): Promise<Map<number, { reviewCount: number; avgRating: number }>> {
+  const statsMap = new Map<number, { reviewCount: number; avgRating: number }>();
+
+  try {
+    const url = new URL(`${STRAPI_URL}/api/reviews`);
+    url.searchParams.append('populate[dish][populate][restaurant][fields][0]', 'id');
+    url.searchParams.append('pagination[limit]', '1000');
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    const token = process.env.NEXT_PUBLIC_STRAPI_KEY;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch all reviews for stats');
+      return statsMap;
+    }
+
+    const data = await response.json();
+    const reviews = data.data || [];
+
+    // Grupuj opinie po restauracji
+    const grouped: Record<number, number[]> = {};
+    for (const review of reviews) {
+      const restaurantId = review.dish?.restaurant?.id;
+      if (restaurantId) {
+        if (!grouped[restaurantId]) {
+          grouped[restaurantId] = [];
+        }
+        grouped[restaurantId].push(review.rating || 0);
+      }
+    }
+
+    // Oblicz statystyki
+    for (const [restaurantId, ratings] of Object.entries(grouped)) {
+      const count = ratings.length;
+      const avg = count > 0 ? ratings.reduce((a, b) => a + b, 0) / count : 0;
+      statsMap.set(Number(restaurantId), {
+        reviewCount: count,
+        avgRating: Math.round(avg * 10) / 10,
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching all restaurant stats:', error);
+  }
+
+  return statsMap;
 }

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import { Restaurant } from '@/types/restaurant';
-import { getRestaurants } from '@/lib/restaurants';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 
 interface SearchBarProps {
   onSearch?: (results: Restaurant[]) => void;
@@ -21,7 +21,7 @@ const SearchBar = ({ onSearch, placeholder = 'Szukaj restauracji...' }: SearchBa
       // Jeśli puste - pobierz wszystkie restauracje
       try {
         setIsLoading(true);
-        const response = await getRestaurants();
+        const response = await getRestaurantsWithStats();
         const restaurants =
           response.data?.map((apiRestaurant: any) => ({
             id: apiRestaurant.id,
@@ -53,7 +53,7 @@ const SearchBar = ({ onSearch, placeholder = 'Szukaj restauracji...' }: SearchBa
     // Jeśli jest tekst - wyszukaj w API
     try {
       setIsLoading(true);
-      const response = await getRestaurants({ search: query });
+      const response = await getRestaurantsWithStats({ search: query });
       const restaurants =
         response.data?.map((apiRestaurant: any) => ({
           id: apiRestaurant.id,

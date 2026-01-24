@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import SectionTitle from '../Common/SectionTitle';
 import SingleRestaurant from './SingleRestaurant';
-import { getRestaurants } from '@/lib/restaurants';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
 
 const TopRated = () => {
@@ -14,7 +14,7 @@ const TopRated = () => {
     const loadTopRatedRestaurants = async () => {
       try {
         setIsLoading(true);
-        const response = await getRestaurants({ sortBy: 'rating' });
+        const response = await getRestaurantsWithStats({ sortBy: 'rating' });
         const restaurants =
           response.data?.slice(0, 6).map((apiRestaurant: any) => ({
             id: apiRestaurant.id,

@@ -4,7 +4,7 @@ import SearchBar from '@/components/Restaurant/SearchBar';
 import RestaurantFilters from '@/components/Restaurant/RestaurantFilters';
 import SingleRestaurant from '@/components/Restaurant/SingleRestaurant';
 import { Restaurant } from '@/types/restaurant';
-import { getRestaurants } from '@/lib/restaurants';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 
 const FilteredRestaurantsSection = () => {
   const [searchResults, setSearchResults] = useState<Restaurant[]>([]);
@@ -21,7 +21,7 @@ const FilteredRestaurantsSection = () => {
     const loadInitialRestaurants = async () => {
       try {
         setIsLoading(true);
-        const response = await getRestaurants();
+        const response = await getRestaurantsWithStats();
         const restaurants =
           response.data?.map((apiRestaurant: any) => ({
             id: apiRestaurant.id,

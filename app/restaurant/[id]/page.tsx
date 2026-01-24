@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Restaurant } from '@/types/restaurant';
 import RestaurantCard from '@/components/Restaurant/RestaurantCard';
 import { getRestaurantById, getRestaurants } from '@/lib/restaurants';
+import { getRestaurantStats } from '@/lib/reviews';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
@@ -17,6 +18,9 @@ export default async function RestaurantPage({ params }: Props) {
 
     if (!apiRestaurant) return notFound();
 
+    // Pobierz dynamiczne statystyki z opinii
+    const stats = await getRestaurantStats(numericId);
+
     // Mapowanie danych z API na typ Restaurant
     const cover = apiRestaurant.cover;
 
@@ -30,8 +34,8 @@ export default async function RestaurantPage({ params }: Props) {
       name: apiRestaurant.name,
       address: apiRestaurant.address,
       cuisine: categories,
-      rating: apiRestaurant.avg_rating || 0,
-      reviewCount: apiRestaurant.reviewCount || 0,
+      rating: stats.avgRating || apiRestaurant.avg_rating || 0,
+      reviewCount: stats.reviewCount || apiRestaurant.reviewCount || 0,
       priceRange: apiRestaurant.priceRange || '—',
       deliveryTime: apiRestaurant.deliveryTime || '—',
       distance: apiRestaurant.distance || '—',

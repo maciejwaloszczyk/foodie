@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import SectionTitle from '../Common/SectionTitle';
 import SingleRestaurant from './SingleRestaurant';
-import { getRestaurants } from '@/lib/restaurants';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
 
 const FeaturedRestaurants = () => {
@@ -17,7 +17,7 @@ const FeaturedRestaurants = () => {
     const loadFeaturedRestaurants = async () => {
       try {
         setIsLoading(true);
-        const response = await getRestaurants();
+        const response = await getRestaurantsWithStats();
         const restaurants =
           response.data
             ?.filter((apiRestaurant: any) => apiRestaurant.promoted)

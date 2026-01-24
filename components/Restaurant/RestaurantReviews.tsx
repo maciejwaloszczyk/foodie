@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/useAuth';
 import { useState, useEffect } from 'react';
 import { Restaurant } from '@/types/restaurant';
 import { Review } from '@/types/review';
-import { getReviewsByRestaurant, getDishesByRestaurant } from '@/lib/reviews';
+import { getReviewsByRestaurant, getDishesByRestaurant, postReview } from '@/lib/reviews';
 import type { Dish } from '@/types/dish';
 
 type Props = {
@@ -156,6 +156,11 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
       return;
     }
 
+    if (!token) {
+      console.warn('Brak tokenu uwierzytelniania.');
+      return;
+    }
+
     // Check if user already has a review for this dish
     const existingReview = baseReviews.find((r) => r.dish_id === selectedDish.id && r.user_id === user.id);
     if (existingReview) {
@@ -164,9 +169,49 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
       return;
     }
 
-    // TODO: Implementacja dodawania opinii
-    // Gdy Strapi będzie miał uprawnienia do ustawiania relacji dla JWT
-    alert('Funkcja dodawania opinii jest w trakcie pracy. Spróbuj później!');
+    // Oblicz średnią ocenę z atrybutów (atrybuty są 1-10, rating ma być 1-5)
+    const attrValues = Object.values(attrRatings).filter((v) => typeof v === 'number') as number[];
+    // Średnia z atrybutów (1-10) podzielona przez 2 daje skalę 0.5-5
+    const avgAttr = attrValues.length > 0 ? attrValues.reduce((a, b) => a + b, 0) / attrValues.length : 10;
+    const overallRating = Math.round((avgAttr / 2) * 10) / 10; // Zaokrąglij do 1 miejsca po przecinku
+
+    // Przygotuj oceny atrybutów do wysłania
+    // dishAttributes to tablica dish_attribute, każdy ma nested attribute z documentId
+    console.log('dishAttributes:', dishAttributes);
+    console.log('attrRatings:', attrRatings);
+    const attributeRatings = dishAttributes.map((dishAttr: any) => {
+      console.log('Processing dishAttr:', dishAttr);
+      return {
+        attributeId: dishAttr.attribute?.id || dishAttr.id,
+        attributeDocumentId: dishAttr.attribute?.documentId || dishAttr.documentId,
+        rating: Number(attrRatings[dishAttr.id]) || 8,
+      };
+    });
+    console.log('attributeRatings to send:', attributeRatings);
+
+    try {
+      const payload = {
+        data: {
+          dish: selectedDish.documentId || selectedDish.id,
+          rating: overallRating,
+          comment: comment || '',
+          attributeRatings, // Dodajemy oceny atrybutów
+        },
+      };
+
+      await postReview(token, payload);
+
+      // Reset formularza
+      setComment('');
+      setAttrRatings({});
+      setSelectedDishId('all');
+
+      // Powiadom rodzica o dodaniu opinii
+      if (onAdd) onAdd();
+    } catch (error) {
+      console.error('Błąd podczas dodawania opinii:', error);
+      alert('Nie udało się dodać opinii. Spróbuj ponownie.');
+    }
   };
 
   return (
@@ -441,15 +486,23 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         // Fetch all dishes for this restaurant
         const dishesResponse = await getDishesByRestaurant(rest.id);
-        const allDishes = (dishesResponse.data || []).map((dish: any) => ({
-          id: dish.id,
-          documentId: dish.documentId,
-          name: dish.name,
-          dish_attributes: (dish.dish_attributes || []).map((da: any) => ({
-            id: da.attribute?.id || da.id,
-            name: da.attribute?.name || `Atrybut #${da.id}`,
-          })),
-        }));
+        console.log('Raw dishes response:', dishesResponse);
+        const allDishes = (dishesResponse.data || []).map((dish: any) => {
+          console.log('Processing dish:', dish.name, 'dish_attributes:', dish.dish_attributes);
+          return {
+            id: dish.id,
+            documentId: dish.documentId,
+            name: dish.name,
+            dish_attributes: (dish.dish_attributes || []).map((da: any) => {
+              console.log('Processing dish_attribute:', da);
+              return {
+                id: da.id, // id dish_attribute (używane jako klucz w attrRatings)
+                attribute: da.attribute, // cały obiekt attribute z id, documentId, name
+                name: da.attribute?.name || `Atrybut #${da.id}`,
+              };
+            }),
+          };
+        });
         setDishesForRestaurant(allDishes);
         console.log('Dishes fetched:', allDishes);
 

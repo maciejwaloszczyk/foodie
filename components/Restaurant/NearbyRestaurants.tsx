@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import SectionTitle from '../Common/SectionTitle';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getRestaurants } from '@/lib/restaurants';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
 
 const NearbyRestaurants = () => {
@@ -15,7 +15,7 @@ const NearbyRestaurants = () => {
     const loadNearbyRestaurants = async () => {
       try {
         setIsLoading(true);
-        const response = await getRestaurants();
+        const response = await getRestaurantsWithStats();
         const restaurants =
           response.data
             ?.map((apiRestaurant: any) => ({

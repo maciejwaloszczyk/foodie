@@ -4,12 +4,14 @@ import { useAuth } from "@/lib/useAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const headerRef = useRef<HTMLElement | null>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   // Navbar toggle
   const [navbarOpen, setNavbarOpen] = useState(false);
@@ -17,15 +19,13 @@ const Header = () => {
     setNavbarOpen(!navbarOpen);
   };
 
+  const usePathName = usePathname();
+
   // Sticky Navbar
   const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
     if (typeof window !== "undefined") {
-      if (window.scrollY >= 80) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
+      setSticky(window.scrollY > 0);
     }
   };
 
@@ -37,6 +37,30 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const headerEl = headerRef.current;
+    if (!headerEl || typeof window === "undefined") {
+      return;
+    }
+
+    const updateHeaderHeight = () => {
+      setHeaderHeight(headerEl.offsetHeight ?? 0);
+    };
+
+    updateHeaderHeight();
+
+    const observer = new ResizeObserver(() => updateHeaderHeight());
+    observer.observe(headerEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [sticky, navbarOpen]);
+
+  useEffect(() => {
+    handleStickyNavbar();
+  }, [usePathName]);
+
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
   const handleSubmenu = (index: any) => {
@@ -47,20 +71,20 @@ const Header = () => {
     }
   };
 
-  const usePathName = usePathname();
-
   return (
     <>
+      <div aria-hidden="true" style={{ height: headerHeight }} />
       <header
+        ref={headerRef}
         // WYSOKOŚĆ: 70px
         style={{
             height: sticky ? "70px" : "auto",
             transition: "all 0.3s ease-in-out"
         }}
-       className={`header left-0 top-0 z-40 flex w-full items-center ${
+       className={`header fixed left-0 top-0 z-40 flex w-full items-center ${
           sticky
-            ? "fixed z-[9999] bg-primary-light !bg-opacity-95 shadow-sticky backdrop-blur-sm dark:bg-bg-color-dark dark:shadow-sticky-dark !py-0" 
-            : "absolute bg-transparent py-8"
+            ? "z-[9999] bg-primary-light !bg-opacity-95 shadow-sticky backdrop-blur-sm dark:bg-bg-color-dark dark:shadow-sticky-dark !py-0" 
+            : "bg-transparent py-4"
         }`}
       >
         <div className="container h-full">
@@ -99,7 +123,7 @@ const Header = () => {
                   <Image
                     src={getImagePath("/images/logo/logo.svg")}
                     alt="logo"
-                    width={70} 
+                    width={70}
                     height={70}
                     // ZMIANA: Dodałem 'translate-y-2', żeby przesunąć logo w dół i odkleić od górnej krawędzi
                     className="!w-auto !h-[70px] object-contain scale-150 origin-left ml-1 translate-y-1"
@@ -185,15 +209,17 @@ const Header = () => {
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
-                              {menuItem.submenu.map((submenuItem, index) => (
-                                <Link
-                                  href={submenuItem.path}
-                                  key={index}
-                                  className="block rounded py-2.5 text-sm text-text-main hover:text-primary dark:text-white/70 dark:hover:text-white"
-                                >
-                                  {submenuItem.title}
-                                </Link>
-                              ))}
+                              {menuItem.submenu
+                                ?.filter((submenuItem) => submenuItem.path)
+                                .map((submenuItem, index) => (
+                                  <Link
+                                    href={submenuItem.path as string}
+                                    key={index}
+                                    className="block rounded py-2.5 text-sm text-text-main hover:text-primary dark:text-white/70 dark:hover:text-white"
+                                  >
+                                    {submenuItem.title}
+                                  </Link>
+                                ))}
                             </div>
                           </>
                         )}

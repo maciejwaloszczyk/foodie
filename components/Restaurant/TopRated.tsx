@@ -14,9 +14,9 @@ const TopRated = () => {
     const loadTopRatedRestaurants = async () => {
       try {
         setIsLoading(true);
-        const response = await getRestaurantsWithStats({ sortBy: 'rating' });
+        const response = await getRestaurantsWithStats();
         const restaurants =
-          response.data?.slice(0, 6).map((apiRestaurant: any) => ({
+          response.data?.map((apiRestaurant: any) => ({
             id: apiRestaurant.id,
             name: apiRestaurant.name,
             address: apiRestaurant.address,
@@ -31,7 +31,8 @@ const TopRated = () => {
             description: apiRestaurant.description || '',
             location: apiRestaurant.latitude && apiRestaurant.longitude ? { lat: apiRestaurant.latitude, lng: apiRestaurant.longitude } : undefined,
           })) || [];
-        setTopRatedRestaurants(restaurants);
+        const sorted = [...restaurants].sort((a, b) => b.rating - a.rating);
+        setTopRatedRestaurants(sorted.slice(0, 9));
       } catch (error) {
         console.error('Failed to load top rated restaurants:', error);
         setTopRatedRestaurants([]);

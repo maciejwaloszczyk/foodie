@@ -52,7 +52,7 @@ const NearbyRestaurants = () => {
   }, []);
 
   return (
-    <section className="bg-primary-light dark:bg-bg-color-dark py-16 md:py-20 lg:py-28"> {/* <-- ZMIANA TŁA */}
+    <section className="bg-white dark:bg-gray-dark py-16 md:py-20 lg:py-28">
       <div className="container">
         <SectionTitle title="W twojej okolicy" paragraph="Znajdź najlepsze restauracje w Twojej okolicy" center />
 

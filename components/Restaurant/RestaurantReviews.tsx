@@ -415,7 +415,24 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
             <div className="text-xs text-gray-600 font-semibold dark:text-gray-400 mb-2">Oceny atrybutów:</div>
             {Object.entries(rev.attribute_ratings).map(([attrId, rating]: [string, any]) => {
               const dish = dishes?.find((d) => d.id === rev.dish_id);
-              const attrName = dish?.dish_attributes?.find((a: any) => a.id === Number(attrId))?.name || `Atrybut #${attrId}`;
+              const dishAttrs = dish?.dish_attributes || [];
+              const keyNum = Number(attrId);
+              let attrName = dishAttrs.find((a: any) => a?.attribute?.id === keyNum)?.attribute?.name as string | undefined;
+              if (!attrName && !Number.isNaN(keyNum)) {
+                // Some payloads key by dish_attribute.id
+                attrName = dishAttrs.find((a: any) => a?.id === keyNum)?.name || dishAttrs.find((a: any) => a?.id === keyNum)?.attribute?.name;
+              }
+              if (!attrName) {
+                // Some payloads key by attribute.documentId
+                attrName = dishAttrs.find((a: any) => String(a?.attribute?.documentId) === String(attrId))?.attribute?.name;
+              }
+              if (!attrName) {
+                // Fallback: names carried in review_details mapping by attribute.id
+                attrName = (rev.attribute_names && (rev.attribute_names[keyNum] || rev.attribute_names[attrId]))
+                  || (rev.attribute_names_by_docId && rev.attribute_names_by_docId[String(attrId)])
+                  || attrName;
+              }
+              attrName = attrName || `Atrybut #${attrId}`;
               const displayRating = Number(rating) * 2; // backend stores 0-5, show as 0-10
               return (
                 <div key={attrId} className="flex items-center justify-between text-sm">
@@ -513,7 +530,29 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         // Map API reviews to component format
         const mappedReviews = apiReviews.map((review: any) => {
-          const detailRatings = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute && typeof d.rating !== 'undefined').map((d: any) => [d.attribute.id, d.rating])) : {};
+          const detailRatings = Array.isArray(review.review_details)
+            ? Object.fromEntries(
+                review.review_details
+                  .filter((d: any) => d.attribute && typeof d.rating !== 'undefined')
+                  .map((d: any) => [d.attribute.id, d.rating])
+              )
+            : {};
+
+          const detailNames = Array.isArray(review.review_details)
+            ? Object.fromEntries(
+                review.review_details
+                  .filter((d: any) => d.attribute)
+                  .map((d: any) => [d.attribute.id, d.attribute.name])
+              )
+            : {};
+
+          const detailNamesByDocId = Array.isArray(review.review_details)
+            ? Object.fromEntries(
+                review.review_details
+                  .filter((d: any) => d.attribute?.documentId)
+                  .map((d: any) => [d.attribute.documentId, d.attribute.name])
+              )
+            : {};
 
           return {
             id: review.id,
@@ -527,6 +566,8 @@ export default function RestaurantReviews({ restaurant }: Props) {
             overall_rating: review.rating,
             documentId: review.documentId,
             attribute_ratings: review.attribute_ratings || detailRatings || {},
+            attribute_names: detailNames,
+            attribute_names_by_docId: detailNamesByDocId,
           };
         });
 
@@ -549,6 +590,13 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
   // apply dish filter for reviews (shows all when "all")
   const reviewsToShow = selectedDishFilter === 'all' ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishFilter);
+
+  // compute average rating for selected dish (from displayed reviews)
+  const dishAvgRating = selectedDish
+    ? (reviewsToShow.length
+        ? Math.round((reviewsToShow.reduce((sum, r) => sum + (r.overall_rating ?? r.rating ?? 0), 0) / reviewsToShow.length) * 10) / 10
+        : 0)
+    : undefined;
 
   // split reviews into current user's and others
   const auth = useAuth();
@@ -603,7 +651,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
               <div className="mb-4 flex items-center gap-2">
                 <div className="text-sm text-gray-600 font-semibold dark:text-gray-300">Ocena dania:</div>
                 <div className="flex items-center gap-2">
-                  <Stars rating={selectedDish.rating ?? 0} />
+                  <Stars rating={dishAvgRating ?? 0} />
                   <span className="text-sm text-gray-600 dark:text-gray-400">({reviewsToShow.length})</span>
                 </div>
               </div>

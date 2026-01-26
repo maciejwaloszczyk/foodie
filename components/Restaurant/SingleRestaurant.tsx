@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const SingleRestaurant = ({ restaurant }: { restaurant: Restaurant }) => {
-  const { name, image, cuisine, rating, reviewCount, priceRange, deliveryTime, distance } = restaurant;
+  const { name, image, cuisine, rating, reviewCount, distance } = restaurant;
 
   return (
     <>
@@ -34,7 +34,7 @@ const SingleRestaurant = ({ restaurant }: { restaurant: Restaurant }) => {
           <p className="mb-4 text-sm font-medium text-light dark:text-body-color-dark">
             {' '}
             {/* <-- ZMIANA (text-body-color na text-light) */}
-            {cuisine} • {priceRange}
+            {cuisine}
           </p>
 
           <div className="mb-6 flex items-center border-b border-stroke border-opacity-10 pb-6 dark:border-white dark:border-opacity-10">
@@ -61,20 +61,6 @@ const SingleRestaurant = ({ restaurant }: { restaurant: Restaurant }) => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <svg
-                className="mr-2 h-5 w-5 fill-current text-light dark:text-body-color-dark" // <-- ZMIANA (text-body-color na text-light)
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm.5-13H9v6l5.25 3.15.75-1.23-4.5-2.67V5z" />
-              </svg>
-              <span className="text-sm text-light dark:text-body-color-dark">
-                {' '}
-                {/* <-- ZMIANA (text-body-color na text-light) */}
-                {deliveryTime}
-              </span>
-            </div>
             <div className="flex items-center">
               <svg
                 className="mr-2 h-5 w-5 fill-current text-light dark:text-body-color-dark" // <-- ZMIANA (text-body-color na text-light)

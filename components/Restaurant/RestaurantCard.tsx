@@ -1,7 +1,12 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Restaurant } from '@/types/restaurant';
 import { getRestaurants } from '@/lib/restaurants';
+import { useGeolocation } from '@/lib/GeolocationContext';
+import { calculateDistanceKm, formatDistance } from '@/lib/useGeolocation';
+import { useState, useEffect } from 'react';
 
 type Props = {
   restaurant: Restaurant;
@@ -142,6 +147,18 @@ function Description({ restaurant }: Props) {
 }
 
 function LocationInfo({ restaurant }: Props) {
+  const { userLocation, locationStatus, requestLocation } = useGeolocation();
+  const [displayDistance, setDisplayDistance] = useState<string | undefined>(restaurant.distance);
+
+  useEffect(() => {
+    if (userLocation && restaurant.location) {
+      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+      setDisplayDistance(formatDistance(distanceKm));
+    } else {
+      setDisplayDistance(restaurant.distance);
+    }
+  }, [userLocation, restaurant.location, restaurant.distance]);
+
   return (
     <div className="mt-2 grid grid-cols-1 gap-3">
       <div className="flex items-start gap-3 rounded-lg bg-white dark:bg-gray-900 p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-gray-800">
@@ -166,10 +183,30 @@ function LocationInfo({ restaurant }: Props) {
         <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
           <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z" />
         </svg>
-        <div>
+        <div className="flex-1">
           <div className="text-xs text-gray-500 dark:text-gray-400">Odległość</div>
-          <div className="text-sm md:text-base font-medium text-gray-900 dark:text-gray-100">{restaurant.distance ?? '—'}</div>
+          <div className="text-sm md:text-base font-medium text-gray-900 dark:text-gray-100">{displayDistance ?? '—'}</div>
         </div>
+        {locationStatus !== 'granted' && (
+          <button onClick={requestLocation} disabled={locationStatus === 'requesting'} className="ml-2 sm:ml-4 inline-flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed" title="Włącz lokalizację aby zobaczyć odległość">
+            {locationStatus === 'requesting' ? (
+              <>
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Pobieranie...</span>
+              </>
+            ) : (
+              <>
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M10 0C6.134 0 3 3.134 3 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5S8.619 4.5 10 4.5s2.5 1.119 2.5 2.5S11.381 9.5 10 9.5z" />
+                </svg>
+                <span>Włącz lokalizację</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

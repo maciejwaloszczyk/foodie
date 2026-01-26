@@ -31,8 +31,6 @@ const TopRated = () => {
               cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
               rating: apiRestaurant.avg_rating || 0,
               reviewCount: apiRestaurant.reviewCount || 0,
-              priceRange: apiRestaurant.priceRange || '—',
-              deliveryTime: apiRestaurant.deliveryTime || '—',
               isPromoted: apiRestaurant.promoted || false,
               image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
               description: apiRestaurant.description || '',

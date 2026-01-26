@@ -10,8 +10,10 @@ type Props = {
 function Header({ restaurant }: Props) {
   return (
     <header className="mb-4">
-      <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-gray-900 dark:text-gray-100 flex items-center gap-3">
-        <span>{restaurant.name}</span>
+      <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-gray-900 dark:text-gray-100 flex items-center gap-3 min-w-0">
+        <span className="truncate" title={restaurant.name}>
+          {restaurant.name}
+        </span>
         {restaurant.isPromoted && (
           <span title="Promowane" className="inline-flex items-center text-yellow-500 dark:text-yellow-400">
             <svg className="w-5 h-5 translate-y-[-1px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>

@@ -5,10 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
+import { useGeolocation } from '@/lib/GeolocationContext';
+import { calculateDistanceKm, formatDistance } from '@/lib/useGeolocation';
 
 const NearbyRestaurants = () => {
+  const RESULT_LIMIT = 30;
+  const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
   const [nearbyRestaurants, setNearbyRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userLocation, locationLabel, isResolvingLocation, locationStatus, locationError, requestLocation } = useGeolocation();
   const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
   useEffect(() => {
@@ -17,8 +22,12 @@ const NearbyRestaurants = () => {
         setIsLoading(true);
         const response = await getRestaurantsWithStats();
         const restaurants =
-          response.data
-            ?.map((apiRestaurant: any) => ({
+          response.data?.map((apiRestaurant: any) => {
+            const hasLocation = apiRestaurant.latitude !== undefined && apiRestaurant.latitude !== null && apiRestaurant.longitude !== undefined && apiRestaurant.longitude !== null;
+
+            const location = hasLocation ? { lat: Number(apiRestaurant.latitude), lng: Number(apiRestaurant.longitude) } : undefined;
+
+            return {
               id: apiRestaurant.id,
               name: apiRestaurant.name,
               address: apiRestaurant.address,
@@ -27,21 +36,25 @@ const NearbyRestaurants = () => {
               reviewCount: apiRestaurant.reviewCount || 0,
               priceRange: apiRestaurant.priceRange || '—',
               deliveryTime: apiRestaurant.deliveryTime || '—',
-              distance: apiRestaurant.distance || '—',
+              distance: apiRestaurant.distance || undefined,
               isPromoted: apiRestaurant.promoted || false,
               image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
               description: apiRestaurant.description || '',
-              location: apiRestaurant.latitude && apiRestaurant.longitude ? { lat: apiRestaurant.latitude, lng: apiRestaurant.longitude } : undefined,
-            }))
-            .sort((a: Restaurant, b: Restaurant) => {
-              const distanceA = parseFloat(a.distance?.replace(' km', '') || '999');
-              const distanceB = parseFloat(b.distance?.replace(' km', '') || '999');
-              return distanceA - distanceB;
-            })
-            .slice(0, 10) || [];
-        setNearbyRestaurants(restaurants);
+              location,
+            } as Restaurant;
+          }) || [];
+
+        const sortedByExistingDistance = [...restaurants].sort((a, b) => {
+          const distanceA = parseFloat(a.distance?.replace(' km', '') || '999');
+          const distanceB = parseFloat(b.distance?.replace(' km', '') || '999');
+          return distanceA - distanceB;
+        });
+
+        setAllRestaurants(sortedByExistingDistance);
+        setNearbyRestaurants(sortedByExistingDistance.slice(0, RESULT_LIMIT));
       } catch (error) {
         console.error('Failed to load nearby restaurants:', error);
+        setAllRestaurants([]);
         setNearbyRestaurants([]);
       } finally {
         setIsLoading(false);
@@ -51,10 +64,58 @@ const NearbyRestaurants = () => {
     loadNearbyRestaurants();
   }, []);
 
+  useEffect(() => {
+    if (!userLocation || allRestaurants.length === 0) {
+      setNearbyRestaurants(allRestaurants.slice(0, RESULT_LIMIT));
+      return;
+    }
+
+    const withDistance = allRestaurants.map((restaurant) => {
+      if (!restaurant.location) return { restaurant, distanceKm: null };
+      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+      return {
+        restaurant: {
+          ...restaurant,
+          distance: formatDistance(distanceKm) ?? restaurant.distance,
+        },
+        distanceKm,
+      };
+    });
+
+    const sortedByUserLocation = [...withDistance]
+      .sort((a, b) => {
+        if (a.distanceKm === null && b.distanceKm === null) return 0;
+        if (a.distanceKm === null) return 1;
+        if (b.distanceKm === null) return -1;
+        return a.distanceKm - b.distanceKm;
+      })
+      .map((entry) => entry.restaurant)
+      .slice(0, RESULT_LIMIT);
+
+    setNearbyRestaurants(sortedByUserLocation);
+  }, [userLocation, allRestaurants]);
+
   return (
     <section className="bg-white dark:bg-gray-dark py-16 md:py-20 lg:py-28">
       <div className="container">
         <SectionTitle title="W twojej okolicy" paragraph="Znajdź najlepsze restauracje w Twojej okolicy" center />
+
+        <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-lg bg-primary/5 p-6 sm:flex-row">
+          <div className="text-center sm:text-left">
+            <p className="text-lg font-semibold text-black dark:text-white">Pokaż {RESULT_LIMIT} najbliższych restauracji</p>
+            <p className="text-sm text-body-color dark:text-body-color-dark">Użyj swojej lokalizacji, aby posortować listę według faktycznej odległości.</p>
+            {locationStatus === 'granted' && userLocation && (
+              <p className="mt-1 text-xs text-primary">
+                Lokalizacja włączona{isResolvingLocation ? '...' : ''}: {locationLabel || `${userLocation.lat.toFixed(3)}°, ${userLocation.lng.toFixed(3)}°`}
+              </p>
+            )}
+            {locationStatus === 'denied' && locationError && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{locationError}</p>}
+            {locationStatus === 'unavailable' && locationError && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{locationError}</p>}
+          </div>
+          <button onClick={requestLocation} disabled={locationStatus === 'requesting'} className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60">
+            {locationStatus === 'requesting' ? 'Pobieranie lokalizacji...' : 'Użyj mojej lokalizacji'}
+          </button>
+        </div>
 
         {isLoading ? (
           <div className="flex justify-center py-20">
@@ -103,7 +164,9 @@ const NearbyRestaurants = () => {
                       {restaurant.description && <p className="mb-4 text-base text-body-color dark:text-body-color-dark">{restaurant.description}</p>}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 border-t border-stroke border-opacity-10 pt-4 dark:border-white dark:border-opacity-10"> {/* <-- ZMIANA (kolor linii) */}
+                    <div className="flex flex-wrap items-center gap-4 border-t border-stroke border-opacity-10 pt-4 dark:border-white dark:border-opacity-10">
+                      {' '}
+                      {/* <-- ZMIANA (kolor linii) */}
                       {restaurant.distance && (
                         <div className="flex items-center">
                           <svg className="mr-2 h-5 w-5 fill-current text-primary" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -112,14 +175,12 @@ const NearbyRestaurants = () => {
                           <span className="font-semibold text-dark dark:text-white">{restaurant.distance}</span>
                         </div>
                       )}
-
                       <div className="flex items-center">
                         <svg className="mr-2 h-5 w-5 fill-current text-body-color dark:text-body-color-dark" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm.5-13H9v6l5.25 3.15.75-1.23-4.5-2.67V5z" />
                         </svg>
                         <span className="text-sm text-body-color dark:text-body-color-dark">{restaurant.deliveryTime}</span>
                       </div>
-
                       <div className="flex items-center">
                         <svg className="mr-2 h-5 w-5 fill-current text-body-color dark:text-body-color-dark" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />

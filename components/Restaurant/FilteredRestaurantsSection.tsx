@@ -5,8 +5,11 @@ import RestaurantFilters from '@/components/Restaurant/RestaurantFilters';
 import SingleRestaurant from '@/components/Restaurant/SingleRestaurant';
 import { Restaurant } from '@/types/restaurant';
 import { getRestaurantsWithStats } from '@/lib/restaurants';
+import { useGeolocation } from '@/lib/GeolocationContext';
+import { calculateDistanceKm, formatDistance } from '@/lib/useGeolocation';
 
 const FilteredRestaurantsSection = () => {
+  const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
   const [searchResults, setSearchResults] = useState<Restaurant[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedRating, setSelectedRating] = useState<number>(0);
@@ -14,6 +17,7 @@ const FilteredRestaurantsSection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  const { userLocation } = useGeolocation();
   const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
   // Load initial restaurants on mount
@@ -23,24 +27,30 @@ const FilteredRestaurantsSection = () => {
         setIsLoading(true);
         const response = await getRestaurantsWithStats();
         const restaurants =
-          response.data?.map((apiRestaurant: any) => ({
-            id: apiRestaurant.id,
-            name: apiRestaurant.name,
-            address: apiRestaurant.address,
-            cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
-            rating: apiRestaurant.avg_rating || 0,
-            reviewCount: apiRestaurant.reviewCount || 0,
-            priceRange: apiRestaurant.priceRange || '—',
-            deliveryTime: apiRestaurant.deliveryTime || '—',
-            distance: apiRestaurant.distance || '—',
-            isPromoted: apiRestaurant.promoted || false,
-            image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
-            description: apiRestaurant.description || '',
-            location: apiRestaurant.latitude && apiRestaurant.longitude ? { lat: apiRestaurant.latitude, lng: apiRestaurant.longitude } : undefined,
-          })) || [];
+          response.data?.map((apiRestaurant: any) => {
+            const hasLocation = apiRestaurant.latitude !== undefined && apiRestaurant.latitude !== null && apiRestaurant.longitude !== undefined && apiRestaurant.longitude !== null;
+            const location = hasLocation ? { lat: Number(apiRestaurant.latitude), lng: Number(apiRestaurant.longitude) } : undefined;
+
+            return {
+              id: apiRestaurant.id,
+              name: apiRestaurant.name,
+              address: apiRestaurant.address,
+              cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
+              rating: apiRestaurant.avg_rating || 0,
+              reviewCount: apiRestaurant.reviewCount || 0,
+              priceRange: apiRestaurant.priceRange || '—',
+              deliveryTime: apiRestaurant.deliveryTime || '—',
+              isPromoted: apiRestaurant.promoted || false,
+              image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
+              description: apiRestaurant.description || '',
+              location,
+            };
+          }) || [];
+        setAllRestaurants(restaurants);
         setSearchResults(restaurants);
       } catch (error) {
         console.error('Failed to load restaurants:', error);
+        setAllRestaurants([]);
         setSearchResults([]);
       } finally {
         setIsLoading(false);
@@ -51,8 +61,48 @@ const FilteredRestaurantsSection = () => {
   }, []);
 
   const handleSearch = (results: Restaurant[]) => {
-    setSearchResults(results);
+    // Apply distance calculation if userLocation is available
+    if (userLocation) {
+      const withDistance = results.map((restaurant) => {
+        if (!restaurant.location) return restaurant;
+        const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+        return {
+          ...restaurant,
+          distance: formatDistance(distanceKm) ?? restaurant.distance,
+        };
+      });
+      setSearchResults(withDistance);
+    } else {
+      setSearchResults(results);
+    }
   };
+
+  // Update distances when location becomes available
+  useEffect(() => {
+    if (!userLocation || allRestaurants.length === 0) return;
+
+    const withDistance = allRestaurants.map((restaurant) => {
+      if (!restaurant.location) return restaurant;
+      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+      return {
+        ...restaurant,
+        distance: formatDistance(distanceKm) ?? restaurant.distance,
+      };
+    });
+
+    setAllRestaurants(withDistance);
+
+    // Also update search results
+    const updatedSearchResults = searchResults.map((restaurant) => {
+      if (!restaurant.location) return restaurant;
+      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+      return {
+        ...restaurant,
+        distance: formatDistance(distanceKm) ?? restaurant.distance,
+      };
+    });
+    setSearchResults(updatedSearchResults);
+  }, [userLocation]);
 
   // Resetuj stronę po zmianie wyników lub filtrów
   useEffect(() => {

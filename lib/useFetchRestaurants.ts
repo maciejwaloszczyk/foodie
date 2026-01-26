@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Restaurant } from '@/types/restaurant';
+import { getRestaurantsWithStats } from '@/lib/restaurants';
 
 interface FetchState {
   data: Restaurant[];
@@ -19,75 +20,73 @@ export function useFetchRestaurants() {
       try {
         setState((prev) => ({ ...prev, loading: true, error: null }));
 
-        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-        const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
-
-        // Pobieranie restauracji z API
-        const headers: HeadersInit = {
-          'Content-Type': 'application/json',
-        };
-
-        // Dodaj Bearer token do nagłówka Authorization
-        if (apiKey) {
-          headers['Authorization'] = `Bearer ${apiKey}`;
-        }
-
-        // Pobierz wszystkie restauracje ze wszystkich stron
-        let allRestaurants: any[] = [];
-        let page = 1;
-        let pageCount = 1;
-
-        while (page <= pageCount) {
-          const response = await fetch(`${strapiUrl}/api/restaurants?pagination[page]=${page}&pagination[pageSize]=100`, {
-            method: 'GET',
-            headers,
-          });
-
-          if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
-          }
-
-          const json = await response.json();
-          allRestaurants = [...allRestaurants, ...(json.data || [])];
-
-          // Pobierz info o paginacji
-          if (json.meta?.pagination) {
-            pageCount = json.meta.pagination.pageCount;
-          }
-
-          page++;
-        }
+        // Używaj getRestaurantsWithStats zamiast bezpośredniego fetch
+        const response = await getRestaurantsWithStats();
+        const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
         // Transformacja danych z API na format aplikacji
-        const transformedRestaurants = allRestaurants
-          .map((item: any) => ({
-            id: item.id || item.documentId,
-            name: item.name || '',
-            image: item.image || '',
-            cuisine: item.cuisine || item.category || 'Różne',
-            rating: item.avg_rating || item.rating || 0,
-            reviewCount: item.review_count || item.reviewCount || 0,
-            distance: item.distance || '',
-            isPromoted: item.promoted || item.isPromoted || false,
-            description: item.description || '',
-            address: item.address || '',
-            location: {
-              lat: item.latitude,
-              lng: item.longitude,
-            },
-          }))
+        const transformedRestaurants = (response.data || [])
+          .map((apiRestaurant: any) => {
+            // Obsługuj kategorie - mogą być w różnych miejscach
+            let cuisine = 'Różne';
+            if (Array.isArray(apiRestaurant.categories)) {
+              cuisine = apiRestaurant.categories.map((c: any) => c.name || c).join(', ');
+            } else if (apiRestaurant.cuisine) {
+              cuisine = apiRestaurant.cuisine;
+            } else if (apiRestaurant.category) {
+              cuisine = apiRestaurant.category;
+            }
+
+            // Pobierz URL obrazu - sprawdzaj różne ścieżki
+            let image = '/images/hero/hero.jpg'; // Fallback
+            if (apiRestaurant.cover) {
+              if (apiRestaurant.cover.formats?.medium?.url) {
+                image = apiRestaurant.cover.formats.medium.url;
+              } else if (apiRestaurant.cover.formats?.large?.url) {
+                image = apiRestaurant.cover.formats.large.url;
+              } else if (apiRestaurant.cover.url) {
+                image = apiRestaurant.cover.url;
+              }
+              // Dodaj URL Strapi jeśli to ścieżka względna
+              if (image && !image.startsWith('http')) {
+                image = `${STRAPI_URL}${image}`;
+              }
+            } else if (apiRestaurant.image) {
+              image = apiRestaurant.image;
+            }
+
+            return {
+              id: apiRestaurant.id || apiRestaurant.documentId,
+              name: apiRestaurant.name || '',
+              image: image,
+              cuisine: cuisine,
+              rating: apiRestaurant.avg_rating || apiRestaurant.rating || 0,
+              reviewCount: apiRestaurant.reviewCount || apiRestaurant.review_count || 0,
+              distance: apiRestaurant.distance || '',
+              isPromoted: apiRestaurant.promoted || apiRestaurant.featured || false,
+              description: apiRestaurant.description || '',
+              address: apiRestaurant.address || '',
+              location: {
+                lat: apiRestaurant.latitude,
+                lng: apiRestaurant.longitude,
+              },
+            };
+          })
           .filter((restaurant: Restaurant) => {
             // Filtruj restauracje bez nazwy i bez współrzędnych
             return restaurant.name && restaurant.location.lat && restaurant.location.lng;
           });
+
+        console.log(
+          '✅ Restauracje z getRestaurantsWithStats:',
+          transformedRestaurants.slice(0, 3).map((r) => ({ name: r.name, rating: r.rating, reviews: r.reviewCount, cuisine: r.cuisine })),
+        );
 
         setState({
           data: transformedRestaurants,
           loading: false,
           error: null,
         });
-
-        console.log(`✅ Pobrano ${transformedRestaurants.length} restauracji (z ${allRestaurants.length} total)`);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd';
         console.error('Error fetching restaurants:', errorMessage);

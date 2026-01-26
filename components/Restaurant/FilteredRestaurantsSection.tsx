@@ -26,7 +26,7 @@ const FilteredRestaurantsSection = () => {
       try {
         setIsLoading(true);
         const response = await getRestaurantsWithStats();
-        const restaurants =
+        let restaurants =
           response.data?.map((apiRestaurant: any) => {
             const hasLocation = apiRestaurant.latitude !== undefined && apiRestaurant.latitude !== null && apiRestaurant.longitude !== undefined && apiRestaurant.longitude !== null;
             const location = hasLocation ? { lat: Number(apiRestaurant.latitude), lng: Number(apiRestaurant.longitude) } : undefined;
@@ -44,6 +44,19 @@ const FilteredRestaurantsSection = () => {
               location,
             };
           }) || [];
+
+        // Jeśli userLocation jest dostępny, od razu dodaj odległości
+        if (userLocation) {
+          restaurants = restaurants.map((restaurant) => {
+            if (!restaurant.location) return restaurant;
+            const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+            return {
+              ...restaurant,
+              distance: formatDistance(distanceKm),
+            };
+          });
+        }
+
         setAllRestaurants(restaurants);
         setSearchResults(restaurants);
       } catch (error) {
@@ -56,7 +69,7 @@ const FilteredRestaurantsSection = () => {
     };
 
     loadInitialRestaurants();
-  }, []);
+  }, []); // Tylko raz przy montowaniu
 
   const handleSearch = (results: Restaurant[]) => {
     // Apply distance calculation if userLocation is available
@@ -66,7 +79,7 @@ const FilteredRestaurantsSection = () => {
         const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
         return {
           ...restaurant,
-          distance: formatDistance(distanceKm) ?? restaurant.distance,
+          distance: formatDistance(distanceKm),
         };
       });
       setSearchResults(withDistance);
@@ -75,31 +88,33 @@ const FilteredRestaurantsSection = () => {
     }
   };
 
-  // Update distances when location becomes available
+  // Update distances when location becomes available (after initial load)
   useEffect(() => {
     if (!userLocation || allRestaurants.length === 0) return;
 
-    const withDistance = allRestaurants.map((restaurant) => {
-      if (!restaurant.location) return restaurant;
-      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
-      return {
-        ...restaurant,
-        distance: formatDistance(distanceKm) ?? restaurant.distance,
-      };
-    });
+    // Update allRestaurants with distances
+    setAllRestaurants((prevRestaurants) =>
+      prevRestaurants.map((restaurant) => {
+        if (!restaurant.location) return restaurant;
+        const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+        return {
+          ...restaurant,
+          distance: formatDistance(distanceKm),
+        };
+      }),
+    );
 
-    setAllRestaurants(withDistance);
-
-    // Also update search results
-    const updatedSearchResults = searchResults.map((restaurant) => {
-      if (!restaurant.location) return restaurant;
-      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
-      return {
-        ...restaurant,
-        distance: formatDistance(distanceKm) ?? restaurant.distance,
-      };
-    });
-    setSearchResults(updatedSearchResults);
+    // Update searchResults with distances
+    setSearchResults((prevResults) =>
+      prevResults.map((restaurant) => {
+        if (!restaurant.location) return restaurant;
+        const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+        return {
+          ...restaurant,
+          distance: formatDistance(distanceKm),
+        };
+      }),
+    );
   }, [userLocation]);
 
   // Resetuj stronę po zmianie wyników lub filtrów

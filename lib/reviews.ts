@@ -46,6 +46,57 @@ export async function postReview(token: string, payload: ReviewPayload) {
   return response.json();
 }
 
+export async function updateReview(
+  token: string, 
+  reviewDocumentId: string, 
+  data: { comment?: string; rating?: number; attributeRatings?: any[] }
+) {
+  if (!token) {
+    throw new Error('Authentication token is missing');
+  }
+
+  const response = await fetch('/api/reviews', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      reviewDocumentId,
+      comment: data.comment,
+      rating: data.rating,
+      attributeRatings: data.attributeRatings,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to update review');
+  }
+
+  return response.json();
+}
+
+export async function deleteReview(token: string, reviewDocumentId: string) {
+  if (!token) {
+    throw new Error('Authentication token is missing');
+  }
+
+  const response = await fetch(`/api/reviews?documentId=${reviewDocumentId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to delete review');
+  }
+
+  return response.json();
+}
+
 export async function getDishesByRestaurant(restaurantId: number | string) {
   if (!restaurantId) {
     throw new Error('Restaurant ID is required');

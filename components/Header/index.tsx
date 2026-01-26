@@ -94,41 +94,22 @@ const Header = () => {
             <div className="w-60 max-w-full px-4 xl:mr-12 flex items-center h-full">
               <Link
                 href="/"
-                className={`block w-full transition-all duration-300 ease-in-out hover:scale-110 ${
+                className={`flex items-center gap-3 transition-all duration-300 ease-in-out hover:scale-105 ${
                   sticky ? "!py-0" : "py-2"
                 }`}
               >
-                {/* WARUNEK 1: NIE-przyklejony (Pełne logo) */}
-                {!sticky && (
-                  <Image
-                    src={getImagePath("/images/logo/logo-2.svg")}
-                    alt="logo"
-                    width={140}
-                    height={30}
-                    className="w-full dark:hidden"
-                  />
-                )}
-                {!sticky && (
-                  <Image
-                    src={getImagePath("/images/logo/logo-2.svg")} // ZMIANA: logo-2.svg zamiast logo.svg
-                    alt="logo"
-                    width={140}
-                    height={30}
-                    className="hidden w-full dark:block"
-                  />
-                )}
-
-                {/* WARUNEK 2: PRZYKLEJONY (Ikonka) */}
-                {sticky && (
-                  <Image
-                    src={getImagePath("/images/logo/logo.svg")}
-                    alt="logo"
-                    width={70}
-                    height={70}
-                    // ZMIANA: Dodałem 'translate-y-2', żeby przesunąć logo w dół i odkleić od górnej krawędzi
-                    className="!w-auto !h-[70px] object-contain scale-150 origin-left ml-1 translate-y-1"
-                  />
-                )}
+                {/* Logo ikonka */}
+                <Image
+                  src={getImagePath("/images/logo/logo.svg")}
+                  alt="logo"
+                  width={sticky ? 50 : 80}
+                  height={sticky ? 50 : 80}
+                  className={`${sticky ? "!w-[50px] !h-[50px]" : "!w-[80px] !h-[80px]"} object-contain`}
+                />
+                {/* Napis foodie */}
+                <span className={`font-bold text-white ${sticky ? "text-2xl" : "text-4xl"}`}>
+                  Foodie
+                </span>
               </Link>
             </div>
 

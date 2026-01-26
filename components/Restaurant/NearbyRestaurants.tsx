@@ -9,7 +9,7 @@ import { useGeolocation } from '@/lib/GeolocationContext';
 import { calculateDistanceKm, formatDistance } from '@/lib/useGeolocation';
 
 const NearbyRestaurants = () => {
-  const RESULT_LIMIT = 30;
+  const RESULT_LIMIT = 10;
   const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
   const [nearbyRestaurants, setNearbyRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,21 +98,23 @@ const NearbyRestaurants = () => {
       <div className="container">
         <SectionTitle title="W twojej okolicy" paragraph="Znajdź najlepsze restauracje w Twojej okolicy" center />
 
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-lg bg-primary/5 p-6 sm:flex-row">
+        <div className={`mt-6 flex flex-col items-center justify-between gap-4 rounded-lg p-6 sm:flex-row ${locationStatus === 'granted' ? 'bg-green-50 dark:bg-green-900/20' : 'bg-primary/5'}`}>
           <div className="text-center sm:text-left">
             <p className="text-lg font-semibold text-black dark:text-white">Pokaż {RESULT_LIMIT} najbliższych restauracji</p>
             <p className="text-sm text-body-color dark:text-body-color-dark">Użyj swojej lokalizacji, aby posortować listę według faktycznej odległości.</p>
             {locationStatus === 'granted' && userLocation && (
-              <p className="mt-1 text-xs text-primary">
-                Lokalizacja włączona{isResolvingLocation ? '...' : ''}: {locationLabel || `${userLocation.lat.toFixed(3)}°, ${userLocation.lng.toFixed(3)}°`}
+              <p className="mt-1 text-sm font-semibold text-green-600 dark:text-green-400">
+                ✓ Lokalizacja włączona{isResolvingLocation ? '...' : ''}: {locationLabel || `${userLocation.lat.toFixed(3)}°, ${userLocation.lng.toFixed(3)}°`}
               </p>
             )}
             {locationStatus === 'denied' && locationError && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{locationError}</p>}
             {locationStatus === 'unavailable' && locationError && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{locationError}</p>}
           </div>
-          <button onClick={requestLocation} disabled={locationStatus === 'requesting'} className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60">
-            {locationStatus === 'requesting' ? 'Pobieranie lokalizacji...' : 'Użyj mojej lokalizacji'}
-          </button>
+          {locationStatus !== 'granted' && (
+            <button onClick={requestLocation} disabled={locationStatus === 'requesting'} className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60">
+              {locationStatus === 'requesting' ? 'Pobieranie lokalizacji...' : 'Użyj mojej lokalizacji'}
+            </button>
+          )}
         </div>
 
         {isLoading ? (

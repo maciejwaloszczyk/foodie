@@ -3,9 +3,11 @@
 ## 📋 Informacje o projekcie
 
 ### Nazwa projektu
+
 **Foodie** - Aplikacja do odkrywania i zamawiania jedzenia z restauracji
 
 ### Stack technologiczny
+
 - **Frontend**: Next.js 13+ (App Router)
 - **Styling**: Tailwind CSS
 - **Język**: TypeScript
@@ -18,6 +20,7 @@
 ## 🏗️ Struktura projektu
 
 ### Kluczowe katalogi
+
 ```
 app/                    # Next.js App Router
 ├── page.tsx           # Strona główna (tylko Hero ukryte dla zalogowanych)
@@ -53,34 +56,38 @@ types/
 ## 🔐 System autentykacji
 
 ### Architektura
+
 - **Provider**: `AuthContext` opakowuje całą aplikację w `layout.tsx`
 - **Hook**: `useAuth()` - dostęp do globalnego stanu autentykacji
 - **Storage**: JWT token w `localStorage` (klucz: `jwt`)
 - **Backend**: Strapi API endpoints
 
 ### Używanie autentykacji w komponentach
+
 ```typescript
 import { useAuth } from "@/lib/useAuth";
 
 const MyComponent = () => {
   const { user, isAuthenticated, loading, login, logout, register } = useAuth();
-  
+
   if (loading) return <LoadingSpinner />;
-  
+
   if (isAuthenticated) {
     return <div>Witaj, {user.username}!</div>;
   }
-  
+
   return <LoginButton />;
 };
 ```
 
 ### Strapi API Endpoints
+
 - `POST /api/auth/local` - Logowanie
 - `POST /api/auth/local/register` - Rejestracja
 - `GET /api/users/me` - Pobieranie danych zalogowanego użytkownika
 
 ### Environment Variables
+
 ```env
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 ```
@@ -90,18 +97,21 @@ NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
 ## 🎨 Style i konwencje
 
 ### Tailwind CSS
+
 - Używamy Tailwind utility classes
 - Dark mode: `dark:` prefix
 - Responsive: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
 - Główny kolor primary jest już zdefiniowany w konfiguracji
 
 ### Konwencje nazewnictwa
+
 - Komponenty: PascalCase (np. `SingleRestaurant.tsx`)
 - Hooki: camelCase z prefixem "use" (np. `useAuth.ts`)
 - Typy: PascalCase (np. `Restaurant`, `User`)
 - Pliki danych: camelCase (np. `restaurantData.tsx`)
 
 ### Struktura komponentu
+
 ```typescript
 "use client"; // Jeśli używa useState, useEffect, lub kontekstu
 
@@ -116,7 +126,7 @@ const ComponentName = ({ restaurant }: Props) => {
   // Hooks
   // State
   // Functions
-  
+
   return (
     <div className="...">
       {/* JSX */}
@@ -132,6 +142,7 @@ export default ComponentName;
 ## 🍔 Typy restauracji
 
 ### Restaurant Interface
+
 ```typescript
 export type Restaurant = {
   id: number;
@@ -140,8 +151,6 @@ export type Restaurant = {
   cuisine: string;
   rating: number;
   reviewCount: number;
-  priceRange: string; // "$", "$$", "$$$", "$$$$"
-  deliveryTime: string; // "20-30 min"
   distance?: string; // "1.2 km"
   isPromoted?: boolean;
   description?: string;
@@ -158,6 +167,7 @@ export type Restaurant = {
 ## 📄 Logika wyświetlania stron
 
 ### Strona główna (app/page.tsx)
+
 ```typescript
 // WAŻNE: Hero jest ukryte dla zalogowanych
 // Wszystkie sekcje restauracji są widoczne zawsze
@@ -174,6 +184,7 @@ if (!isAuthenticated) {
 ```
 
 ### Header (components/Header/index.tsx)
+
 ```typescript
 // Dynamiczne przyciski w zależności od statusu logowania
 
@@ -191,27 +202,31 @@ if (isAuthenticated) {
 ## 🔧 Częste zadania
 
 ### Dodawanie nowej sekcji restauracji
+
 1. Utwórz komponent w `components/Restaurant/`
 2. Importuj `restaurantData` z `./restaurantData.tsx`
 3. Użyj `SingleRestaurant` dla pojedynczych kart
 4. Dodaj do `app/page.tsx`
 
 ### Dodawanie nowego typu danych
+
 1. Utwórz interface w `types/`
 2. Export jako `export type`
 3. Importuj gdzie potrzeba: `import type { TypeName } from "@/types/filename"`
 
 ### Tworzenie nowego formularza z autentykacją
+
 1. Użyj `"use client"` na górze
 2. Import `useAuth` hook
 3. Obsługa submit:
+
 ```typescript
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
   const result = await login(email, password);
   if (result.success) {
-    router.push("/");
+    router.push('/');
   } else {
     setError(result.error);
   }
@@ -220,20 +235,21 @@ const handleSubmit = async (e: React.FormEvent) => {
 ```
 
 ### Dodawanie protected route
+
 ```typescript
 const ProtectedPage = () => {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
-  
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push("/signin");
     }
   }, [isAuthenticated, loading, router]);
-  
+
   if (loading) return <LoadingSpinner />;
   if (!isAuthenticated) return null;
-  
+
   return <YourContent />;
 };
 ```
@@ -243,6 +259,7 @@ const ProtectedPage = () => {
 ## ⚠️ Ważne uwagi dla Copilota
 
 ### DO:
+
 ✅ Zawsze używaj TypeScript z odpowiednimi typami
 ✅ Używaj `"use client"` dla komponentów z hooks/state
 ✅ Import typów: `import type { Type } from ...`
@@ -254,6 +271,7 @@ const ProtectedPage = () => {
 ✅ Zachowuj spójność z istniejącym stylem kodu
 
 ### DON'T:
+
 ❌ Nie twórz nowych systemów autentykacji (używaj AuthContext)
 ❌ Nie używaj inline styles (tylko Tailwind)
 ❌ Nie twórz duplikatów komponentów (sprawdź `components/`)
@@ -267,16 +285,19 @@ const ProtectedPage = () => {
 ## 🧪 Testowanie
 
 ### Sprawdzanie autentykacji
+
 1. Otwórz DevTools → Application → Local Storage
 2. Sprawdź klucz `jwt`
 3. Console nie powinno mieć błędów
 
 ### Sprawdzanie responsywności
+
 - Mobile: < 640px
 - Tablet: 768px - 1024px
 - Desktop: > 1024px
 
 ### Sprawdzanie dark mode
+
 - Toggle w Header (ThemeToggler component)
 - Wszystkie komponenty powinny wspierać `dark:` classes
 
@@ -285,11 +306,13 @@ const ProtectedPage = () => {
 ## 📚 Dodatkowe zasoby
 
 ### Dokumentacja
+
 - **STRAPI_AUTH_README.md** - Szczegółowa dokumentacja autentykacji
 - **TESTING_AUTH.md** - Instrukcje testowania
 - **FIX_HEADER_UPDATE.md** - Wyjaśnienie React Context implementation
 
 ### Strapi Setup
+
 1. Uruchom Strapi: `http://localhost:1337`
 2. Settings → Users & Permissions → Roles → Public
 3. Zaznacz: `auth/local`, `auth/local/register`
@@ -300,6 +323,7 @@ const ProtectedPage = () => {
 ## 🚀 Polecenia
 
 ### Development
+
 ```bash
 npm run dev          # Start dev server (port 3000)
 npm run build        # Production build
@@ -307,6 +331,7 @@ npm run start        # Start production server
 ```
 
 ### Strapi (jeśli osobny projekt)
+
 ```bash
 npm run develop      # Start Strapi dev server (port 1337)
 ```
@@ -316,15 +341,19 @@ npm run develop      # Start Strapi dev server (port 1337)
 ## 💡 Tips dla przenoszenia plików
 
 ### Importy absolutne
+
 Używamy `@/` jako alias dla root:
+
 ```typescript
-import { useAuth } from "@/lib/useAuth";
-import { Restaurant } from "@/types/restaurant";
-import Header from "@/components/Header";
+import { useAuth } from '@/lib/useAuth';
+import { Restaurant } from '@/types/restaurant';
+import Header from '@/components/Header';
 ```
 
 ### Kluczowe zależności
+
 Po przeniesieniu sprawdź:
+
 1. ✅ `AuthProvider` w `app/layout.tsx`
 2. ✅ `.env.local` z `NEXT_PUBLIC_STRAPI_URL`
 3. ✅ Wszystkie komponenty Restaurant w `components/Restaurant/`
@@ -332,6 +361,7 @@ Po przeniesieniu sprawdź:
 5. ✅ Typy w `types/`
 
 ### Kolejność migracji (zalecana)
+
 1. **Typy** (`types/`)
 2. **Lib/Utils** (`lib/`)
 3. **Komponenty bazowe** (`components/Common/`, `components/Header/`)
@@ -344,6 +374,7 @@ Po przeniesieniu sprawdź:
 ## 🎯 Obecny stan projektu
 
 ### ✅ Zaimplementowane
+
 - Autentykacja Strapi (login, register, logout)
 - React Context dla globalnego stanu
 - Strona główna z 4 sekcjami restauracji
@@ -355,6 +386,7 @@ Po przeniesieniu sprawdź:
 - Error handling
 
 ### 🔜 Do zrobienia (sugestie)
+
 - Profile użytkownika
 - Zamawianie jedzenia
 - Historia zamówień
@@ -378,6 +410,7 @@ Po przeniesieniu sprawdź:
 Ta aplikacja jest w pełni funkcjonalna z autentykacją Strapi. Wszystkie komponenty są zaprojektowane modułowo i można je łatwo rozszerzać. Zachowaj spójność ze stylem i konwencjami obecnymi w kodzie.
 
 Przy dodawaniu nowych features zawsze:
+
 1. Sprawdź czy podobny komponent już istnieje
 2. Użyj istniejących typów TypeScript
 3. Integruj się z AuthContext dla user-specific features

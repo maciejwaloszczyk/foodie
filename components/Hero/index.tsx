@@ -1,9 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
+import { useGeolocation } from '@/lib/GeolocationContext';
 
 const Hero = () => {
   const { isAuthenticated } = useAuth();
+  const { userLocation, locationLabel, locationStatus, requestLocation } = useGeolocation();
 
   return (
     <>
@@ -19,17 +21,48 @@ const Hero = () => {
                   <Link href="#featured" className="inline-block rounded-full bg-primary px-8 py-4 text-base font-semibold text-white duration-300 ease-in-out hover:bg-primary/90">
                     Przeglądaj restauracje
                   </Link>
+
+                  {/* Przycisk lokalizacji */}
+                  <button onClick={requestLocation} disabled={locationStatus === 'requesting'} className={`inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold duration-300 ease-in-out ${locationStatus === 'granted' ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-black/10 text-dark hover:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20'} ${locationStatus === 'requesting' ? 'cursor-not-allowed opacity-60' : ''}`}>
+                    {locationStatus === 'requesting' ? (
+                      <>
+                        <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Pobieranie...</span>
+                      </>
+                    ) : locationStatus === 'granted' ? (
+                      <>
+                        <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                          <path d="M10 0C6.134 0 3 3.134 3 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5S8.619 4.5 10 4.5s2.5 1.119 2.5 2.5S11.381 9.5 10 9.5z" />
+                        </svg>
+                        <span>{locationLabel || 'Lokalizacja włączona'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                          <path d="M10 0C6.134 0 3 3.134 3 7c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5c-1.381 0-2.5-1.119-2.5-2.5S8.619 4.5 10 4.5s2.5 1.119 2.5 2.5S11.381 9.5 10 9.5z" />
+                        </svg>
+                        <span>Użyj lokalizacji</span>
+                      </>
+                    )}
+                  </button>
+
                   {!isAuthenticated && (
                     <Link href="/signin" className="inline-block rounded-full bg-black/10 px-8 py-4 text-base font-semibold text-dark duration-300 ease-in-out hover:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/5">
                       Zaloguj się
                     </Link>
                   )}
                 </div>
+
+                {/* Podpowiedź o lokalizacji */}
+                {locationStatus !== 'granted' && <p className="mt-4 text-sm text-body-color dark:text-body-color-dark">💡 Włącz lokalizację dla lepszego doświadczenia - zobacz odległości i znajdź najbliższe restauracje</p>}
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Poniżej zmieniam wszystkie stare kolory #4A6CF7 na Twój nowy #007bff */}
         <div className="absolute right-0 top-0 z-[-1] opacity-30 lg:opacity-100">
           <svg width="450" height="556" viewBox="0 0 450 556" fill="none" xmlns="http://www.w3.org/2000/svg">

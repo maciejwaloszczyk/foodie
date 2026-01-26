@@ -36,8 +36,6 @@ export default async function RestaurantPage({ params }: Props) {
       cuisine: categories,
       rating: stats.avgRating || apiRestaurant.avg_rating || 0,
       reviewCount: stats.reviewCount || apiRestaurant.reviewCount || 0,
-      priceRange: apiRestaurant.priceRange || '—',
-      deliveryTime: apiRestaurant.deliveryTime || '—',
       distance: apiRestaurant.distance || '—',
       isPromoted: apiRestaurant.promoted || false,
       image: imageUrl,

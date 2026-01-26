@@ -4,13 +4,17 @@ import SectionTitle from '../Common/SectionTitle';
 import SingleRestaurant from './SingleRestaurant';
 import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
+import { useGeolocation } from '@/lib/GeolocationContext';
+import { calculateDistanceKm, formatDistance } from '@/lib/useGeolocation';
 
 const FeaturedRestaurants = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [allFeatured, setAllFeatured] = useState<Restaurant[]>([]);
   const [featuredRestaurants, setFeaturedRestaurants] = useState<Restaurant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userLocation } = useGeolocation();
   const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
   useEffect(() => {
@@ -21,24 +25,28 @@ const FeaturedRestaurants = () => {
         const restaurants =
           response.data
             ?.filter((apiRestaurant: any) => apiRestaurant.promoted)
-            .map((apiRestaurant: any) => ({
-              id: apiRestaurant.id,
-              name: apiRestaurant.name,
-              address: apiRestaurant.address,
-              cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
-              rating: apiRestaurant.avg_rating || 0,
-              reviewCount: apiRestaurant.reviewCount || 0,
-              priceRange: apiRestaurant.priceRange || '—',
-              deliveryTime: apiRestaurant.deliveryTime || '—',
-              distance: apiRestaurant.distance || '—',
-              isPromoted: apiRestaurant.promoted || false,
-              image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
-              description: apiRestaurant.description || '',
-              location: apiRestaurant.latitude && apiRestaurant.longitude ? { lat: apiRestaurant.latitude, lng: apiRestaurant.longitude } : undefined,
-            })) || [];
+            .map((apiRestaurant: any) => {
+              const hasLocation = apiRestaurant.latitude !== undefined && apiRestaurant.latitude !== null && apiRestaurant.longitude !== undefined && apiRestaurant.longitude !== null;
+              const location = hasLocation ? { lat: Number(apiRestaurant.latitude), lng: Number(apiRestaurant.longitude) } : undefined;
+
+              return {
+                id: apiRestaurant.id,
+                name: apiRestaurant.name,
+                address: apiRestaurant.address,
+                cuisine: Array.isArray(apiRestaurant.categories) ? apiRestaurant.categories.map((c: any) => c.name || c).join(', ') : typeof apiRestaurant.categories === 'string' ? apiRestaurant.categories : 'Nieznana kuchnia',
+                rating: apiRestaurant.avg_rating || 0,
+                reviewCount: apiRestaurant.reviewCount || 0,
+                isPromoted: apiRestaurant.promoted || false,
+                image: apiRestaurant.cover?.url ? `${STRAPI_URL}${apiRestaurant.cover.url}` : '',
+                description: apiRestaurant.description || '',
+                location,
+              };
+            }) || [];
+        setAllFeatured(restaurants);
         setFeaturedRestaurants(restaurants);
       } catch (error) {
         console.error('Failed to load featured restaurants:', error);
+        setAllFeatured([]);
         setFeaturedRestaurants([]);
       } finally {
         setIsLoading(false);
@@ -47,6 +55,36 @@ const FeaturedRestaurants = () => {
 
     loadFeaturedRestaurants();
   }, []);
+
+  useEffect(() => {
+    if (!userLocation || allFeatured.length === 0) {
+      setFeaturedRestaurants(allFeatured);
+      return;
+    }
+
+    const withDistance = allFeatured.map((restaurant) => {
+      if (!restaurant.location) return { restaurant, distanceKm: null };
+      const distanceKm = calculateDistanceKm(userLocation, restaurant.location);
+      return {
+        restaurant: {
+          ...restaurant,
+          distance: formatDistance(distanceKm) ?? restaurant.distance,
+        },
+        distanceKm,
+      };
+    });
+
+    const sortedByDistance = [...withDistance]
+      .sort((a, b) => {
+        if (a.distanceKm === null && b.distanceKm === null) return 0;
+        if (a.distanceKm === null) return 1;
+        if (b.distanceKm === null) return -1;
+        return a.distanceKm - b.distanceKm;
+      })
+      .map((entry) => entry.restaurant || entry);
+
+    setFeaturedRestaurants(sortedByDistance);
+  }, [userLocation, allFeatured]);
 
   const checkScrollability = () => {
     if (scrollContainerRef.current) {

@@ -5,8 +5,6 @@ export type Restaurant = {
   cuisine: string;
   rating: number;
   reviewCount: number;
-  priceRange: string; // e.g., "$$", "$$$"
-  deliveryTime: string;
   distance?: string;
   isPromoted?: boolean;
   description?: string;

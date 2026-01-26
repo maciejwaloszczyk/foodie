@@ -4,6 +4,7 @@ import SectionTitle from '../Common/SectionTitle';
 import SingleRestaurant from './SingleRestaurant';
 import { getRestaurantsWithStats } from '@/lib/restaurants';
 import { Restaurant } from '@/types/restaurant';
+import restaurantData from "./data/restaurantData";
 
 const TopRated = () => {
   const [topRatedRestaurants, setTopRatedRestaurants] = useState<Restaurant[]>([]);

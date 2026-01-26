@@ -17,7 +17,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'api-agh.waloszczyk.eu',
         port: '',
-        pathname: '/uploads/**',
+        pathname: '/**',
       },
       {
         protocol: 'http',

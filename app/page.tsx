@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <ScrollUp />
-      {!isAuthenticated && <Hero />}
+      <Hero />
       <FeaturedRestaurants />
       <FilteredRestaurantsSection />
       <TopRated />

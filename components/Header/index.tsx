@@ -10,6 +10,7 @@ import menuData from './menuData';
 
 const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const pathname = usePathname();
   const headerRef = useRef<HTMLElement | null>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
 
@@ -165,7 +166,7 @@ const Header = () => {
                   </>
                 ) : (
                   <>
-                    <Link href="/signin" className={`hidden px-7 text-base font-medium text-text-main hover:opacity-70 dark:text-white md:block ${sticky ? '!py-2' : 'py-3'}`}>
+                    <Link href={`/signin?redirect=${encodeURIComponent(pathname || '/')}`} className={`hidden px-7 text-base font-medium text-text-main hover:opacity-70 dark:text-white md:block ${sticky ? '!py-2' : 'py-3'}`}>
                       Zaloguj się
                     </Link>
                     <Link href="/signup" className={`ease-in-up hidden rounded-full bg-primary px-8 text-base font-medium text-white shadow-btn transition duration-300 hover:bg-opacity-90 hover:shadow-btn-hover md:block md:px-9 lg:px-6 xl:px-9 ${sticky ? '!py-2' : 'py-3'}`}>

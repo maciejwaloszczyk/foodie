@@ -90,7 +90,7 @@ function Header({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, onAdd, onOpenEdit }: { selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; baseReviews: any[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
+function ReviewForm({ restaurant, selectedDishId, setSelectedDishId, dishes, baseReviews, onAdd, onOpenEdit }: { restaurant: Restaurant; selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; baseReviews: any[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
   const { isAuthenticated, loading, user, token } = useAuth();
   const [name, setName] = useState<string>('');
   const [comment, setComment] = useState<string>('');
@@ -140,7 +140,7 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
         <h2 className="text-lg font-semibold mb-3">Dodaj opinię</h2>
         <p className="text-sm italic text-gray-700 dark:text-gray-300">
           Aby dodać opinię, musisz być{' '}
-          <Link href="/signin" className="text-primary underline">
+          <Link href={`/signin?redirect=/restaurant/${restaurant.id}/reviews`} className="text-primary underline">
             zalogowany
           </Link>
           .
@@ -337,6 +337,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
   const token = auth?.token;
   const [isEditing, setIsEditing] = useState(false);
   const [editComment, setEditComment] = useState<string>(rev.comment ?? '');
+  const [editAttrRatings, setEditAttrRatings] = useState<Record<string, number>>({});
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -348,10 +349,24 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
 
   const details = [] as any[];
 
+  // Get dish attributes for this review's dish
+  const dish = dishes?.find((d) => d.id === rev.dish_id);
+  const dishAttrs = dish?.dish_attributes || [];
+
   // populate edit map when entering edit mode
   useEffect(() => {
     if (isEditing) {
       setEditComment(rev.comment ?? '');
+
+      // Initialize attribute ratings from current review
+      const attrRatings: Record<string, number> = {};
+      if (rev.attribute_ratings && typeof rev.attribute_ratings === 'object') {
+        Object.entries(rev.attribute_ratings).forEach(([attrId, rating]: [string, any]) => {
+          // Backend stores 0-5, UI displays 1-10
+          attrRatings[attrId] = Number(rating) * 2;
+        });
+      }
+      setEditAttrRatings(attrRatings);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
@@ -367,7 +382,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
       alert('Błąd: brak autoryzacji lub ID opinii');
       return;
     }
-    
+
     setIsDeleting(true);
     try {
       await deleteReview(token, rev.documentId);
@@ -386,10 +401,28 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
       alert('Błąd: brak autoryzacji lub ID opinii');
       return;
     }
-    
+
     setIsSaving(true);
     try {
-      await updateReview(token, rev.documentId, { comment: editComment });
+      // Prepare attribute ratings for update (convert back from 1-10 to 0-5 scale)
+      const attributeRatings = dishAttrs.map((dishAttr: any) => {
+        const attrId = dishAttr.attribute?.id || dishAttr.id;
+        const uiRating = editAttrRatings[attrId] || editAttrRatings[String(attrId)] || 8;
+        return {
+          attributeId: attrId,
+          attributeDocumentId: dishAttr.attribute?.documentId || dishAttr.documentId,
+          rating: uiRating / 2, // Convert from 1-10 UI scale to 0-5 backend scale
+        };
+      });
+
+      // Calculate new overall rating from attribute averages
+      const avgAttr = attributeRatings.length > 0 ? attributeRatings.reduce((sum, ar) => sum + ar.rating, 0) / attributeRatings.length : rev.overall_rating || 3;
+
+      await updateReview(token, rev.documentId, {
+        comment: editComment,
+        rating: Math.round(avgAttr * 10) / 10, // Round to 1 decimal place
+        attributeRatings,
+      });
       setIsEditing(false);
       if (onModify) onModify({ showSuccess: true, action: 'edit' });
       if (onCloseEdit) onCloseEdit();
@@ -427,11 +460,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                 <button onClick={() => setIsEditing(true)} className="text-xs text-primary underline">
                   Edytuj
                 </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="text-xs text-red-600 underline disabled:opacity-50"
-                >
+                <button onClick={handleDelete} disabled={isDeleting} className="text-xs text-red-600 underline disabled:opacity-50">
                   {isDeleting ? 'Usuwanie...' : 'Usuń'}
                 </button>
               </div>
@@ -468,9 +497,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
               }
               if (!attrName) {
                 // Fallback: names carried in review_details mapping by attribute.id
-                attrName = (rev.attribute_names && (rev.attribute_names[keyNum] || rev.attribute_names[attrId]))
-                  || (rev.attribute_names_by_docId && rev.attribute_names_by_docId[String(attrId)])
-                  || attrName;
+                attrName = (rev.attribute_names && (rev.attribute_names[keyNum] || rev.attribute_names[attrId])) || (rev.attribute_names_by_docId && rev.attribute_names_by_docId[String(attrId)]) || attrName;
               }
               attrName = attrName || `Atrybut #${attrId}`;
               const displayRating = Number(rating) * 2; // backend stores 0-5, show as 0-10
@@ -489,9 +516,30 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
 
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-lg max-w-lg w-full mx-4">
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">Edytuj opinię</h3>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-lg max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Edytuj opinię</h3>
             <div className="space-y-4">
+              {/* Attribute rating sliders */}
+              {dishAttrs.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Oceny atrybutów:</h4>
+                  {dishAttrs.map((attr: any) => {
+                    const attrId = attr.attribute?.id || attr.id;
+                    const attrName = attr.name || attr.attribute?.name || `Atrybut #${attrId}`;
+                    const val = editAttrRatings[attrId] || editAttrRatings[String(attrId)] || 8;
+                    return (
+                      <div key={attrId}>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attrName}</label>
+                        <div className="flex items-center gap-3">
+                          <input type="range" min={1} max={10} step={1} value={Number(val)} onChange={(e) => setEditAttrRatings((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))} className="w-full accent-blue-600" />
+                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 min-w-[3rem] text-right">{val}/10</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Treść opinii</label>
                 <textarea value={editComment} onChange={(e) => setEditComment(e.target.value)} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[100px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
@@ -501,11 +549,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                 <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
                   Anuluj
                 </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                >
+                <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
                   {isSaving ? 'Zapisuję...' : 'Zapisz'}
                 </button>
               </div>
@@ -567,29 +611,11 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         // Map API reviews to component format
         const mappedReviews = apiReviews.map((review: any) => {
-          const detailRatings = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute && typeof d.rating !== 'undefined')
-                  .map((d: any) => [d.attribute.id, d.rating])
-              )
-            : {};
+          const detailRatings = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute && typeof d.rating !== 'undefined').map((d: any) => [d.attribute.id, d.rating])) : {};
 
-          const detailNames = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute)
-                  .map((d: any) => [d.attribute.id, d.attribute.name])
-              )
-            : {};
+          const detailNames = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute).map((d: any) => [d.attribute.id, d.attribute.name])) : {};
 
-          const detailNamesByDocId = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute?.documentId)
-                  .map((d: any) => [d.attribute.documentId, d.attribute.name])
-              )
-            : {};
+          const detailNamesByDocId = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute?.documentId).map((d: any) => [d.attribute.documentId, d.attribute.name])) : {};
 
           return {
             id: review.id,
@@ -629,11 +655,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
   const reviewsToShow = selectedDishFilter === 'all' ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishFilter);
 
   // compute average rating for selected dish (from displayed reviews)
-  const dishAvgRating = selectedDish
-    ? (reviewsToShow.length
-        ? Math.round((reviewsToShow.reduce((sum, r) => sum + (r.overall_rating ?? r.rating ?? 0), 0) / reviewsToShow.length) * 10) / 10
-        : 0)
-    : undefined;
+  const dishAvgRating = selectedDish ? (reviewsToShow.length ? Math.round((reviewsToShow.reduce((sum, r) => sum + (r.overall_rating ?? r.rating ?? 0), 0) / reviewsToShow.length) * 10) / 10 : 0) : undefined;
 
   // split reviews into current user's and others
   const auth = useAuth();
@@ -659,7 +681,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
       <hr className="border-gray-700 my-6" />
 
-      <ReviewForm selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} baseReviews={baseReviews} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
+      <ReviewForm restaurant={restaurant} selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} baseReviews={baseReviews} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
 
       <hr className="border-gray-700 my-6" />
 

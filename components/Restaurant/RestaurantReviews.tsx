@@ -90,7 +90,7 @@ function Header({ restaurant }: { restaurant: Restaurant }) {
   );
 }
 
-function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, onAdd, onOpenEdit }: { selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; baseReviews: any[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
+function ReviewForm({ restaurant, selectedDishId, setSelectedDishId, dishes, baseReviews, onAdd, onOpenEdit }: { restaurant: Restaurant; selectedDishId: number | 'all'; setSelectedDishId: (v: number | 'all') => void; dishes: Dish[]; baseReviews: any[]; onAdd?: () => void; onOpenEdit?: (reviewId: number) => void }) {
   const { isAuthenticated, loading, user, token } = useAuth();
   const [name, setName] = useState<string>('');
   const [comment, setComment] = useState<string>('');
@@ -140,7 +140,7 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
         <h2 className="text-lg font-semibold mb-3">Dodaj opinię</h2>
         <p className="text-sm italic text-gray-700 dark:text-gray-300">
           Aby dodać opinię, musisz być{' '}
-          <Link href="/signin" className="text-primary underline">
+          <Link href={`/signin?redirect=/restaurant/${restaurant.id}/reviews`} className="text-primary underline">
             zalogowany
           </Link>
           .
@@ -367,7 +367,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
       alert('Błąd: brak autoryzacji lub ID opinii');
       return;
     }
-    
+
     setIsDeleting(true);
     try {
       await deleteReview(token, rev.documentId);
@@ -386,7 +386,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
       alert('Błąd: brak autoryzacji lub ID opinii');
       return;
     }
-    
+
     setIsSaving(true);
     try {
       await updateReview(token, rev.documentId, { comment: editComment });
@@ -427,11 +427,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                 <button onClick={() => setIsEditing(true)} className="text-xs text-primary underline">
                   Edytuj
                 </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="text-xs text-red-600 underline disabled:opacity-50"
-                >
+                <button onClick={handleDelete} disabled={isDeleting} className="text-xs text-red-600 underline disabled:opacity-50">
                   {isDeleting ? 'Usuwanie...' : 'Usuń'}
                 </button>
               </div>
@@ -468,9 +464,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
               }
               if (!attrName) {
                 // Fallback: names carried in review_details mapping by attribute.id
-                attrName = (rev.attribute_names && (rev.attribute_names[keyNum] || rev.attribute_names[attrId]))
-                  || (rev.attribute_names_by_docId && rev.attribute_names_by_docId[String(attrId)])
-                  || attrName;
+                attrName = (rev.attribute_names && (rev.attribute_names[keyNum] || rev.attribute_names[attrId])) || (rev.attribute_names_by_docId && rev.attribute_names_by_docId[String(attrId)]) || attrName;
               }
               attrName = attrName || `Atrybut #${attrId}`;
               const displayRating = Number(rating) * 2; // backend stores 0-5, show as 0-10
@@ -501,11 +495,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                 <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
                   Anuluj
                 </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                >
+                <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
                   {isSaving ? 'Zapisuję...' : 'Zapisz'}
                 </button>
               </div>
@@ -567,29 +557,11 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
         // Map API reviews to component format
         const mappedReviews = apiReviews.map((review: any) => {
-          const detailRatings = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute && typeof d.rating !== 'undefined')
-                  .map((d: any) => [d.attribute.id, d.rating])
-              )
-            : {};
+          const detailRatings = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute && typeof d.rating !== 'undefined').map((d: any) => [d.attribute.id, d.rating])) : {};
 
-          const detailNames = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute)
-                  .map((d: any) => [d.attribute.id, d.attribute.name])
-              )
-            : {};
+          const detailNames = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute).map((d: any) => [d.attribute.id, d.attribute.name])) : {};
 
-          const detailNamesByDocId = Array.isArray(review.review_details)
-            ? Object.fromEntries(
-                review.review_details
-                  .filter((d: any) => d.attribute?.documentId)
-                  .map((d: any) => [d.attribute.documentId, d.attribute.name])
-              )
-            : {};
+          const detailNamesByDocId = Array.isArray(review.review_details) ? Object.fromEntries(review.review_details.filter((d: any) => d.attribute?.documentId).map((d: any) => [d.attribute.documentId, d.attribute.name])) : {};
 
           return {
             id: review.id,
@@ -629,11 +601,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
   const reviewsToShow = selectedDishFilter === 'all' ? baseReviews : baseReviews.filter((r) => r.dish_id === selectedDishFilter);
 
   // compute average rating for selected dish (from displayed reviews)
-  const dishAvgRating = selectedDish
-    ? (reviewsToShow.length
-        ? Math.round((reviewsToShow.reduce((sum, r) => sum + (r.overall_rating ?? r.rating ?? 0), 0) / reviewsToShow.length) * 10) / 10
-        : 0)
-    : undefined;
+  const dishAvgRating = selectedDish ? (reviewsToShow.length ? Math.round((reviewsToShow.reduce((sum, r) => sum + (r.overall_rating ?? r.rating ?? 0), 0) / reviewsToShow.length) * 10) / 10 : 0) : undefined;
 
   // split reviews into current user's and others
   const auth = useAuth();
@@ -659,7 +627,7 @@ export default function RestaurantReviews({ restaurant }: Props) {
 
       <hr className="border-gray-700 my-6" />
 
-      <ReviewForm selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} baseReviews={baseReviews} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
+      <ReviewForm restaurant={restaurant} selectedDishId={selectedDishToRate} setSelectedDishId={setSelectedDishToRate} dishes={dishesForRestaurant} baseReviews={baseReviews} onAdd={() => handleModify({ showSuccess: true, action: 'add' })} onOpenEdit={handleOpenEdit} />
 
       <hr className="border-gray-700 my-6" />
 

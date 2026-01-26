@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/useAuth';
 import { useState, useEffect } from 'react';
 import { Restaurant } from '@/types/restaurant';
 import { Review } from '@/types/review';
-import { getReviewsByRestaurant, getDishesByRestaurant, postReview } from '@/lib/reviews';
+import { getReviewsByRestaurant, getDishesByRestaurant, postReview, updateReview, deleteReview } from '@/lib/reviews';
 import type { Dish } from '@/types/dish';
 
 type Props = {
@@ -117,10 +117,11 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
       const attributes = selectedDish.dish_attributes;
       setDishAttributes(attributes);
 
-      // Initialize attribute ratings
+      // Initialize attribute ratings with attribute.id as key
       const init: Record<number, number> = {};
       attributes.forEach((attr: any) => {
-        init[attr.id] = 8;
+        const attrId = attr.attribute?.id || attr.id;
+        init[attrId] = 8;
       });
       setAttrRatings(init);
     } else {
@@ -181,10 +182,11 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
     console.log('attrRatings:', attrRatings);
     const attributeRatings = dishAttributes.map((dishAttr: any) => {
       console.log('Processing dishAttr:', dishAttr);
+      const attrId = dishAttr.attribute?.id || dishAttr.id;
       return {
-        attributeId: dishAttr.attribute?.id || dishAttr.id,
+        attributeId: attrId,
         attributeDocumentId: dishAttr.attribute?.documentId || dishAttr.documentId,
-        rating: Number(attrRatings[dishAttr.id]) || 8,
+        rating: Number(attrRatings[attrId]) || 8,
       };
     });
     console.log('attributeRatings to send:', attributeRatings);
@@ -239,12 +241,13 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
           <>
             {/* Attribute sliders for the selected dish */}
             {dishAttributes.map((attr) => {
-              const val = attrRatings[attr.id] ?? 8;
+              const attrId = attr.attribute?.id || attr.id;
+              const val = attrRatings[attrId] ?? 8;
               return (
-                <div key={attr.id}>
+                <div key={attrId}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attr.name}</label>
                   <div className="flex items-center gap-3">
-                    <input type="range" min={1} max={10} step={1} value={Number(val)} onChange={(e) => setAttrRatings((prev) => ({ ...prev, [attr.id]: Number(e.target.value) }))} className="w-full accent-blue-600" />
+                    <input type="range" min={1} max={10} step={1} value={Number(val)} onChange={(e) => setAttrRatings((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))} className="w-full accent-blue-600" />
                     <input
                       type="number"
                       min={1}
@@ -254,11 +257,11 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
                       onChange={(e) => {
                         const raw = e.target.value;
                         if (raw === '') {
-                          setAttrRatings((prev) => ({ ...prev, [attr.id]: '' }));
+                          setAttrRatings((prev) => ({ ...prev, [attrId]: '' }));
                           return;
                         }
                         const v = Number(raw);
-                        if (!Number.isNaN(v)) setAttrRatings((prev) => ({ ...prev, [attr.id]: Math.max(1, Math.min(10, v)) }));
+                        if (!Number.isNaN(v)) setAttrRatings((prev) => ({ ...prev, [attrId]: Math.max(1, Math.min(10, v)) }));
                       }}
                       className="w-16 rounded-md border border-gray-200 px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     />
@@ -331,8 +334,11 @@ function ReviewForm({ selectedDishId, setSelectedDishId, dishes, baseReviews, on
 function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any; onModify?: (opts?: { showSuccess?: boolean; action?: 'add' | 'edit' | 'delete' }) => void; editOpen?: boolean; onCloseEdit?: () => void; dishes?: any[] }) {
   const auth = useAuth();
   const authUser = auth?.user;
+  const token = auth?.token;
   const [isEditing, setIsEditing] = useState(false);
   const [editComment, setEditComment] = useState<string>(rev.comment ?? '');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Get user from API data or auth user if they are the reviewer
   let user = { id: rev.user_id, username: rev.username ?? 'Anonim' } as any;
@@ -354,6 +360,46 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
   useEffect(() => {
     if (editOpen) setIsEditing(true);
   }, [editOpen]);
+
+  const handleDelete = async () => {
+    if (!confirm('Czy na pewno chcesz usunąć tę opinię?')) return;
+    if (!token || !rev.documentId) {
+      alert('Błąd: brak autoryzacji lub ID opinii');
+      return;
+    }
+    
+    setIsDeleting(true);
+    try {
+      await deleteReview(token, rev.documentId);
+      if (onModify) onModify({ showSuccess: true, action: 'delete' });
+      if (onCloseEdit) onCloseEdit();
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      alert('Nie udało się usunąć opinii');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!token || !rev.documentId) {
+      alert('Błąd: brak autoryzacji lub ID opinii');
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      await updateReview(token, rev.documentId, { comment: editComment });
+      setIsEditing(false);
+      if (onModify) onModify({ showSuccess: true, action: 'edit' });
+      if (onCloseEdit) onCloseEdit();
+    } catch (error) {
+      console.error('Error updating review:', error);
+      alert('Nie udało się zaktualizować opinii');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const getBadgeClasses = (value: number) => {
     if (value <= 3) return 'bg-red-500 text-white';
@@ -382,17 +428,11 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                   Edytuj
                 </button>
                 <button
-                  onClick={async () => {
-                    // delete flow
-                    if (!confirm('Czy na pewno chcesz usunąć tę opinię?')) return;
-                    // Delete would be handled through API in future
-                    // For now, just refresh
-                    if (onModify) onModify({ showSuccess: true, action: 'delete' });
-                    if (onCloseEdit) onCloseEdit();
-                  }}
-                  className="text-xs text-red-600 underline"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="text-xs text-red-600 underline disabled:opacity-50"
                 >
-                  Usuń
+                  {isDeleting ? 'Usuwanie...' : 'Usuń'}
                 </button>
               </div>
             )}
@@ -462,14 +502,11 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
                   Anuluj
                 </button>
                 <button
-                  onClick={() => {
-                    setIsEditing(false);
-                    if (onModify) onModify({ showSuccess: true, action: 'edit' });
-                    if (onCloseEdit) onCloseEdit();
-                  }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  Zapisz
+                  {isSaving ? 'Zapisuję...' : 'Zapisz'}
                 </button>
               </div>
             </div>

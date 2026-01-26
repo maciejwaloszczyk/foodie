@@ -16,19 +16,22 @@ const Footer = () => {
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-5/12">
               <div className="mb-12 max-w-[360px] lg:mb-16">
                 
-                {/* Twoje ustawienia logo zachowane bez zmian */}
+                {/* Logo z napisem foodie */}
                 <Link
                   href="/"
-                  className="block w-[240px] ml-14 -mt-10 mb-8 lg:-mt-14"
+                  className="flex items-center gap-3 mb-8 transition-all duration-300 ease-in-out hover:scale-105"
                 >
                   <Image
-                    src={getImagePath("/images/logo/logo-2.svg")}
+                    src={getImagePath("/images/logo/logo.svg")}
                     alt="logo"
-                    width={240}
-                    height={240}
+                    width={80}
+                    height={80}
                     priority
-                    className="w-full h-auto object-contain"
+                    className="!w-[80px] !h-[80px] object-contain"
                   />
+                  <span className="font-bold text-white text-4xl">
+                    Foodie
+                  </span>
                 </Link>
 
                 <p className="mb-9 text-base leading-relaxed text-light dark:text-body-color-dark">

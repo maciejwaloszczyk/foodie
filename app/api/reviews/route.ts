@@ -12,11 +12,11 @@ interface AttributeRating {
 export async function POST(request: NextRequest) {
   try {
     console.log('=== POST /api/reviews started ===');
-    
+
     // Pobierz token JWT użytkownika z nagłówka
     const authHeader = request.headers.get('Authorization');
     console.log('Auth header present:', !!authHeader);
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       console.log('Missing or invalid auth header, returning 401');
       return NextResponse.json({ error: 'Unauthorized - missing Bearer token' }, { status: 401 });
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Zweryfikuj użytkownika przez Strapi
     console.log('Attempting to verify user at:', `${STRAPI_URL}/api/users/me`);
-    
+
     const userResponse = await fetch(`${STRAPI_URL}/api/users/me`, {
       method: 'GET',
       headers: {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('User verification status:', userResponse.status);
-    
+
     if (!userResponse.ok) {
       const errorText = await userResponse.text();
       console.log('User verification failed:', errorText.substring(0, 200));
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     };
 
     console.log('Creating review with dish ID:', dishId);
-    
+
     const reviewResponse = await fetch(`${STRAPI_URL}/api/reviews`, {
       method: 'POST',
       headers: {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('Review creation status:', reviewResponse.status);
-    
+
     if (!reviewResponse.ok) {
       const error = await reviewResponse.json();
       console.error('Review creation failed:', error);
@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
     const review = await reviewResponse.json();
     const reviewDocumentId = review.data.documentId;
     console.log('Review created with ID:', reviewDocumentId);
-
 
     // Utwórz review_details dla każdego atrybutu
     if (attributeRatings && Array.isArray(attributeRatings) && attributeRatings.length > 0) {
@@ -140,7 +139,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     console.log('=== PUT /api/reviews started ===');
-    
+
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -198,8 +197,61 @@ export async function PUT(request: NextRequest) {
     // Update attribute ratings if provided
     if (attributeRatings && Array.isArray(attributeRatings) && attributeRatings.length > 0) {
       console.log('Updating attribute ratings...');
-      // This would require deleting old details and creating new ones
-      // For simplicity, we skip this for now
+
+      // First, delete existing review details for this review
+      const existingDetailsResponse = await fetch(`${STRAPI_URL}/api/review-details?filters[review][documentId][$eq]=${docId}`, {
+        headers: {
+          Authorization: `Bearer ${STRAPI_KEY}`,
+        },
+      });
+
+      if (existingDetailsResponse.ok) {
+        const existingDetails = await existingDetailsResponse.json();
+        const deletePromises = existingDetails.data.map((detail: any) =>
+          fetch(`${STRAPI_URL}/api/review-details/${detail.documentId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${STRAPI_KEY}`,
+            },
+          }),
+        );
+        await Promise.all(deletePromises);
+        console.log(`Deleted ${existingDetails.data.length} existing review details`);
+      }
+
+      // Create new review details
+      const detailPromises = attributeRatings.map(async (attrRating: AttributeRating) => {
+        const detailPayload = {
+          data: {
+            review: docId,
+            attribute: attrRating.attributeDocumentId || attrRating.attributeId,
+            rating: Math.min(5, Math.max(0.5, Number(attrRating.rating))),
+          },
+        };
+
+        try {
+          const detailResponse = await fetch(`${STRAPI_URL}/api/review-details`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${STRAPI_KEY}`,
+            },
+            body: JSON.stringify(detailPayload),
+          });
+
+          if (!detailResponse.ok) {
+            const detailError = await detailResponse.json();
+            console.error('Error creating review detail:', detailError);
+          }
+          return detailResponse.ok;
+        } catch (err) {
+          console.error('Error creating review detail:', err);
+          return false;
+        }
+      });
+
+      await Promise.all(detailPromises);
+      console.log(`Created ${attributeRatings.length} new review details`);
     }
 
     return NextResponse.json(review, { status: 200 });
@@ -213,7 +265,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     console.log('=== DELETE /api/reviews started ===');
-    
+
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

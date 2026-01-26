@@ -337,6 +337,7 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
   const token = auth?.token;
   const [isEditing, setIsEditing] = useState(false);
   const [editComment, setEditComment] = useState<string>(rev.comment ?? '');
+  const [editAttrRatings, setEditAttrRatings] = useState<Record<string, number>>({});
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -348,10 +349,24 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
 
   const details = [] as any[];
 
+  // Get dish attributes for this review's dish
+  const dish = dishes?.find((d) => d.id === rev.dish_id);
+  const dishAttrs = dish?.dish_attributes || [];
+
   // populate edit map when entering edit mode
   useEffect(() => {
     if (isEditing) {
       setEditComment(rev.comment ?? '');
+
+      // Initialize attribute ratings from current review
+      const attrRatings: Record<string, number> = {};
+      if (rev.attribute_ratings && typeof rev.attribute_ratings === 'object') {
+        Object.entries(rev.attribute_ratings).forEach(([attrId, rating]: [string, any]) => {
+          // Backend stores 0-5, UI displays 1-10
+          attrRatings[attrId] = Number(rating) * 2;
+        });
+      }
+      setEditAttrRatings(attrRatings);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
@@ -389,7 +404,25 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
 
     setIsSaving(true);
     try {
-      await updateReview(token, rev.documentId, { comment: editComment });
+      // Prepare attribute ratings for update (convert back from 1-10 to 0-5 scale)
+      const attributeRatings = dishAttrs.map((dishAttr: any) => {
+        const attrId = dishAttr.attribute?.id || dishAttr.id;
+        const uiRating = editAttrRatings[attrId] || editAttrRatings[String(attrId)] || 8;
+        return {
+          attributeId: attrId,
+          attributeDocumentId: dishAttr.attribute?.documentId || dishAttr.documentId,
+          rating: uiRating / 2, // Convert from 1-10 UI scale to 0-5 backend scale
+        };
+      });
+
+      // Calculate new overall rating from attribute averages
+      const avgAttr = attributeRatings.length > 0 ? attributeRatings.reduce((sum, ar) => sum + ar.rating, 0) / attributeRatings.length : rev.overall_rating || 3;
+
+      await updateReview(token, rev.documentId, {
+        comment: editComment,
+        rating: Math.round(avgAttr * 10) / 10, // Round to 1 decimal place
+        attributeRatings,
+      });
       setIsEditing(false);
       if (onModify) onModify({ showSuccess: true, action: 'edit' });
       if (onCloseEdit) onCloseEdit();
@@ -483,9 +516,30 @@ function ReviewCard({ rev, onModify, editOpen, onCloseEdit, dishes }: { rev: any
 
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-lg max-w-lg w-full mx-4">
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">Edytuj opinię</h3>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-lg max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Edytuj opinię</h3>
             <div className="space-y-4">
+              {/* Attribute rating sliders */}
+              {dishAttrs.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Oceny atrybutów:</h4>
+                  {dishAttrs.map((attr: any) => {
+                    const attrId = attr.attribute?.id || attr.id;
+                    const attrName = attr.name || attr.attribute?.name || `Atrybut #${attrId}`;
+                    const val = editAttrRatings[attrId] || editAttrRatings[String(attrId)] || 8;
+                    return (
+                      <div key={attrId}>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{attrName}</label>
+                        <div className="flex items-center gap-3">
+                          <input type="range" min={1} max={10} step={1} value={Number(val)} onChange={(e) => setEditAttrRatings((prev) => ({ ...prev, [attrId]: Number(e.target.value) }))} className="w-full accent-blue-600" />
+                          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 min-w-[3rem] text-right">{val}/10</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Treść opinii</label>
                 <textarea value={editComment} onChange={(e) => setEditComment(e.target.value)} className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm min-h-[100px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
